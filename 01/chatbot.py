@@ -42,7 +42,7 @@ async def main(message: str):
     reply = generate_message()
 
     # 新しいメッセージを会話履歴に追加
-    store_history("assistant", message)
+    store_history("assistant", reply)
 
     # チャット上にChatGPTからの返信を表示
     msg = cl.Message(content=reply)
