@@ -2,3 +2,5 @@ Published: 2023-04-19
 Title: On the Perception of Difficulty: Differences between Humans and AI
 Authors: Philipp Spitzer, Joshua Holstein, Michael Vössing, Niklas Kühl
 Summary: With the increased adoption of artificial intelligence (AI) in industry and society, effective human-AI interaction systems are becoming increasingly important. A central challenge in the interaction of humans with AI is the estimation of difficulty for human and AI agent
+
+Cite: arXiv:2304.09803

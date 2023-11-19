@@ -1,8 +1,13 @@
+import os
 import chainlit as cl
 from conversational_agent import ConversationalAgent
 from pathlib import Path
 
+# 作業用ディレクトリの設定
 WORKING_DIRECTORY = Path('./work')
+
+# sk...の部分を自身のOpenAIのAPIキーに置き換える
+# os.environ["OPENAI_API_KEY"] = "sk-..."
 
 
 # チャットセッション開始時に実行
