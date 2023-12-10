@@ -123,3 +123,6 @@ terraform.rc
 # Ignore the .terraform/plugins directory, which contains the installed plugin
 # binaries for each provider
 .terraform/plugins
+
+.chainlit
+chainlit.md

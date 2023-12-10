@@ -1,0 +1,3 @@
+openai==1.2.0
+langchain==0.0.332
+chainlit==0.7.501
