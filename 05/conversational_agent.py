@@ -11,6 +11,11 @@ from langchain.memory import ConversationBufferMemory
 from openai import BadRequestError
 from pathlib import Path
 
+# NOTE: デバッグの際は以下の行をコメントアウトすると、
+# LangChainのデバッグ用のログが表示されて便利です。
+# from langchain.globals import set_debug
+# set_debug(True)
+
 MODEL_NAME = "gpt-4"
 
 
@@ -102,7 +107,7 @@ class ConversationalAgent:
             "read_file": read_file,
             "write_file": write_file,
             "list_directory": list_directory,
-        }[tool_name]
+        }.get(tool_name)
         if tool:
             return tool.run(tool_input)
         else:
