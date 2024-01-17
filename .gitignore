@@ -124,5 +124,9 @@ terraform.rc
 # binaries for each provider
 .terraform/plugins
 
+.pytest_cache
+.venv
+venv/
+
 .chainlit
 chainlit.md
