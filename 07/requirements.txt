@@ -1,0 +1,5 @@
+openai==1.6.1
+langchain==0.1.8
+langchain-openai==0.0.6
+grandalf
+jupyter
