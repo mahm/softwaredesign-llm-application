@@ -10,6 +10,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
 from tavily import TavilyClient
 from dotenv import load_dotenv
+from retry import retry
 
 # 環境変数を読み込む
 load_dotenv()
@@ -38,7 +39,7 @@ class SearchContent(BaseModel):
 
     def __str__(self):
         return "\n\n".join(
-            f"title: {item['title']}\nurl: {item['url']}\ncontent: {item['content']}"
+            f"\"\"\"\ntitle: {item['title']}\nurl: {item['url']}\ncontent: {item['raw_content']}\n\"\"\""
             for item in self.documents
         )
 
@@ -112,19 +113,23 @@ def plan(query: str) -> list[Task]:
             for item in data["properties"]
         ]
 
-    llm = ChatOpenAI(model=LLM_MODEL_NAME, temperature=0).bind(
-        response_format={"type": "json_object"}
-    )
-    prompt = ChatPromptTemplate.from_messages(
-        [("system", "{system_message}"), ("user", "{message}")]
-    ).partial(system_message=load_prompt("plan_system"))
-    chain = prompt | llm | JsonOutputParser(pydantic_model=Tasks) | dict_to_task
-    return chain.invoke({"message": query})
+    @retry(tries=3)
+    def invoke_chain(query: str) -> list[Task]:
+        llm = ChatOpenAI(model=LLM_MODEL_NAME, temperature=0).bind(
+            response_format={"type": "json_object"}
+        )
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", "{system_message}"), ("user", "{message}")]
+        ).partial(system_message=load_prompt("plan_system"))
+        chain = prompt | llm | JsonOutputParser(pydantic_model=Tasks) | dict_to_task
+        return chain.invoke({"message": query})
+
+    return invoke_chain(query)
 
 
 # 検索を実行する関数
 def search(query: str) -> list[dict]:
-    response = tavily_client().search(query, max_results=TAVILY_MAX_RESULTS)
+    response = tavily_client().search(query, max_results=TAVILY_MAX_RESULTS, include_raw_content=True)
     return response["results"]
 
 
