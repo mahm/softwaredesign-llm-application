@@ -1,0 +1,26 @@
+Based on the following information, create a search query for the Tavily API. The search query should be a natural, human-like question. For example, instead of "automobile industry," it should be "What are the current trends in the automobile industry?"
+
+User request:
+{task}
+
+Previous refined_query:
+{refined_query}
+
+Previous score:
+{previous_score}
+
+If refined_query is not empty and the previous score was below 0.6, it means the previous search returned unreliable information. Improve the query accordingly. If refined_query is empty or the previous score was 0.6 or higher, treat it as an initial request.
+
+Example:
+
+Task: "Find out about the trends in the automobile industry"
+Refined query: ""
+Previous score:
+Search query: What are the recent trends in the automobile industry?
+
+Task: "Learn about the latest trends in the IT industry"
+Refined query: What are the recent trends in the IT industry?
+Previous score: 0.4
+Search query: Can you provide reliable information on the latest trends in the IT industry?
+
+Generate only the search query.
