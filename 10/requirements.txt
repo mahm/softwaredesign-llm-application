@@ -5,5 +5,4 @@ openai
 langchain-openai
 python-dotenv
 retry
-torch
 sentence-transformers
