@@ -3,14 +3,14 @@ import argparse
 from functools import lru_cache
 from typing import TypedDict, Annotated, Sequence
 from operator import add
+from sentence_transformers.cross_encoder import CrossEncoder
 from langchain_core.pydantic_v1 import BaseModel
-from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
 from tavily import TavilyClient
 from dotenv import load_dotenv
-from cross_encoder_reranker import CrossEncoderReranker
 
 # 環境変数を読み込む
 load_dotenv()
@@ -91,17 +91,26 @@ def search(query: str) -> list[dict]:
 
 
 @lru_cache
-def load_cross_encoder_reranker():
-    return CrossEncoderReranker()
+def load_cross_encoder(
+        model_name: str = "hotchpotch/japanese-reranker-cross-encoder-xsmall-v1",
+        default_activation_function=None
+):
+    _cross_encoder = CrossEncoder(
+        model_name,
+        default_activation_function=default_activation_function,
+    )
+    _cross_encoder.max_length = 512
+    return _cross_encoder
 
 
-# 評価を実行する関数
+# 検索クエリと検索結果の関連度スコアの平均スコアを算出する
 def evaluate(query: str, tavily_result: list[dict]) -> float:
     # 検索結果を文字列に変換
     documents = [record["title"] + " " + record["content"] for record in tavily_result]
-    # クロスエンコーダーでスコアリング
-    _, scores = load_cross_encoder_reranker().rerank(query=query, documents=documents)
+    # Cross Encoderでスコアを算出
+    ranks = load_cross_encoder().rank(query, documents)
     # スコアの平均を計算
+    scores = [rank['score'] for rank in ranks]
     average_score = sum(scores) / len(scores)
     return average_score
 
