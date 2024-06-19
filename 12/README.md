@@ -9,7 +9,7 @@ $ git clone https://github.com/mahm/softwaredesign-llm-application.git
 続けて以下のコマンドを実行し、必要なライブラリのインストールを行って下さい。
 
 ```
-$ cd softwaredesign-llm-application/11
+$ cd softwaredesign-llm-application/10
 $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt # 必要なライブラリのインストール
@@ -29,10 +29,10 @@ OPENAI_API_KEY=[発行されたAPIキーを設定します]
 TAVILY_API_KEY=[発行されたAPIキーを設定します]
 ```
 
-ディレクトリ内にはサンプルコードを収録した`main.py`が保存されています。お手元で動作を確認される際には、上記のセットアップの後に以下のコマンドを実行してご確認ください。`--task`オプションに続けて作成して欲しいレポートの指示を入力すると、レポートを生成します。
+ディレクトリ内にはサンプルコードを収録した`research_agent.py`が保存されています。お手元で動作を確認される際には、上記のセットアップの後に以下のコマンドを実行してご確認ください。`--query`オプションに続けて作成して欲しいレポートの指示を入力すると、レポートを生成します。
 
 ```
-python main.py --task 生成AIスタートアップの最新動向について調査してください
+python adaptive_rag.py --query 生成AIスタートアップの最新動向について調査してください
 ```
 
 ## Tavily APIキーの取得方法
