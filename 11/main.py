@@ -1,15 +1,14 @@
-from datetime import datetime
 import os
 import argparse
+from datetime import datetime
 from functools import lru_cache
 from langgraph.prebuilt import create_react_agent
-from langchain_openai import ChatOpenAI
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import Runnable
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from tavily import TavilyClient
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -42,20 +41,15 @@ def load_prompt(name: str) -> str:
 
 
 # エージェントを実行する関数
-def run_streaming_agent(agent, inputs):
-    result = ""
+def run_streaming_agent(agent: Runnable, user_task: str) -> str:
+    final_output = ""
+    inputs = {"messages": [HumanMessage(content=user_task)]}
     for s in agent.stream(inputs, stream_mode="values"):
         message: AIMessage = s["messages"][-1]
-        if isinstance(message, tuple):
-            result = str(message)
-        else:
-            result = message.content
-            message.pretty_print()
-    print(
-        "================================= Final Result ================================="
-    )
-    print(result)
-    return result
+        final_output = message.content
+        message.pretty_print()
+
+    return final_output
 
 
 # 検索結果をサマリするためのチェイン
@@ -103,22 +97,6 @@ def search(query: str) -> str:
     return "\n\n".join(xml_results)
 
 
-# 成果物の内容がユーザー要求に対して十分かどうかをチェックするツール
-@tool
-def sufficiency_check(user_requirement: str, result: str) -> str:
-    """Determine whether the answers generated adequately answer the question."""
-    llm = ChatOpenAI(model=settings.LLM_MODEL_NAME, temperature=0.0)
-    user_prompt = f"ユーザーからの要求: {user_requirement}\n生成結果: {result}\n十分かどうかを判断してください。"
-    prompt = ChatPromptTemplate.from_messages(
-        [("system", "{system}"), ("user", "{user}")]
-    ).partial(
-        system=load_prompt("sufficiency_classifier_system"),
-        user=user_prompt,
-    )
-    chain = prompt | llm | StrOutputParser()
-    return chain.invoke({})
-
-
 # レポートを生成するツール
 @tool
 def report_writer(user_requirement: str, source: str) -> str:
@@ -135,11 +113,27 @@ def report_writer(user_requirement: str, source: str) -> str:
     return chain.invoke({})
 
 
+# 成果物の内容がユーザー要求に対して十分かどうかをチェックするツール
+@tool
+def sufficiency_check(user_requirement: str, result: str) -> str:
+    """Determine whether the answers generated adequately answer the question."""
+    llm = ChatOpenAI(model=settings.LLM_MODEL_NAME, temperature=0.0)
+    user_prompt = f"ユーザーからの要求: {user_requirement}\n生成結果: {result}\n十分かどうかを判断してください。"
+    prompt = ChatPromptTemplate.from_messages(
+        [("system", "{system}"), ("user", "{user}")]
+    ).partial(
+        system=load_prompt("sufficiency_classifier_system"),
+        user=user_prompt,
+    )
+    chain = prompt | llm | StrOutputParser()
+    return chain.invoke({})
+
+
 # エージェントを作成する関数
 def multi_step_agent():
     llm = ChatOpenAI(model=settings.LLM_MODEL_NAME, temperature=0.0)
-    # ツールとして検索、十分性チェック、レポート生成を指定
-    tools = [search, sufficiency_check, report_writer]
+    # ツールとして検索、レポート生成、十分性チェックを指定
+    tools = [search, report_writer, sufficiency_check]
     return create_react_agent(
         llm,
         tools=tools,
@@ -158,8 +152,8 @@ def main():
     args = parser.parse_args()
 
     # エージェントを実行
-    inputs = {"messages": [("user", args.task)]}
-    run_streaming_agent(multi_step_agent(), inputs)
+    user_task = args.task
+    run_streaming_agent(multi_step_agent(), user_task)
 
 
 if __name__ == "__main__":
