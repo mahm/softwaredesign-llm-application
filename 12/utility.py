@@ -21,7 +21,8 @@ def run_streaming_agent(
         if isinstance(message, tuple):
             result = str(message)
         else:
-            result = message.pretty_print()
+            message.pretty_print()
+            result = message.content
 
         if verbose:
             display_result = ""
