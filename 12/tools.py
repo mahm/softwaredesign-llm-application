@@ -1,14 +1,14 @@
 import os
 from functools import lru_cache
-from langchain_openai import ChatOpenAI
-from langchain_core.tools import tool
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import Runnable
-from tavily import TavilyClient
-from settings import Settings
-from utility import load_prompt
 
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import Runnable
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI
+from settings import Settings
+from tavily import TavilyClient
+from utility import load_prompt
 
 TAVILY_MAX_RESULTS = 5
 
@@ -81,7 +81,7 @@ def report_writer(user_requirement: str, source: str) -> str:
     prompt = ChatPromptTemplate.from_messages(
         [("system", "{system}"), ("user", "{user}")]
     ).partial(
-        system=load_prompt("writer_system"),
+        system=load_prompt("report_writer_system"),
         user=user_prompt,
     )
     chain = prompt | llm | StrOutputParser()

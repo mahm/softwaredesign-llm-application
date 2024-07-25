@@ -10,8 +10,8 @@ $ git clone https://github.com/mahm/softwaredesign-llm-application.git
 
 ```
 $ cd softwaredesign-llm-application/12
-$ python -m venv venv
-$ source venv/bin/activate
+$ python -m venv .venv
+$ source .venv/bin/activate
 $ pip install -r requirements.txt # 必要なライブラリのインストール
 ```
 
