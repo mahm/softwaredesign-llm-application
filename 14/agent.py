@@ -232,14 +232,14 @@ class HumanInTheLoopAgent:
             config=self._config(thread_id),
             stream_mode="updates",
         ):
-            message = ""
             # 実行ノードの情報を取得
             node = list(event.keys())[0]
-            if node == "decompose_query":
-                title, message = self._decompose_query_message(event[node])
-            elif node == "execute_task":
-                title, message = self._execute_task_message(event[node], thread_id)
-            self._notify("agent", title, message)
+            if node in ["decompose_query", "execute_task"]:
+                if node == "decompose_query":
+                    title, message = self._decompose_query_message(event[node])
+                else:  # execute_task
+                    title, message = self._execute_task_message(event[node], thread_id)
+                self._notify("agent", title, message)
 
     def _decompose_query_message(self, update_state: dict) -> Tuple[str, str]:
         tasks = "\n".join([f"- {task}" for task in update_state["tasks"]])
