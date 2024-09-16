@@ -15,6 +15,13 @@ from pydantic import BaseModel, Field
 APPROVE_TOKEN = "[APPROVE]"
 
 
+class HumanInTheLoopAgentState(BaseModel):
+    human_inputs: Annotated[list[str], operator.add] = Field(default_factory=list)
+    tasks: list[str] = Field(default_factory=list)
+    current_task_index: int = Field(default=0)
+    results: list[str] = Field(default_factory=list)
+
+
 class DecomposedTasks(BaseModel):
     tasks: list[str] = Field(
         default_factory=list,
@@ -22,13 +29,6 @@ class DecomposedTasks(BaseModel):
         max_items=5,
         description="分解されたタスクのリスト",
     )
-
-
-class HumanInTheLoopAgentState(BaseModel):
-    human_inputs: Annotated[list[str], operator.add] = Field(default_factory=list)
-    tasks: list[str] = Field(default_factory=list)
-    current_task_index: int = Field(default=0)
-    results: list[str] = Field(default_factory=list)
 
 
 class QueryDecomposer:
@@ -119,7 +119,6 @@ class HumanInTheLoopAgent:
         self.subscribers.append(subscriber)
 
     def handle_human_message(self, human_message: str, thread_id: str) -> None:
-        print("handle_human_message")
         if self.is_next_human_approval_node(thread_id):
             self.graph.update_state(
                 config=self._config(thread_id),
@@ -192,8 +191,7 @@ class HumanInTheLoopAgent:
     def _config(self, thread_id: str) -> RunnableConfig:
         return {"configurable": {"thread_id": thread_id}}
 
-    def _decompose_query(self, state: HumanInTheLoopAgentState) -> DecomposedTasks:
-        print("decompose_query")
+    def _decompose_query(self, state: HumanInTheLoopAgentState) -> dict:
         human_inputs = self._latest_human_inputs(state.human_inputs)
         # 初回のタスク分解時には過去のタスク分解結果を参考にしない
         if len(human_inputs) > 1:
@@ -211,11 +209,9 @@ class HumanInTheLoopAgent:
         }
 
     def _human_approval(self, state: HumanInTheLoopAgentState) -> dict:
-        print("human_approval")
         pass
 
     def _execute_task(self, state: HumanInTheLoopAgentState) -> dict:
-        print("execute_task")
         result = self.task_executor.run(
             task=state.tasks[state.current_task_index], results=state.results
         )

@@ -16,7 +16,7 @@ def show_message(type: Literal["human", "agent"], title: str, message: str) -> N
 def app() -> None:
     load_dotenv(override=True)
 
-    st.title("ヒューマンフィードバック付きのシングルパスプランジェネレーター")
+    st.title("Human-in-the-loopを適用したリサーチエージェント")
 
     # st.session_stateにagentを保存
     if "agent" not in st.session_state:
