@@ -13,6 +13,7 @@ langchain-openai = "^0.2.0"
 python-dotenv = "^1.0.1"
 streamlit = "^1.38.0"
 langgraph-checkpoint = "^1.0.9"
+langchain-community = "^0.3.0"
 
 
 [build-system]

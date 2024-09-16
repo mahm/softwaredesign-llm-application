@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
 
-def show_message(type: Literal["human", "agent"], message: str) -> None:
+def show_message(type: Literal["human", "agent"], title: str, message: str) -> None:
     with st.chat_message(type):
-        st.write(message)
+        st.markdown(f"**{title}**")
+        st.markdown(message)
 
 
 def app() -> None:
@@ -19,7 +20,7 @@ def app() -> None:
 
     # st.session_stateにagentを保存
     if "agent" not in st.session_state:
-        _llm = ChatOpenAI(model="gpt-4o-mini")
+        _llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
         _agent = HumanInTheLoopAgent(_llm)
         _agent.subscribe(show_message)
         st.session_state.agent = _agent
@@ -55,7 +56,7 @@ def app() -> None:
                 st.session_state.approval_state = "processing"
                 st.rerun()
         elif st.session_state.approval_state == "processing":
-            with st.spinner("承認処理中..."):
+            with st.spinner("タスク処理中..."):
                 agent.handle_human_message("[APPROVE]", thread_id)
             st.session_state.approval_state = "approved"
     else:
