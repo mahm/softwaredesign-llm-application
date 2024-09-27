@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "sd14-sample-code"
+version = "0.1.0"
+description = ""
+authors = ["Masahiro Nishimi <498686+mahm@users.noreply.github.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langgraph = "^0.2.21"
+langchain-openai = "^0.2.0"
+python-dotenv = "^1.0.1"
+streamlit = "^1.38.0"
+langgraph-checkpoint = "^1.0.9"
+langchain-community = "^0.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D", "ANN", "TRY", "EM", "FA", "SIM108", "S101", "RET505", "TCH002"]
