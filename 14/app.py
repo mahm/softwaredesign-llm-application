@@ -58,9 +58,7 @@ def app() -> None:
         elif st.session_state.approval_state == "processing":
             with st.spinner("タスク処理中..."):
                 agent.handle_human_message("[APPROVE]", thread_id)
-            st.session_state.approval_state = "approved"
-    else:
-        st.session_state.approval_state = "pending"
+            st.session_state.approval_state = "pending"
 
 
 app()
