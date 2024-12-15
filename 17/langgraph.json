@@ -1,0 +1,9 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./my_agent/agent.py:graph",
+    "task_planner": "./my_agent/task_planner_agent.py:graph",
+    "task_executor": "./my_agent/task_executor_agent.py:graph"
+  },
+  "env": ".env"
+}
