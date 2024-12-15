@@ -9,22 +9,21 @@ from langgraph.prebuilt import create_react_agent
 from langgraph.types import Send
 
 
-class TaskAgentInputState(TypedDict):
+class TaskExecutorAgentInputState(TypedDict):
     tasks: list[str]
 
 
-class TaskAgentOutputState(TypedDict):
+class TaskExecutorAgentOutputState(TypedDict):
     results: Annotated[Sequence[str], operator.add]
 
 
-class TaskAgentState(TaskAgentInputState, TaskAgentOutputState):
+class TaskExecutorAgentState(TaskExecutorAgentInputState, TaskExecutorAgentOutputState):
     pass
 
 
 # 並列ノードに値を受け渡すためのState
 class ParallelState(TypedDict):
     task: str
-    results: Annotated[Sequence[str], operator.add]
 
 
 class TaskExecutor:
@@ -33,7 +32,7 @@ class TaskExecutor:
         self.tools = [TavilySearchResults(max_results=3)]
 
     def __call__(self, state: ParallelState) -> dict:
-        return {"results": [self.run(state["task"])]}
+        return {"results": [self.run(state.get("task", ""))]}
 
     def run(self, task: str) -> str:
         messages = {
@@ -54,7 +53,7 @@ class TaskExecutor:
         return result["messages"][-1].content
 
 
-class TaskAgent:
+class TaskExecutorAgent:
     def __init__(self, llm: ChatOpenAI) -> None:
         self.llm = llm
         self.task_executor = TaskExecutor(self.llm)
@@ -62,9 +61,9 @@ class TaskAgent:
 
     def _create_graph(self) -> CompiledStateGraph:
         graph = StateGraph(
-            state_schema=TaskAgentState,
-            input=TaskAgentInputState,
-            output=TaskAgentOutputState,
+            state_schema=TaskExecutorAgentState,
+            input=TaskExecutorAgentInputState,
+            output=TaskExecutorAgentOutputState,
         )
         graph.add_node("execute_task", self.task_executor)
         graph.add_conditional_edges(
@@ -74,12 +73,12 @@ class TaskAgent:
 
         return graph.compile()
 
-    def routing_parallel_nodes(self, state: TaskAgentInputState) -> list[Send]:
+    def routing_parallel_nodes(self, state: TaskExecutorAgentInputState) -> list[Send]:
         return [Send("execute_task", {"task": task}) for task in state.get("tasks", [])]
 
 
 def create_agent(llm: ChatOpenAI) -> CompiledStateGraph:
-    return TaskAgent(llm).graph
+    return TaskExecutorAgent(llm).graph
 
 
 graph = create_agent(ChatOpenAI(model="gpt-4o-mini"))
