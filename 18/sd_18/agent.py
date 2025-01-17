@@ -4,33 +4,22 @@ from typing import Any, List, Literal, Optional
 
 from langchain_anthropic import ChatAnthropic
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import HumanMessage
 from langchain_core.tools import BaseTool, tool
 from langchain_experimental.utilities import PythonREPL
-from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.graph import END, MessagesState, StateGraph
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import create_react_agent
 from langgraph.types import Command
 
 
 def create_tavily_tool() -> BaseTool:
-    """Tavily検索ツールを生成します。
-
-    Returns:
-        BaseTool: 最大5件の検索結果を返すTavily検索ツール
-    """
+    """Tavily検索ツールを生成"""
     return TavilySearchResults(max_results=5)
 
 
 def create_python_repl_tool() -> BaseTool:
-    """Python REPL実行ツールを生成します。
-
-    このツールは、与えられたPythonコードを安全に実行し、
-    実行結果を整形して返します。エラーが発生した場合は
-    エラーメッセージを適切に整形して返します。
-
-    Returns:
-        BaseTool: Pythonコードを実行するためのREPLツール
-    """
+    """Python REPL実行ツールを生成"""
     repl = PythonREPL()
 
     @tool
@@ -55,26 +44,13 @@ def create_python_repl_tool() -> BaseTool:
 
 
 class FileReader:
-    """ファイル読み込みを行うクラス
-
-    生成されたCSVファイルやチャート画像を読み込み、
-    その内容を検証するために使用します。
-    """
+    """ファイル読み込みツールの提供を行う"""
 
     def __init__(self, timestamp: str) -> None:
-        """FileReaderを初期化します。
-
-        Args:
-            timestamp: 出力ファイルの保存に使用するタイムスタンプ
-        """
         self.timestamp = timestamp
 
     def create_tool(self) -> BaseTool:
-        """ファイル読み込みツールを生成します。
-
-        Returns:
-            BaseTool: ファイル読み込み用のツール
-        """
+        """ファイル読み込みツールを生成"""
         timestamp = self.timestamp
 
         @tool
@@ -84,24 +60,24 @@ class FileReader:
             Args:
                 file_path: 読み込むファイルのパス
                          - 完全なパス（output/{timestamp}/data/file.csv）
-                         - 相対パス（data/file.csv）のどちらも指定可能
+                         - 相対パス（data/file.csv）のいずれかを指定する
 
             Returns:
                 str: ファイルの内容
-                     CSVの場合: 先頭10行のデータ
-                     画像の場合: ファイルの存在確認と基本情報
+                     CSVの場合は先頭10行のデータを返す
+                     画像の場合はファイルの基本情報を返す
             """
             import os
             from pathlib import Path
 
             def read_file(path: Path) -> Optional[str]:
-                """ファイルを読み込み、内容を返します。
+                """ファイルを読み込み、内容を返す
 
                 Args:
                     path: 読み込むファイルのパス
 
                 Returns:
-                    Optional[str]: ファイルの内容。ファイルが存在しない場合はNone
+                    Optional[str]: ファイルの内容。ファイルが存在しない場合はNoneを返す
                 """
                 if not path.exists():
                     return None
@@ -173,9 +149,9 @@ class AgentConfig:
     """エージェントの設定を保持するデータクラス
 
     Attributes:
-        prompt (str): システムプロンプト。エージェントの役割や制約を定義します。
+        prompt (str): システムプロンプト。エージェントの役割や制約を定義する。
         tools (List[BaseTool]): エージェントが使用できるツールのリスト。
-        name (str): エージェントの識別名。メッセージのやり取りで使用されます。
+        name (str): エージェントの識別名。メッセージのやり取りで使用する。
     """
 
     prompt: str
@@ -184,10 +160,9 @@ class AgentConfig:
 
 
 class Agent(ABC):
-    """エージェント基底クラス
+    """エージェント
 
-    このクラスは、LangChainとAnthropicのClaudeモデルを使用して
-    特定のタスクを実行するエージェントの基本機能を提供します。
+    特定のタスクを実行するエージェントの基本機能を提供する。
 
     Attributes:
         config (AgentConfig): エージェントの設定
@@ -196,11 +171,6 @@ class Agent(ABC):
     """
 
     def __init__(self, config: AgentConfig) -> None:
-        """エージェントを初期化します。
-
-        Args:
-            config: エージェントの設定を含むAgentConfigインスタンス
-        """
         self.config = config
         self.llm = ChatAnthropic(model="claude-3-5-sonnet-latest")
         self.agent = create_react_agent(
@@ -210,32 +180,17 @@ class Agent(ABC):
         )
 
     def _make_system_prompt(self) -> str:
-        """システムプロンプトを生成します。
-
-        基本的なプロンプトとエージェント固有のプロンプトを組み合わせて
-        完全なシステムプロンプトを生成します。
-
-        Returns:
-            str: 完全なシステムプロンプト
-        """
+        """システムプロンプトを生成"""
         base_prompt = (
             "あなたは他のAIアシスタントと協力して作業を行うアシスタントです。\n"
-            "与えられたツールを使用して、質問に対する回答を進めてください。\n"
+            "与えられたツールを使用して、質問に対する回答を進めること。\n"
             "完全な回答ができない場合でも問題ありません。他のアシスタントが続きを担当します。\n"
-            "できる範囲で作業を進めてください。\n"
+            "できる範囲で作業を進めること。\n"
         )
         return base_prompt + self.config.prompt
 
     def run(self, state: MessagesState, next_node: str) -> Command:
-        """エージェントを実行し、次のノードを決定します。
-
-        Args:
-            state: 現在のメッセージ状態
-            next_node: 次に実行するノードの名前
-
-        Returns:
-            Command: 次のノードとメッセージの更新情報を含むコマンド
-        """
+        """エージェントを実行"""
         result = self.agent.invoke(state)
         result["messages"][-1] = HumanMessage(
             content=result["messages"][-1].content, name=self.config.name
@@ -244,15 +199,7 @@ class Agent(ABC):
 
 
 def _read_prompt(file_name: str, **kwargs) -> str:
-    """プロンプトファイルを読み込み、必要に応じて変数を置換します。
-
-    Args:
-        file_name: プロンプトファイルの名前（拡張子含む）
-        **kwargs: プロンプト内の変数を置換するための辞書
-
-    Returns:
-        str: 読み込んだプロンプト
-    """
+    """プロンプトファイルを読み込む"""
     with open(f"prompts/{file_name}", "r", encoding="utf-8") as f:
         prompt = f.read()
 
@@ -264,14 +211,12 @@ def _read_prompt(file_name: str, **kwargs) -> str:
 
 
 class ResearchAgent(Agent):
-    """リサーチを行うエージェント
+    """データ検索と収集を行うエージェント
 
-    Tavilyの検索APIを使用して情報を収集し、
-    データをCSV形式でまとめるようにCodeGeneratorに依頼します。
+    Tavily Search APIを使用して情報を収集し、結果を構造化する。
     """
 
     def __init__(self) -> None:
-        """リサーチエージェントを初期化します。"""
         prompt = _read_prompt("researcher.prompt")
         super().__init__(
             AgentConfig(
@@ -283,18 +228,13 @@ class ResearchAgent(Agent):
 
 
 class CodeGenerator(Agent):
-    """コード生成を行うエージェント
+    """データセットとチャートを生成するエージェント
 
-    ResearchAgentから受け取ったデータを基に、
-    Pythonコードを生成してデータの処理と可視化を行います。
+    収集されたデータを基に、CSVデータセットとチャートを生成する。
+    生成されたファイルはタイムスタンプ付きディレクトリに保存される。
     """
 
     def __init__(self, timestamp: str) -> None:
-        """コードジェネレータを初期化します。
-
-        Args:
-            timestamp: 出力ファイルの保存に使用するタイムスタンプ
-        """
         self._setup_visualization_env()
         prompt = _read_prompt("code_generator.prompt", timestamp=timestamp)
         super().__init__(
@@ -307,9 +247,9 @@ class CodeGenerator(Agent):
 
     @staticmethod
     def _setup_visualization_env() -> None:
-        """可視化環境をセットアップします。
+        """可視化環境をセットアップ
 
-        以下の設定を行います：
+        以下の設定を行う：
         1. matplotlibのインポートと初期設定
         2. 日本語フォントの設定
            - japanize_matplotlibパッケージを優先使用
@@ -328,20 +268,13 @@ class CodeGenerator(Agent):
 
 
 class ReflectionAgent(Agent):
-    """データの検証と品質チェックを行うエージェント
+    """データの検証と評価を行うエージェント
 
-    リサーチ結果とデータ生成結果を検証し、以下を確認します：
-    1. 情報の正確性と信頼性
-    2. データの完全性
-    3. 生成されたデータと元の情報との整合性
+    収集されたデータと生成された成果物の品質を検証する。
+    検証結果に基づいて次のステップを決定する。
     """
 
     def __init__(self, file_reader: FileReader) -> None:
-        """リフレクションエージェントを初期化します。
-
-        Args:
-            file_reader: タイムスタンプ付きのファイル読み込みツール
-        """
         prompt = _read_prompt("reflection.prompt")
         super().__init__(
             AgentConfig(
@@ -355,16 +288,16 @@ class ReflectionAgent(Agent):
         )
 
     def run(self, state: MessagesState, next_node: str) -> Command:
-        """エージェントを実行し、検証結果に基づいて次のノードを決定します。
+        """エージェントを実行し、検証結果に基づいて次のノードを決定する
 
         Args:
             state: 現在のメッセージ状態
-            next_node: デフォルトの次のノード（この場合は使用しません）
+            next_node: デフォルトの次のノード
 
         Returns:
             Command: 次のノードとメッセージの更新情報を含むコマンド
                 - 検証OKの場合: code_generatorに進む
-                - 検証NGの場合: researcherに差し戻し
+                - 検証NGの場合: next_nodeで指定するノードに差し戻す
                 - 最終確認OKの場合: ENDに進む
         """
         result = self.agent.invoke(state)
@@ -382,7 +315,7 @@ class ReflectionAgent(Agent):
                 goto = END
         else:
             # 次のノードが不明確な場合は改善を要求
-            goto = "researcher"
+            goto = next_node
             content += (
                 "\n\n次のノードが不明確です。正しい形式で次のノードを指定してください。"
             )
@@ -392,21 +325,7 @@ class ReflectionAgent(Agent):
 
 
 class WorkflowGraph:
-    """ワークフローを管理するクラス
-
-    ResearchAgent、CodeGenerator、ReflectionAgentを組み合わせて、
-    データの収集から可視化、検証までの一連の処理を管理します。
-
-    Attributes:
-        timestamp (str): 実行時のタイムスタンプ
-        research_agent (ResearchAgent): リサーチを行うエージェント
-        code_generator (CodeGenerator): コード生成を行うエージェント
-        reflection_agent (ReflectionAgent): データ検証を行うエージェント
-        workflow (Any): コンパイル済みのワークフローグラフ
-    """
-
     def __init__(self) -> None:
-        """ワークフローを初期化します。"""
         self.timestamp = self._get_timestamp()
         self._ensure_output_dirs()
         self.research_agent = ResearchAgent()
@@ -417,7 +336,7 @@ class WorkflowGraph:
 
     @staticmethod
     def _get_timestamp() -> str:
-        """実行時のタイムスタンプを取得します。
+        """実行時のタイムスタンプを取得する
 
         Returns:
             str: YYYYMMDD_HHMMSS形式のタイムスタンプ
@@ -427,33 +346,19 @@ class WorkflowGraph:
         return datetime.now().strftime("%Y%m%d_%H%M%S")
 
     def _ensure_output_dirs(self) -> None:
-        """出力ディレクトリを作成します。
+        """出力ディレクトリを作成する
 
-        タイムスタンプ付きのディレクトリ構造を作成します：
-        output/
-        └── {timestamp}/
-            ├── charts/  # チャートファイル用
-            └── data/    # データセット用
+        タイムスタンプ付きのディレクトリ構造を作成する：
+        - output/{timestamp}/data/: データセット用
+        - output/{timestamp}/charts/: チャート用
         """
         import os
 
         os.makedirs(f"output/{self.timestamp}/charts", exist_ok=True)
         os.makedirs(f"output/{self.timestamp}/data", exist_ok=True)
 
-    def _create_workflow(self) -> StateGraph:
-        """ワークフローを生成します。
-
-        以下の順序で実行されるワークフローを構築します：
-        1. ResearchAgent: データの収集
-        2. ReflectionAgent: 検証
-        3. CodeGenerator: データの処理と可視化
-        4. ReflectionAgent: 最終検証
-
-        各ノードはCommandオブジェクトを返し、動的に次のノードを決定します。
-
-        Returns:
-            StateGraph: コンパイル済みのワークフローグラフ
-        """
+    def _create_workflow(self) -> CompiledStateGraph:
+        """ワークフローを生成する"""
         workflow = StateGraph(MessagesState)
 
         # ノードの追加
@@ -462,86 +367,25 @@ class WorkflowGraph:
         workflow.add_node("code_generator", self._code_node)
 
         # 開始ノードの設定
-        workflow.add_edge(START, "researcher")
+        workflow.set_entry_point("researcher")
 
         return workflow.compile()
 
-    def _research_node(self, state: MessagesState) -> Command[Literal["reflection"]]:
-        """リサーチノードを実行します。
-
-        Args:
-            state: 現在のメッセージ状態
-
-        Returns:
-            Command: 次のノード（reflection）とメッセージの更新情報を含むコマンド
-        """
+    def _research_node(
+        self, state: MessagesState
+    ) -> Command[Literal["reflection", END]]:
+        """リサーチノードの実行"""
         return self.research_agent.run(state, "reflection")
 
     def _reflection_node(
         self, state: MessagesState
     ) -> Command[Literal["researcher", "code_generator", END]]:
-        """リフレクションノードを実行します。
+        """リフレクションノードの実行"""
+        return self.reflection_agent.run(state, "researcher")
 
-        リサーチ結果を検証し、次のノードを決定します：
-        - 問題がある場合: フィードバックと共にresearcherに差し戻し
-        - 問題がない場合: code_generatorに進む
-        - 最終確認OKの場合: ENDに進む
-
-        Args:
-            state: 現在のメッセージ状態
-
-        Returns:
-            Command: 次のノード（researcher、code_generator、またはEND）とメッセージの更新情報を含むコマンド
-        """
-        return self.reflection_agent.run(state, "code_generator")
-
-    def _code_node(self, state: MessagesState) -> Command[Literal["reflection"]]:
-        """コード生成ノードを実行します。
-
-        データの処理と可視化を行い、検証のためにReflectionAgentに進みます。
-
-        Args:
-            state: 現在のメッセージ状態
-
-        Returns:
-            Command: 次のノード（reflection）とメッセージの更新情報を含むコマンド
-        """
+    def _code_node(self, state: MessagesState) -> Command[Literal[END]]:
+        """コード生成ノードの実行"""
         return self.code_generator.run(state, "reflection")
-
-    def run(self, message: str) -> None:
-        """ワークフローを実行します。
-
-        Args:
-            message: ユーザーからの初期メッセージ。
-                    データの収集と可視化に関する要求を含みます。
-
-        Note:
-            イベントの構造:
-            {
-                "実行ノード名": {
-                    "messages": [メッセージのリスト]
-                }
-            }
-        """
-        events = self.workflow.stream(
-            {"messages": [("user", message)]},
-            {"recursion_limit": 150},  # 最大ステップ数
-        )
-        for event in events:
-            # イベントからメッセージを取得
-            for node_name, node_data in event.items():
-                if isinstance(node_data, dict) and "messages" in node_data:
-                    messages = node_data["messages"]
-                    if messages:  # メッセージが存在する場合
-                        last_message = messages[-1]
-                        # メッセージの内容を取得
-                        if isinstance(last_message, (tuple, list)):
-                            content = last_message[1]  # タプルの場合
-                        else:
-                            content = last_message.content  # HumanMessageの場合
-
-                        print(f"[{node_name}] {content}")
-                        print("----")
 
 
 if __name__ == "__main__":
@@ -550,7 +394,29 @@ if __name__ == "__main__":
     load_dotenv()
 
     workflow = WorkflowGraph()
-    workflow.run(
+    message = (
         "2024年の1年間の日経平均推移をCSVファイルとチャートにしてください。"
         "チャートとCSVファイルを作成したら終了してください。"
     )
+
+    # ワークフローの実行
+    events = workflow.workflow.stream(
+        {"messages": [("user", message)]},
+        {"recursion_limit": 150},  # 最大ステップ数
+    )
+
+    # イベントの処理
+    for event in events:
+        for node_name, node_data in event.items():
+            if isinstance(node_data, dict) and "messages" in node_data:
+                messages = node_data["messages"]
+                if messages:  # メッセージが存在する場合
+                    last_message = messages[-1]
+                    # メッセージの内容を取得
+                    if isinstance(last_message, (tuple, list)):
+                        content = last_message[1]  # タプルの場合
+                    else:
+                        content = last_message.content  # HumanMessageの場合
+
+                    print(f"[{node_name}] {content}")
+                    print("----")

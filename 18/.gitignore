@@ -35,4 +35,5 @@ ENV/
 
 # Project specific
 output/
-.langgraph_api/ 
+.langgraph_api/
+tmp/

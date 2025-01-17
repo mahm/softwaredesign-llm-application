@@ -1,22 +1,8 @@
-# LangGraph Studio プロジェクト
+# Software Design誌「実践LLMアプリケーション開発」第18回サンプルコード
 
-このプロジェクトは、LangGraph Studioに対応したLangGraphソースコードのプロジェクトです。
-複数のAIエージェントが協力して、データの検索、データセット生成、チャート生成を行います。
+## サンプルコードの実行方法
 
-## セットアップ手順
-
-### 1. 必要なパッケージのインストール
-
-```bash
-# Pythonの仮想環境を作成
-python -m venv .venv
-source .venv/bin/activate
-
-# 依存パッケージのインストール
-pip install -r requirements.txt
-```
-
-### 2. 日本語フォントのインストール
+### 1. 日本語フォントのインストール
 
 Ubuntuの場合：
 ```bash
@@ -29,23 +15,34 @@ macOSの場合：
 brew install font-ipa
 ```
 
-### 3. 環境変数の設定
+### 2. プロジェクトのセットアップ
 
-1. `.env.sample`ファイルを`.env`にコピー
-```bash
-cp .env.sample .env
+※ このプロジェクトは`uv`を使用しています。`uv`のインストール方法については[こちら](https://github.com/astral-sh/uv)をご確認ください。
+
+以下のコマンドを実行し、必要なライブラリのインストールを行って下さい。
+
+```
+$ uv sync
 ```
 
-2. `.env`ファイルを編集し、以下のAPIキーを設定
+次に環境変数の設定を行います。まず`.env.sample`ファイルをコピーして`.env`ファイルを作成します。
+
+```
+$ cp .env.sample .env
+$ vi .env # お好きなエディタで編集してください
+```
+
+`.env`ファイルを編集し、以下のAPIキーを設定してください。
+
 - `ANTHROPIC_API_KEY`: Claude APIのキー
 - `TAVILY_API_KEY`: Tavily Search APIのキー
 - `LANGSMITH_API_KEY`: LangSmith APIのキー（オプション）
 - `LANGSMITH_PROJECT`: LangSmithプロジェクト名（オプション）
 
-## 使用方法
+## 実行方法
 
 ```bash
-python -m sd_18.agent
+uv run python -m sd_18.agent
 ```
 
 ## プロジェクト構成
