@@ -332,7 +332,7 @@ class WorkflowGraph:
         self.code_generator = CodeGenerator(self.timestamp)
         self.file_reader = FileReader(self.timestamp)
         self.reflection_agent = ReflectionAgent(self.file_reader)
-        self.workflow = self._create_workflow()
+        self.graph = self._create_graph()
 
     @staticmethod
     def _get_timestamp() -> str:
@@ -357,8 +357,8 @@ class WorkflowGraph:
         os.makedirs(f"output/{self.timestamp}/charts", exist_ok=True)
         os.makedirs(f"output/{self.timestamp}/data", exist_ok=True)
 
-    def _create_workflow(self) -> CompiledStateGraph:
-        """ワークフローを生成する"""
+    def _create_graph(self) -> CompiledStateGraph:
+        """グラフを生成する"""
         workflow = StateGraph(MessagesState)
 
         # ノードの追加
@@ -371,9 +371,7 @@ class WorkflowGraph:
 
         return workflow.compile()
 
-    def _research_node(
-        self, state: MessagesState
-    ) -> Command[Literal["reflection", END]]:
+    def _research_node(self, state: MessagesState) -> Command[Literal["reflection"]]:
         """リサーチノードの実行"""
         return self.research_agent.run(state, "reflection")
 
@@ -383,7 +381,7 @@ class WorkflowGraph:
         """リフレクションノードの実行"""
         return self.reflection_agent.run(state, "researcher")
 
-    def _code_node(self, state: MessagesState) -> Command[Literal[END]]:
+    def _code_node(self, state: MessagesState) -> Command[Literal["reflection", END]]:
         """コード生成ノードの実行"""
         return self.code_generator.run(state, "reflection")
 
@@ -400,7 +398,7 @@ if __name__ == "__main__":
     )
 
     # ワークフローの実行
-    events = workflow.workflow.stream(
+    events = workflow.graph.stream(
         {"messages": [("user", message)]},
         {"recursion_limit": 150},  # 最大ステップ数
     )
