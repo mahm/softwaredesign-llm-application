@@ -1,0 +1,11 @@
+# Add patterns to ignore here, one per line
+# Example:
+# *.log
+# tmp/
+uv.lock
+tmp/
+.venv/
+.env
+repomix.config.json
+.repomixignore
+.gitignore
