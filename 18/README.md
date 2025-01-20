@@ -12,7 +12,7 @@ sudo apt-get install -y fonts-ipafont-gothic fonts-noto-cjk
 
 macOSの場合：
 ```bash
-brew install font-ipa
+brew install --cask font-ipafont
 ```
 
 ### 2. プロジェクトのセットアップ
@@ -61,3 +61,25 @@ uv run python -m sd_18.agent
   - データセット: `output/{TIMESTAMP}/data/`
 - 各実行結果は実行時のタイムスタンプ付きディレクトリで管理されます
 - APIキーは`.env`ファイルで管理し、Gitにコミットしないようにしてください
+
+## トラブルシューティング
+
+### 日本語が表示されない
+
+matplotlibのキャッシュを削除してみてください。
+
+- 参考：https://qiita.com/ae14watanabe/items/2c6f2ebf70a503b63702
+- 参考：https://qiita.com/mix_dvd/items/1c192bd8c852c4aaa413
+
+### 「NSInternalInconsistencyException: NSWindow should only be instantiated on the main thread!」が発生した場合
+
+agent.pyにて、matplotlibのバックエンドを以下のようにAggへ変更し、もう一度お試しください。
+
+```python
+import matplotlib
+matplotlib.use('Agg')
+# 以下既存コード
+import matplotlib.pyplot as plt
+```
+
+- 参考：https://qiita.com/TomokIshii/items/3a26ee4453f535a69e9e
