@@ -1,3 +1,4 @@
+import operator
 from typing import Annotated, List, TypedDict
 
 from typing_extensions import NotRequired
@@ -18,12 +19,14 @@ class WriterResult(TypedDict):
     structure: List[str]  # 記事の構造（見出しなど）
 
 
-class EvaluationResult(TypedDict):
+class EvaluationResult(TypedDict, total=False):
     """評価結果を表現するモデル"""
 
     score: float  # 記事の評価スコア（0-100）
     improvement_points: List[str]  # 改善が必要な点のリスト
     required_searches: List[SearchQuery]  # 追加で必要な検索クエリのリスト
+    selected_index: int  # 選択された改善案のインデックス（0-based）
+    selection_reason: str  # 選択理由
 
 
 class RefinerState(TypedDict):
@@ -31,6 +34,8 @@ class RefinerState(TypedDict):
 
     content: str  # 改善対象の記事内容
     style: str  # 改善のスタイル
+    search_results: str  # 追加の検索結果
+    iteration: int  # 現在のイテレーション番号
 
 
 class RefinerResult(TypedDict):
@@ -52,32 +57,11 @@ class Revision(TypedDict):
 
 
 class CandidateResult(TypedDict):
-    """改善候補の評価結果を表現するモデル"""
+    """改善候補を表現するモデル"""
 
-    content: str  # 候補の内容
-    score: float  # 評価スコア
-    improvement_points: List[str]  # 改善ポイント
-    style: str  # 改善のスタイル
+    style: str  # 改善のスタイル（"保守的"、"中間"、"積極的"）
+    diff: str  # 改善内容のdiff
     iteration: int  # 生成されたイテレーション番号
-
-
-def messages_reducer(current_messages: List[str], new_message: str) -> List[str]:
-    """メッセージリストのReducer"""
-    return current_messages + [new_message]
-
-
-def candidates_reducer(
-    current_candidates: List[CandidateResult], new_candidate: CandidateResult
-) -> List[CandidateResult]:
-    """候補リストのReducer"""
-    return current_candidates + [new_candidate]
-
-
-def revisions_reducer(
-    current_revisions: List[Revision], new_revision: Revision
-) -> List[Revision]:
-    """改訂履歴のReducer"""
-    return current_revisions + [new_revision]
 
 
 class WebExplorerInputState(TypedDict):
@@ -89,10 +73,9 @@ class WebExplorerInputState(TypedDict):
 class WebExplorerPrivateState(TypedDict):
     """非公開状態を定義するクラス"""
 
-    candidates: Annotated[
-        List[CandidateResult], candidates_reducer
-    ]  # 評価済み改善候補リスト
-    history: Annotated[List[Revision], revisions_reducer]  # 改訂履歴
+    draft: str  # 初稿
+    candidates: Annotated[List[CandidateResult], operator.add]  # 評価済み改善候補リスト
+    revisions: Annotated[List[Revision], operator.add]  # 改訂履歴
 
 
 class WebExplorerOutputState(TypedDict):

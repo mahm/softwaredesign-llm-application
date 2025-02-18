@@ -7,14 +7,20 @@ requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.13.3",
     "html2text>=2024.2.26",
-    "langchain-anthropic>=0.3.7",
     "langchain-core>=0.3.35",
+    "langchain-openai>=0.3.6",
+    "langgraph-cli[inmem]>=0.1.71",
     "langgraph>=0.2.73",
     "mcp[cli]>=1.2.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
+    "retry>=0.9.2",
     "tavily-python>=0.5.1",
+    "unidiff>=0.7.5",
 ]
 
 [tool.mypy]
 disable_error_code = ["import-untyped"]
+
+[tool.uv]
+dev-dependencies = []
