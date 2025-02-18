@@ -7,7 +7,7 @@ from ..utils import apply_patch, load_prompt
 
 @retry(exceptions=Exception, tries=3, delay=1, backoff=2)
 def _generate_patch(draft: str, style: str, search_results: str) -> str:
-    chain = load_prompt("refiner") | get_llm(model="gpt-4o-mini") | StrOutputParser()
+    chain = load_prompt("refiner") | get_llm(model="gpt-4o") | StrOutputParser()
     diff_str = chain.invoke(
         {"draft": draft, "style": style, "search_results": search_results}
     )
