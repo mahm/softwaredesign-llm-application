@@ -1,0 +1,20 @@
+[project]
+name = "19"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.13.3",
+    "html2text>=2024.2.26",
+    "langchain-anthropic>=0.3.7",
+    "langchain-core>=0.3.35",
+    "langgraph>=0.2.73",
+    "mcp[cli]>=1.2.1",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "tavily-python>=0.5.1",
+]
+
+[tool.mypy]
+disable_error_code = ["import-untyped"]
