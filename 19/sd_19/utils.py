@@ -30,49 +30,29 @@ def load_prompt(chain_name: str) -> ChatPromptTemplate:
     return ChatPromptTemplate.from_messages(messages)
 
 
-def apply_patch(original_text: str, patch_text: str) -> str:
-    """
-    テキストにパッチを適用する（-u0形式のパッチに対応）
-    Args:
-        original_text: 元のテキスト
-        patch_text: パッチの内容（-u0形式）
-    Returns:
-        str: パッチ適用後のテキスト
-    """
-    # 元テキストを行リストに変換
-    original_lines = original_text.splitlines(keepends=True)
-
-    # パッチテキストからPatchSetオブジェクトを作成
-    patch = PatchSet(StringIO(patch_text))
-
-    # パッチファイル内の最初のファイルパッチを処理
-    if not patch:
-        return original_text
-
-    patched_file = patch[0]
-    patched_lines = original_lines[:]
-    offset = 0
-
-    # 各hunk（変更ブロック）に対して処理
-    for hunk in patched_file:
-        # hunk.source_startは1-indexedなので0-indexedに変換し、これまでのoffsetを加味
-        start = hunk.source_start - 1 + offset
-        # 元テキスト側で削除対象となる行数
-        old_block_len = hunk.source_length
-
-        # hunk の新しいブロック（target block）を構築：共通行と追加行の両方を採用
-        new_block = []
-        for line in hunk:
-            if line.is_context or line.is_added:
-                new_block.append(line.value)
-
-        # 対象ブロックを new_block で置換
-        patched_lines[start : start + old_block_len] = new_block
-        # offsetを更新：新ブロックの行数と元ブロックの行数の差分
-        offset += len(new_block) - old_block_len
-
-    # 結果を文字列として返す
-    return "".join(patched_lines)
+def apply_patch(original_text: str, diff_text: str) -> str:
+    """与えられたテキスト(original_text)にUnified Diff(diff_text)を適用し、結果テキストを返す"""
+    lines = original_text.splitlines(
+        keepends=True
+    )  # 元テキストを行リスト化（改行を維持）
+    patch = PatchSet(diff_text)
+    for patched_file in patch:
+        # Hunkを後ろから順に適用
+        for hunk in reversed(list(patched_file)):
+            start = hunk.source_start - 1  # 0-indexに変換
+            end = start + hunk.source_length
+            # Hunk内の出力すべき行を作成（削除行以外を対象。EOFマーカー行も除外）
+            new_lines = []
+            for line in hunk:
+                if line.is_removed:
+                    continue  # 削除行は出力しない（元を削除）
+                if line.value.startswith("\\ No newline at end of file"):
+                    continue  # EOFマーカーはスキップ
+                # コンテキスト行および追加行
+                new_lines.append(line.value)
+            # 元の該当部分を置換
+            lines[start:end] = new_lines
+    return "".join(lines)
 
 
 if __name__ == "__main__":

@@ -1,15 +1,24 @@
 from langchain_core.output_parsers import StrOutputParser
 from retry import retry
 
+from ..current_date import current_date
 from ..llm import get_llm
 from ..utils import apply_patch, load_prompt
 
 
 @retry(exceptions=Exception, tries=3, delay=1, backoff=2)
 def _generate_patch(draft: str, style: str, search_results: str) -> str:
-    chain = load_prompt("refiner") | get_llm(model="gpt-4o") | StrOutputParser()
+    # draftの行頭に行番号を追加
+    draft = "\n".join(f"{i}||{line}" for i, line in enumerate(draft.splitlines(), 1))
+
+    chain = load_prompt("refiner") | get_llm(temperature=0.5) | StrOutputParser()
     diff_str = chain.invoke(
-        {"draft": draft, "style": style, "search_results": search_results}
+        {
+            "current_date": current_date,
+            "draft": draft,
+            "style": style,
+            "search_results": search_results,
+        }
     )
 
     # パッチの検証

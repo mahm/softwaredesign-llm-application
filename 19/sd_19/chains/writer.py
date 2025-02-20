@@ -1,5 +1,6 @@
 from langchain_core.output_parsers import StrOutputParser
 
+from ..current_date import current_date
 from ..llm import get_llm
 from ..utils import load_prompt
 
@@ -14,4 +15,10 @@ def run(query: str, search_result: str) -> str:
         str: 生成された記事
     """
     chain = load_prompt("writer") | get_llm() | StrOutputParser()
-    return chain.invoke({"query": query, "search_result": search_result})
+    return chain.invoke(
+        {
+            "current_date": current_date,
+            "query": query,
+            "search_result": search_result,
+        }
+    )

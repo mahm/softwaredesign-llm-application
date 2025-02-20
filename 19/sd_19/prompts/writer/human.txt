@@ -1,7 +1,21 @@
-以下はユーザーの質問です：
+### 現在の日付
+
+<current_date>
+{current_date}
+</current_date>
+
+### ユーザーの質問
+
+<query>
 {query}
+</query>
 
-以下は関連する検索結果です：
+### 関連する検索結果
+
+<search_result>
 {search_result}
+</search_result>
 
-この情報に基づいて、質問に対する包括的な解答記事を書いてください。 
+### タスク
+
+以上の情報に基づいて、質問に対する包括的な解答記事を書いてください。

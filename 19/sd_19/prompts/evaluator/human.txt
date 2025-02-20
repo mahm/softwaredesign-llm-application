@@ -1,13 +1,22 @@
-<記事>
+### 現在の日付
+
+<current_date>
+{current_date}
+</current_date>
+
+### 記事
+
+<article>
 {content}
-</記事>
+</article>
 
 ### タスク
 
-記事タグで囲まれた内容を、評価基準に従って評価してください。
+articleタグで囲まれた内容を、評価基準に従って評価してください。
 
 ### 評価基準
 
+<evaluation_criteria>
 1. 内容の深さ（40点）
    - 専門用語は適切に説明されているか
    - 一つの情報に対して複数の情報源を参照しているか
@@ -23,13 +32,19 @@
    - 情報は信頼できるか、実在するものか
    - 出典は明確か
    - 事実と意見は適切に区別されているか
+</evaluation_criteria>
 
 ### 合格ライン
 
-{threshold}点以上の成果物を合格とします。改善が必要だと思われる場合には合格点を与えないでください。
+<threshold>
+{threshold}
+</threshold>
+
+合格ラインは{threshold}点以上です。改善が必要だと思われる場合には合格点を与えないでください。
 
 ### 出力形式
 
+<output_format>
 {{
     "score": float,  # 与えられた成果物の評価スコア（0-100）
     "improvement_points": [  # 与えられた成果物の改善点
@@ -39,11 +54,12 @@
     ],
     "required_searches": [  # 追加で必要な情報
         {{
-            "query": "自然な日本語の質問文",
+            "query": "自然な英語の質問文",
             "reason": "この情報が必要な理由（20文字以内）"
         }},
         ...
     ],
     "selected_index": int,  # 選択された改善案のインデックス（0から開始）
     "selection_reason": str  # 選択理由の説明（100文字以内）
-}} 
+}}
+</output_format>
