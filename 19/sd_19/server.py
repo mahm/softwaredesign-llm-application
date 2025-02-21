@@ -54,8 +54,8 @@ def start_server(
 
     Args:
         transport (str): 使用するトランスポートモード ('stdio' または 'sse')
-        host (str, optional): SSEモード時のホスト名. デフォルトは "0.0.0.0"
-        port (int, optional): SSEモード時のポート番号. デフォルトは 8080
+        host (str, optional): SSEモード時のホスト名. デフォルトは DEFAULT_HOST
+        port (int, optional): SSEモード時のポート番号. デフォルトは DEFAULT_PORT
     """
     try:
         if transport == "stdio":
@@ -83,13 +83,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--host",
         type=str,
-        default="0.0.0.0",
+        default=DEFAULT_HOST,
         help="ホスト名",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=8080,
+        default=DEFAULT_PORT,
         help="ポート番号",
     )
     args = parser.parse_args()
