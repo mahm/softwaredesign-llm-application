@@ -6,11 +6,8 @@ logger = get_logger(__name__)
 configure_logging()
 
 server_params = StdioServerParameters(
-    command="uv",
-    args=[
-        "run",
-        "sd_19/server.py",
-    ],
+    command="python",
+    args=["sd_19/server.py"],
     env=None,
 )
 
