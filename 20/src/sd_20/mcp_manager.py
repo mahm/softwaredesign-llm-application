@@ -2,7 +2,6 @@ import asyncio
 import json
 import os
 import sys
-import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple
 
 from langchain_core.tools import Tool
@@ -158,79 +157,30 @@ async def create_langchain_tool(
 
     # 同期呼び出し用にラップする
     def tool_func(*args, **kwargs):
-        # デバッグ情報の出力
-        print(f"\n==== ツール呼び出しデバッグ情報: {full_tool_name} ====")
-        print(f"位置引数: {args}")
-        print(f"キーワード引数: {kwargs}")
-
-        # 位置引数がある場合の処理
+        # 位置引数がある場合
         if args:
             arg_value = args[0]
             call_kwargs = {}
-            print(f"位置引数の型: {type(arg_value)}")
-            print(f"位置引数の値: {arg_value}")
 
             # 辞書の場合はそのまま使用
             if isinstance(arg_value, dict):
                 call_kwargs.update(arg_value)
-                print(f"辞書として処理: {call_kwargs}")
-            # 文字列の場合はクエリパラメータの可能性を考慮
+            # 文字列の場合はJSONとして解析を試みる
             elif isinstance(arg_value, str):
-                # JSONっぽい文字列かどうかチェック（{で始まり}で終わる）
-                if arg_value.strip().startswith("{") and arg_value.strip().endswith(
-                    "}"
-                ):
-                    try:
-                        # JSON文字列をパースして辞書に変換
-                        parsed_json = json.loads(arg_value)
-                        if isinstance(parsed_json, dict):
-                            call_kwargs.update(parsed_json)
-                            print(f"JSON文字列として解析: {parsed_json}")
-                        else:
-                            first_param = next(iter(tool_params.keys()), "__arg1")
-                            call_kwargs[first_param] = arg_value
-                            print(
-                                f"JSON解析できたが辞書でない: パラメータ '{first_param}' に割り当て"
-                            )
-                    except json.JSONDecodeError as e:
-                        print(f"JSON解析エラー: {e}")
-                        first_param = next(iter(tool_params.keys()), "__arg1")
-                        call_kwargs[first_param] = arg_value
-                        print(f"JSON解析失敗: パラメータ '{first_param}' に割り当て")
-                # もし &や= が含まれていたら、クエリパラメータ形式の可能性がある
-                elif "&" in arg_value and "=" in arg_value:
-                    parsed = parse_query_string(arg_value)
-                    if parsed:
-                        call_kwargs.update(parsed)
-                        print(f"クエリパラメータとして解析: {parsed}")
-                    else:
-                        # 解析に失敗した場合は単一パラメータとして扱う
-                        first_param = next(iter(tool_params.keys()), "__arg1")
-                        call_kwargs[first_param] = arg_value
-                        print(f"クエリ解析失敗: パラメータ '{first_param}' に割り当て")
-                else:
-                    # クエリパラメータ形式でない文字列
+                try:
+                    # JSON文字列をパースして辞書に変換
+                    parsed_json = json.loads(arg_value)
+                    call_kwargs.update(parsed_json)
+                except json.JSONDecodeError:
+                    # JSON解析失敗の場合は最初のパラメータに割り当て
                     first_param = next(iter(tool_params.keys()), "__arg1")
                     call_kwargs[first_param] = arg_value
-                    print(f"単純文字列: パラメータ '{first_param}' に割り当て")
-            else:
-                # 辞書以外の場合は、最初のパラメータに割り当て
-                first_param = next(iter(tool_params.keys()), "__arg1")
-                call_kwargs[first_param] = arg_value
-                print(f"単一値として処理: パラメータ '{first_param}' に割り当て")
 
             # 追加のキーワード引数があればマージ
-            if kwargs:
-                print(f"キーワード引数をマージ: {kwargs}")
             call_kwargs.update(kwargs)
-
-            print(f"最終的な引数: {call_kwargs}")
-            print("=" * 50)
             return asyncio.run(call_mcp_tool(**call_kwargs))
         else:
             # 位置引数がない場合は、キーワード引数のみを使用
-            print(f"キーワード引数のみで呼び出し: {kwargs}")
-            print("=" * 50)
             return asyncio.run(call_mcp_tool(**kwargs))
 
     return Tool(
@@ -322,24 +272,6 @@ async def load_all_mcp_tools(config: Optional[Dict] = None) -> List[Tool]:
         )
 
     return all_tools
-
-
-def parse_query_string(query_str: str) -> Dict[str, str]:
-    """
-    URLクエリパラメータ風の文字列（key1=value1&key2=value2形式）を辞書に変換します。
-
-    Args:
-        query_str: パース対象の文字列
-
-    Returns:
-        パース結果の辞書
-    """
-    try:
-        # URLエンコードされている可能性があるので、デコードする
-        return dict(urllib.parse.parse_qsl(query_str))
-    except Exception as e:
-        print(f"クエリ文字列のパースに失敗: {e}")
-        return {}
 
 
 if __name__ == "__main__":
