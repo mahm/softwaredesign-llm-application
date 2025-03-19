@@ -59,7 +59,7 @@ def save_search_result(
     query: str,
     url: str,
     title: str,
-    content: str,
+    content: str = "",
     content_type: str = "",
     summary: str = "",
     tags: str = "",
