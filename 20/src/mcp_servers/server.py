@@ -1,21 +1,23 @@
 import json
 import os
+import sys
 
 from mcp.server.fastmcp import FastMCP
 from tavily import TavilyClient  # type: ignore
 
 import src.mcp_servers.database as db
 
+print("MCPサーバーの初期化を開始します...")
+
 # MCPサーバーの初期化
 mcp = FastMCP("knowledge-db-mcp-server")
+
+print("データベース操作ツールを登録します...")
 
 # --- ツール定義 ---
 
 # 1. Tavily APIを使ったWeb検索ツール
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
-if not TAVILY_API_KEY:
-    raise RuntimeError("TAVILY_API_KEY is not set in environment")
-
 tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
 
 
@@ -31,13 +33,7 @@ def search_web(query: str, max_results: int = 5) -> str:
     返値:
         検索結果のテキスト（各結果のタイトル・URL・スニペット）
     """
-    try:
-        response = tavily_client.search(
-            query, search_depth="moderate", max_results=max_results
-        )
-    except Exception as e:
-        return f"検索エラー: {e}"
-
+    response = tavily_client.search(query, max_results=max_results)
     answer = response.get("answer")
     result_text = ""
     if answer:
@@ -172,5 +168,13 @@ def select_query(query: str) -> str:
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
     print("MCPサーバーを起動します...")
-    mcp.run(transport="stdio")
+    try:
+        mcp.run(transport="stdio")
+    except Exception as e:
+        print(f"サーバー実行中にエラーが発生しました: {e}", file=sys.stderr)
+        sys.exit(1)

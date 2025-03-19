@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "knowledge-db": {
+      "command": "uv",
+      "args": ["run", "-m", "src.mcp_servers.server"]
+    }
+  }
+}
