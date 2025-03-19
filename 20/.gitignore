@@ -172,3 +172,5 @@ cython_debug/
 
 # Database
 data.db
+
+.langgraph_api/
