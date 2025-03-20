@@ -2,12 +2,12 @@ import asyncio
 import json
 import os
 import sys
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Tuple
 
 from langchain_core.tools.structured import StructuredTool
 from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
-from pydantic import BaseModel, Field, create_model
+from mcp.types import Tool as MCPTool
 
 
 def load_mcp_config(config_path="mcp_config.json") -> Dict[str, Any]:
@@ -83,157 +83,28 @@ def extract_tool_info(tool_item: Any) -> Tuple[str, str]:
     return tool_name, tool_desc
 
 
-async def extract_tool_params(tool_item: Any) -> Dict[str, Dict[str, Any]]:
-    """ツールアイテムからパラメータ情報を抽出します"""
-    params: Dict[str, Dict[str, Any]] = {}
-
-    if not hasattr(tool_item, "inputSchema"):
-        return params
-
-    schema = tool_item.inputSchema
-
-    # 辞書として扱う
-    if isinstance(schema, dict) and "properties" in schema:
-        if isinstance(schema["properties"], dict):
-            return schema["properties"]
-
-    # オブジェクトとして扱う
-    if hasattr(schema, "properties"):
-        props = schema.properties
-        if isinstance(props, dict):
-            return props
-        elif hasattr(props, "__dict__"):
-            return props.__dict__
-
-    return params
-
-
-async def get_required_params(tool_item: Any) -> List[str]:
-    """ツールアイテムから必須パラメータのリストを抽出します"""
-    if not hasattr(tool_item, "inputSchema"):
-        return []
-
-    schema = tool_item.inputSchema
-
-    # requiredフィールドを取得
-    required = None
-    if hasattr(schema, "required"):
-        required = schema.required
-    elif isinstance(schema, dict) and "required" in schema:
-        required = schema["required"]
-
-    # 必須パラメータをリストとして変換
-    if required is None:
-        return []
-    elif isinstance(required, list):
-        return required
-    elif isinstance(required, dict):
-        return [k for k, v in required.items() if v]
-    elif isinstance(required, str):
-        try:
-            req_data = json.loads(required)
-            if isinstance(req_data, list):
-                return req_data
-            elif isinstance(req_data, dict):
-                return [k for k, v in req_data.items() if v]
-        except json.JSONDecodeError:
-            return [required]
-
-    return []
-
-
-def create_schema_model(
-    tool_name: str, params: Dict[str, Dict[str, Any]], required_params: List[str]
-) -> Type[BaseModel]:
-    """Pydanticモデルを作成します"""
-    # モデル名を設定
-    model_name = f"{tool_name.replace('-', '_').capitalize()}Parameters"
-
-    # パラメータがない場合は空のモデルを返す
-    if not params:
-        return create_model(model_name)
-
-    # フィールド定義を作成
-    fields = {}
-
-    for param_name, param_info in params.items():
-        # JSONスキーマの型をPythonの型に変換
-        python_type: Type[Any] = str
-
-        if "type" in param_info:
-            schema_type = param_info["type"]
-            if schema_type == "integer":
-                python_type = int
-            elif schema_type == "number":
-                python_type = float
-            elif schema_type == "boolean":
-                python_type = bool
-
-        # フィールドの説明
-        description = param_info.get("description", "")
-
-        # 必須パラメータかどうか
-        is_required = param_name in required_params
-
-        # フィールド定義を作成
-        if is_required:
-            # 必須パラメータ
-            fields[param_name] = (python_type, Field(description=description))
-        else:
-            # オプションパラメータ（デフォルト値あり）
-            default_value = param_info.get("default", None)
-            fields[param_name] = (
-                python_type,
-                Field(default=default_value, description=description),
-            )
-
-    try:
-        # create_modelを使用してモデルを作成
-        return create_model(model_name, **fields)  # type: ignore
-    except Exception as e:
-        print(f"モデル '{model_name}' の作成中にエラーが発生: {str(e)}")
-        # 空のモデルにフォールバック
-        return create_model(model_name)
-
-
 async def create_langchain_tool(
     tool_name: str,
     tool_desc: str,
     prefix: str,
     server_name: Optional[str],
     server_params: StdioServerParameters,
-    tool_item: Any = None,
+    tool_item: MCPTool,
 ) -> StructuredTool:
-    """StructuredToolを使ってLangChain Toolオブジェクトを作成します"""
+    """
+    MCPツールをLangChainのStructuredToolとして生成
+    """
     # サーバー名をプレフィックスとしてツール名に追加（重複防止）
     full_tool_name = f"{prefix}{tool_name}"
     full_tool_desc = f"[{server_name}] {tool_desc}" if server_name else tool_desc
 
     try:
-        # パラメータ情報の抽出
-        params = {}
-        required_params = []
-
-        if tool_item:
-            params = await extract_tool_params(tool_item)
-            required_params = await get_required_params(tool_item)
-
-        # Pydanticモデルの作成
-        args_schema = create_schema_model(tool_name, params, required_params)
-
-        if params:
-            print(f"ツール '{full_tool_name}' のスキーマを作成: {args_schema}")
-        else:
-            print(f"ツール '{full_tool_name}' に空のスキーマを使用します")
-
         # 非同期の MCP 呼び出し関数を定義
         async def call_mcp_tool_async(**kwargs: Any) -> Any:
-            print(f"ツール '{tool_name}' を呼び出し中、引数: {kwargs}")
             async with stdio_client(server_params) as (read, write):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     result = await session.call_tool(tool_name, arguments=kwargs)
-                    print(f"ツール '{tool_name}' の結果: {result}")
                     return result
 
         # 同期呼び出し用にラップする
@@ -245,13 +116,10 @@ async def create_langchain_tool(
             func=tool_func,
             name=full_tool_name,
             description=full_tool_desc,
-            args_schema=args_schema,
+            args_schema=tool_item.inputSchema,
         )
     except Exception as e:
         print(f"ツール '{full_tool_name}' の作成中にエラーが発生しました: {str(e)}")
-        import traceback
-
-        traceback.print_exc()
         raise
 
 
@@ -319,9 +187,6 @@ async def load_mcp_tools(
                 print(f"処理したツール数: {processed_count}個")
     except Exception as e:
         print(f"サーバー '{server_name}' との通信に失敗: {e}")
-        import traceback
-
-        traceback.print_exc()
 
     return tools
 
