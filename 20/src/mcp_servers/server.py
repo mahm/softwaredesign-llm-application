@@ -55,6 +55,62 @@ def search_web(query: str, max_results: int = 5) -> str:
 
 
 @mcp.tool()
+def extract_urls(
+    urls: list, include_images: bool = False, max_content_length: int = 5_000
+) -> str:
+    """
+    指定されたURLリストの内容を抽出します。
+
+    引数:
+        urls: 抽出するURLのリスト（最大20件まで）
+        include_images: 画像情報も含めるかどうか (デフォルト: False)
+        max_content_length: コンテンツの最大文字数 (デフォルト: 5,000)
+    返値:
+        抽出されたコンテンツの情報（タイトル、URL、本文など）
+    """
+    if not isinstance(urls, list):
+        urls = [urls]  # 単一のURLが文字列で渡された場合、リストに変換
+
+    if len(urls) > 20:
+        return "エラー: 一度に処理できるURLは最大20件までです。"
+
+    try:
+        response = tavily_client.extract(urls=urls, include_images=include_images)
+
+        result_text = ""
+        for result in response.get("results", []):
+            url = result.get("url", "")
+            title = result.get("title", "(タイトルなし)")
+            raw_content = result.get("raw_content", "")
+            images = result.get("images", [])
+
+            result_text += f"URL: {url}\n"
+            result_text += f"タイトル: {title}\n"
+
+            # コンテンツは長くなる可能性があるため、指定された最大文字数のみ表示
+            content_preview = (
+                raw_content[:max_content_length] + "..."
+                if len(raw_content) > max_content_length
+                else raw_content
+            )
+            result_text += f"コンテンツ: {content_preview}\n"
+
+            if include_images and images:
+                result_text += f"画像数: {len(images)}\n"
+                # 最初の3つの画像URLのみ表示
+                for i, img in enumerate(images[:3], start=1):
+                    result_text += f"  画像{i}: {img}\n"
+                if len(images) > 3:
+                    result_text += f"  他 {len(images) - 3} 枚の画像\n"
+
+            result_text += "\n---\n\n"
+
+        return result_text.strip()
+    except Exception as e:
+        return f"URLの内容抽出中にエラーが発生しました: {str(e)}"
+
+
+@mcp.tool()
 def save_search_result(
     query: str,
     url: str,
