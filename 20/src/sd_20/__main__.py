@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     # エージェントの実行
     config = {'configurable': {'thread_id': str(uuid.uuid4())}}
-    user_input = {"messages": [("user", args.query)]}
+    user_input = {"messages": [("human", args.query)]}
     for state in graph.stream(user_input, stream_mode="values", config=config):
         msg = state["messages"][-1]
         msg.pretty_print()

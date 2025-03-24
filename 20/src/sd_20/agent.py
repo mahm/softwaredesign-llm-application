@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
-
 from src.sd_20.mcp_manager import load_all_mcp_tools
+from src.sd_20.state import CustomAgentState
 
 # 環境変数の読み込み
 load_dotenv()
@@ -39,6 +39,7 @@ def create_agent():
         model_name="claude-3-7-sonnet-20250219",
         timeout=None,
         stop=None,
+        max_tokens=4_096,
     )
 
     # エージェントの作成
@@ -46,6 +47,7 @@ def create_agent():
         model,
         tools=tools,
         prompt=prompt,
+        state_schema=CustomAgentState,
         checkpointer=MemorySaver(),
     )
 
