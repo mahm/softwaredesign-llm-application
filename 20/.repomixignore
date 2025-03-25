@@ -1,0 +1,9 @@
+# Add patterns to ignore here, one per line
+# Example:
+# *.log
+tmp/
+.langgraph_api/
+.mypy_cache/
+.venv/
+*.db
+uv.lock
