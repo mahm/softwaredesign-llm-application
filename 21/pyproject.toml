@@ -1,0 +1,15 @@
+[project]
+name = "sd-21"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain-anthropic>=0.3.10",
+    "langchain-core>=0.3.48",
+    "langgraph-checkpoint>=2.0.21",
+    "langgraph>=0.3.16",
+    "python-dotenv>=1.0.1",
+    "streamlit>=1.44.1",
+]
+
