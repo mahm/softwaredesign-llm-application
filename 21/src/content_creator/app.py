@@ -1,11 +1,9 @@
 import uuid
 
 import streamlit as st
-from langgraph.types import Command
 
-# src.からの絶対インポートを相対インポートに変更
-from langraph_workflow import content_workflow
-from ui_components import (
+from content_creator.agent import workflow
+from content_creator.ui_components import (
     render_chat_input,
     render_content_area,
     render_feedback_options,
@@ -23,7 +21,7 @@ def main():
     if "thread_id" not in st.session_state:
         st.session_state.thread_id = str(uuid.uuid4())
     if "workflow_state" not in st.session_state:
-        st.session_state.workflow_state = "idle"  # idle, running, feedback
+        st.session_state.workflow_state = "idle"  # idle, feedback
     if "debug_info" not in st.session_state:
         st.session_state.debug_info = {}
     if "current_data" not in st.session_state:
@@ -35,8 +33,8 @@ def main():
     # レイアウト - 2カラムレイアウト
     col1, col2 = st.columns([1, 1])
 
+    # 左カラム - チャット欄
     with col1:
-        # チャット欄
         st.subheader("チャット")
 
         # チャット履歴（LangGraphから取得）
@@ -45,51 +43,31 @@ def main():
 
             # フィードバックオプション - チャット欄に表示
             if st.session_state.workflow_state == "feedback":
+                # フィードバックの選択肢を取得
                 feedback_options = st.session_state.current_data.get("options", [])
 
-                # フィードバックの処理
+                # フィードバック入力欄の表示
                 feedback = render_feedback_options(feedback_options)
 
                 # フィードバックが提供された場合
                 if feedback:
-                    # ワークフロー状態を実行中に設定
-                    st.session_state.workflow_state = "running"
-
-                    # 処理中メッセージ
-                    with st.spinner("フィードバックを処理中..."):
-                        try:
-                            # ワークフローを再開
-                            process_workflow(feedback)
-                        except Exception as e:
-                            st.session_state.debug_info["feedback_error"] = str(e)
-                            st.error(f"エラーが発生しました: {e}")
-                            # エラー発生時は入力可能に戻す
-                            st.session_state.workflow_state = "idle"
-                            st.rerun()
+                    with st.spinner("フィードバックを反映中..."):
+                        # ワークフローを再開
+                        process_workflow(feedback)
 
         # フィードバック待ちでない場合のみ入力フィールドを表示
         if st.session_state.workflow_state != "feedback":
             # 新しい指示の入力
             prompt = render_chat_input()
 
+            # ユーザーからの指示が入力された場合
             if prompt:
-                # デバッグ情報
-                st.session_state.debug_info["last_prompt"] = prompt
-
-                # ワークフロー状態を実行中に設定
-                st.session_state.workflow_state = "running"
-
-                # last_feedbackをリセット
-                st.session_state.last_feedback = None
-
-                # 処理中メッセージ
                 with st.spinner("コンテンツを生成中..."):
                     # ワークフロー実行 - 新しいプロンプトを入力
                     process_workflow(prompt)
 
     # 右カラム - コンテンツ表示
     with col2:
-        # 成果物表示欄
         st.subheader("生成されたコンテンツ")
 
         # コンテンツ表示
@@ -97,7 +75,7 @@ def main():
             content = st.session_state.current_data.get("content", "")
 
             if content:
-                # コンテンツ表示
+                # コンテンツの内容をレンダリング
                 render_content_area(content)
 
                 # ステータス情報（デバッグ用）
@@ -109,35 +87,34 @@ def main():
             st.info("チャット欄に指示を入力すると、ここにコンテンツが表示されます。")
 
 
-def process_workflow(user_input):
+def process_workflow(user_input: str):
     """
-    ワークフローを実行し、結果またはinterruptを処理する
+    ワークフローを実行する
 
     Args:
-        input_data: 新しいプロンプト辞書、またはCommand(resume=feedback)
+        user_input: ユーザーからの入力
     """
-    # ユーザー入力を保存
+    # ユーザー入力
     input_data = {"user_input": user_input}
 
-    # LangGraphで使用するスレッドID設定
+    # スレッドIDの設定
     config = {"configurable": {"thread_id": st.session_state.thread_id}}
 
     # ワークフロー実行
-    for chunk in content_workflow.stream(
+    for chunk in workflow.stream(
         input=input_data,
         config=config,
     ):
-        print("chunk", chunk)
-        if "content_workflow" in chunk:
+        if "workflow" in chunk:
             # デバッグ情報にinterrupt_dataを保存
-            content_workflow_data = chunk["content_workflow"]
-            st.session_state.debug_info["interrupt_data"] = content_workflow_data
+            workflow_data = chunk["workflow"]
+            st.session_state.debug_info["interrupt_data"] = workflow_data
 
             # ワークフロー状態をフィードバック待ちに設定
             st.session_state.workflow_state = "feedback"
 
             # 抽出したデータをUIで利用できるように保存
-            st.session_state.current_data = content_workflow_data
+            st.session_state.current_data = workflow_data
 
     # 全処理完了後にrerun()を実行
     st.rerun()

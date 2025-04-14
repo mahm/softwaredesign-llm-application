@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 import streamlit as st
 
 
@@ -45,13 +47,16 @@ def setup_page_config():
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            height: 70vh;
+            height: 40vh;
             overflow-y: auto;
             font-family: 'Source Sans Pro', sans-serif;
         }
         .content-box h1, .content-box h2, .content-box h3 {
             color: #212529;
             margin-bottom: 1rem;
+        }
+        .character-count {
+            text-align: right;
         }
         </style>
         """,
@@ -71,7 +76,6 @@ def render_sidebar():
         st.markdown("1. 左側のチャット欄に指示を入力します")
         st.markdown("2. 右側に生成されたコンテンツが表示されます")
         st.markdown("3. フィードバックを選択するか自由に入力して改善できます")
-        st.markdown("4. フィードバック完了後、新しい指示を入力できます")
 
         # ステータス表示
         st.markdown("---")
@@ -89,7 +93,7 @@ def render_chat_input():
     return prompt
 
 
-def render_messages(messages):
+def render_messages(messages: List[Dict[str, Any]]):
     """チャット履歴のレンダリング"""
     for message in messages:
         try:
@@ -105,37 +109,22 @@ def render_messages(messages):
                 st.warning(f"メッセージの表示に失敗しました: {str(e)}")
 
 
-def render_content_area(content):
+def render_content_area(content: str):
     """コンテンツ表示エリアのレンダリング - 右カラムでの表示に最適化"""
     with st.container():
-        st.markdown(
-            """
-        <style>
-        .content-box {
-            background-color: transparent;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-            padding: 1.5rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            height: 70vh;
-            overflow-y: auto;
-            font-family: 'Source Sans Pro', sans-serif;
-        }
-        .content-box h1, .content-box h2, .content-box h3 {
-            color: #212529;
-            margin-bottom: 1rem;
-        }
-        </style>
-        """,
-            unsafe_allow_html=True,
-        )
+        # コンテンツが存在する場合は文字数を表示
+        if content:
+            # HTMLタグを除いた純粋なテキストの文字数をカウント
+            char_count = len(content)
+            st.markdown(
+                f'<div class="character-count">{char_count}文字</div>',
+                unsafe_allow_html=True,
+            )
 
         st.markdown(f'<div class="content-box">{content}</div>', unsafe_allow_html=True)
 
 
-def render_feedback_options(options):
+def render_feedback_options(options: List[str]):
     """フィードバックオプションのレンダリング"""
     with st.container(border=True):
         opt_cols = st.columns(3)
@@ -151,13 +140,26 @@ def render_feedback_options(options):
 
         # 自由入力フィールド
         st.caption("または、自由にフィードバックを入力:")
+
+        # 送信後にフィールドをクリアするための状態管理
+        if "custom_feedback_submitted" not in st.session_state:
+            st.session_state.custom_feedback_submitted = False
+
+        if st.session_state.custom_feedback_submitted:
+            st.session_state.custom_feedback = ""
+            st.session_state.custom_feedback_submitted = False
+
         custom_feedback = st.text_input(
             "フィードバック", key="custom_feedback", label_visibility="collapsed"
         )
 
+        # Enterキーが押された場合の処理
+        if custom_feedback:
+            st.session_state.custom_feedback_submitted = True
+            return custom_feedback
+
         # 送信ボタン
         if st.button("送信", key="submit_feedback"):
             if custom_feedback:
+                st.session_state.custom_feedback_submitted = True
                 return custom_feedback
-
-    return None
