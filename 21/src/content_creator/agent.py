@@ -91,7 +91,7 @@ def workflow(
     inputs: Dict[str, Any],
     *,
     previous: Optional[Dict[str, Any]] = None,
-) -> entrypoint.final[Dict[str, Any], Dict[str, Any]]:
+) -> Dict[str, Any]:
     # 以前の状態を取得または初期化
     state = previous or {
         "theme": "",
@@ -120,7 +120,4 @@ def workflow(
     state["messages"].append({"role": "assistant", "content": message})
 
     # 最終的なステートを返し、チェックポイントに保存
-    return entrypoint.final(
-        value=state,
-        save=state,
-    )
+    return state

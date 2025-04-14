@@ -141,25 +141,12 @@ def render_feedback_options(options: List[str]):
         # 自由入力フィールド
         st.caption("または、自由にフィードバックを入力:")
 
-        # 送信後にフィールドをクリアするための状態管理
-        if "custom_feedback_submitted" not in st.session_state:
-            st.session_state.custom_feedback_submitted = False
+        # フォームを使用して一度だけ送信されるようにする
+        with st.form(key="feedback_form", clear_on_submit=True):
+            custom_feedback = st.text_input(
+                "フィードバック", key="custom_feedback", label_visibility="collapsed"
+            )
+            submitted = st.form_submit_button("送信")
 
-        if st.session_state.custom_feedback_submitted:
-            st.session_state.custom_feedback = ""
-            st.session_state.custom_feedback_submitted = False
-
-        custom_feedback = st.text_input(
-            "フィードバック", key="custom_feedback", label_visibility="collapsed"
-        )
-
-        # Enterキーが押された場合の処理
-        if custom_feedback:
-            st.session_state.custom_feedback_submitted = True
-            return custom_feedback
-
-        # 送信ボタン
-        if st.button("送信", key="submit_feedback"):
-            if custom_feedback:
-                st.session_state.custom_feedback_submitted = True
-                return custom_feedback
+            if submitted and custom_feedback.strip():
+                return custom_feedback.strip()
