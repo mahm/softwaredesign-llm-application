@@ -1,15 +1,24 @@
 [project]
 name = "sd-21"
 version = "0.1.0"
-description = "Add your description here"
+description = "LangGraph Functional API Sample"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "langchain-anthropic>=0.3.10",
-    "langchain-core>=0.3.48",
-    "langgraph-checkpoint>=2.0.21",
-    "langgraph>=0.3.16",
-    "python-dotenv>=1.0.1",
-    "streamlit>=1.44.1",
+    "streamlit==1.44.1",
+    "langchain==0.3.23",
+    "langchain-anthropic==0.3.10",
+    "langgraph==0.3.29",
+    "python-dotenv==1.1.0",
 ]
+
+[project.scripts]
+content-creator = "src.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
