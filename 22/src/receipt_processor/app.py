@@ -10,6 +10,7 @@ import streamlit as st
 from langgraph.types import Command
 
 from src.receipt_processor.agent import receipt_workflow
+from src.receipt_processor.models import CommandType, EventType
 from src.receipt_processor.storage import backup_csv, get_saved_receipts
 from src.receipt_processor.ui_components import (
     account_info_editor,
@@ -81,22 +82,22 @@ def stream_handler(data: Dict[str, Any]) -> None:
     event_type = data.get("event", "")
 
     # OCR完了イベント
-    if event_type == "ocr_done":
+    if event_type == EventType.OCR_DONE:
         st.session_state.ocr_text = data.get("text", "")
         st.session_state.ocr_result = data.get("structured_data", {})
         st.session_state.workflow_state = "ocr_complete"
 
     # 勘定科目提案完了イベント
-    elif event_type == "account_suggested":
+    elif event_type == EventType.ACCOUNT_SUGGESTED:
         st.session_state.account_info = data.get("account_info", {})
         st.session_state.workflow_state = "account_suggested"
 
     # 保存完了イベント
-    elif event_type == "save_complete":
+    elif event_type == EventType.SAVE_COMPLETED:
         st.session_state.workflow_state = "complete"
 
     # エラーイベント
-    elif event_type == "error":
+    elif event_type == EventType.ERROR:
         st.session_state.error_message = data.get("message", "エラーが発生しました")
         st.session_state.workflow_state = "error"
 
@@ -181,7 +182,7 @@ def handle_feedback_submission() -> Optional[Dict[str, Any]]:
     if actions["approved"]:
         # 承認 - approveコマンドを返す
         print("承認ボタンが押されました")  # デバッグ出力
-        return {"command": "approve"}
+        return {"command": CommandType.APPROVE}
 
     elif actions["feedback"]:
         # フィードバックボタンが押された場合
@@ -189,7 +190,7 @@ def handle_feedback_submission() -> Optional[Dict[str, Any]]:
         if feedback_text:
             # 直接LLMにフィードバックを送信して再生成を依頼
             print(f"フィードバックが送信されました: {feedback_text}")  # デバッグ出力
-            return {"command": "regenerate", "feedback": feedback_text}
+            return {"command": CommandType.REGENERATE, "feedback": feedback_text}
 
     # デフォルトは何も返さない
     return None
@@ -363,9 +364,9 @@ def resume_workflow_with_feedback(feedback: Dict[str, Any]) -> None:
 
     # コマンドタイプによってスピナーメッセージを変更
     spinner_message = "処理中..."
-    if feedback.get("command") == "regenerate":
+    if feedback.get("command") == CommandType.REGENERATE:
         spinner_message = "フィードバックに基づいて再生成中..."
-    elif feedback.get("command") == "approve":
+    elif feedback.get("command") == CommandType.APPROVE:
         spinner_message = "情報を保存中..."
 
     # Command.resumeを使ってワークフローを再開

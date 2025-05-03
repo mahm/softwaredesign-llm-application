@@ -3,14 +3,20 @@ LangGraph Workflowの定義
 """
 
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.func import entrypoint, task
 from langgraph.types import StreamWriter, interrupt
 
 from src.receipt_processor.account import suggest_account_info
-from src.receipt_processor.models import AccountInfo, ReceiptOCRResult
+from src.receipt_processor.constants import CSV_FILE_PATH
+from src.receipt_processor.models import (
+    AccountInfo,
+    CommandType,
+    EventType,
+    ReceiptOCRResult,
+)
 from src.receipt_processor.storage import backup_csv, save_to_csv
 from src.receipt_processor.vision import ocr_receipt
 
@@ -42,7 +48,7 @@ def process_and_ocr_image(image_path: str, *, writer: StreamWriter) -> ReceiptOC
     # OCR完了イベントを送信
     writer(
         {
-            "event": "ocr_done",
+            "event": EventType.OCR_DONE,
             "text": ocr_result.raw_text,
             "structured_data": ocr_result.model_dump(),
         }
@@ -53,7 +59,10 @@ def process_and_ocr_image(image_path: str, *, writer: StreamWriter) -> ReceiptOC
 
 @task
 def generate_account_suggestion(
-    ocr_result: ReceiptOCRResult, hint: Optional[str] = None, *, writer: StreamWriter
+    ocr_result: ReceiptOCRResult,
+    feedback_history: Optional[List[str]] = None,
+    *,
+    writer: StreamWriter,
 ) -> AccountInfo:
     """
     OCR結果から勘定科目情報を提案するタスク
@@ -62,8 +71,8 @@ def generate_account_suggestion(
     -----------
     ocr_result: ReceiptOCRResult
         OCR処理結果の構造化データ
-    hint: Optional[str]
-        ユーザーからのフィードバック（あれば）
+    feedback_history: Optional[List[str]]
+        これまでのユーザーフィードバック履歴
     writer: StreamWriter
         イベント送信用のStreamWriter
 
@@ -72,13 +81,21 @@ def generate_account_suggestion(
     AccountInfo
         提案された勘定科目情報
     """
+    # フィードバック履歴がある場合はフィードバックとして使用
+    combined_feedback = None
+    if feedback_history and len(feedback_history) > 0:
+        # すべてのフィードバックを結合して渡す
+        combined_feedback = " ".join(
+            [f"フィードバック{i+1}: {fb}" for i, fb in enumerate(feedback_history)]
+        )
+
     # 勘定科目提案を取得
-    account_info = suggest_account_info(ocr_result, hint)
+    account_info = suggest_account_info(ocr_result, combined_feedback)
 
     # 提案完了イベントを送信
     writer(
         {
-            "event": "account_suggested",
+            "event": EventType.ACCOUNT_SUGGESTED,
             "account_info": account_info.model_dump(),
             "ocr_text": ocr_result.raw_text,
         }
@@ -88,13 +105,13 @@ def generate_account_suggestion(
 
 
 @task
-def save_receipt_data(data: Dict[str, Any], *, writer: StreamWriter) -> bool:
+def save_receipt_data(data: AccountInfo, *, writer: StreamWriter) -> bool:
     """
     承認されたデータをCSVに保存するタスク
 
     Parameters:
     -----------
-    data: Dict[str, Any]
+    data: AccountInfo
         保存するデータ
     writer: StreamWriter
         イベント送信用のStreamWriter
@@ -105,19 +122,20 @@ def save_receipt_data(data: Dict[str, Any], *, writer: StreamWriter) -> bool:
         保存が成功したかどうか
     """
     # CSVファイルが既に存在する場合はバックアップを作成
-    if os.path.exists("tmp/db.csv"):
+    if os.path.exists(CSV_FILE_PATH):
         backup_csv()
-
-    # デバッグ出力：保存データの確認
-    print(f"保存するデータ：{data}")
-    for key, value in data.items():
-        print(f"  {key}: {value}")
 
     # データをCSVに保存
     save_success = save_to_csv(data)
 
     # 保存完了イベントを送信
-    writer({"event": "save_complete", "success": save_success, "data": data})
+    writer(
+        {
+            "event": EventType.SAVE_COMPLETED,
+            "success": save_success,
+            "data": data.model_dump(),
+        }
+    )
 
     return save_success
 
@@ -147,27 +165,25 @@ def receipt_workflow(
         更新された状態
     """
     # 状態の初期化または復元
-    # 各キーの役割:
-    # - image_path: 処理中の画像ファイルパス
-    # - attempts: フィードバックの試行回数
-    # - saved: 保存が完了したかどうか
-    # - completed: ワークフロー全体が完了したかどうか
     state = previous or {
-        "image_path": image_path,  # 画像パスを保存
-        "attempts": 0,  # フィードバック試行回数
-        "saved": False,  # 保存完了フラグ
-        "completed": False,  # 処理完了フラグ
+        "image_path": image_path,  # 処理中の画像ファイルパス
+        "feedback_history": [],  # ユーザーからのフィードバック履歴
+        "completed": False,  # ワークフロー完了フラグ
     }
 
     # 画像パスが変更された場合は更新
     if image_path != state.get("image_path", ""):
         state["image_path"] = image_path
+        # 新しい画像の場合はフィードバック履歴をリセット
+        state["feedback_history"] = []
 
     # OCRを実行して結果を保存
     ocr_result = process_and_ocr_image(image_path, writer=writer).result()
 
-    # 勘定科目提案を取得
-    account_info = generate_account_suggestion(ocr_result, writer=writer).result()
+    # 勘定科目提案を取得（フィードバック履歴があれば利用）
+    account_info = generate_account_suggestion(
+        ocr_result, feedback_history=state.get("feedback_history", []), writer=writer
+    ).result()
 
     while True:
         # ユーザーからのフィードバックを待機
@@ -175,67 +191,55 @@ def receipt_workflow(
             {
                 "ocr_result": ocr_result.model_dump(),
                 "account_info": account_info.model_dump(),
-                "attempts": state.get("attempts", 1),
+                "feedback_count": len(state.get("feedback_history", [])),
             }
         )
 
-        # response は必ず dict（コマンドを含む）
+        # コマンドを取得
         command = response.get("command", "")
 
         # 承認コマンドの場合
-        if command == "approve":
-            # 承認された場合はCSVに保存
-            final_data = {
-                "date": account_info.date,
-                "account": account_info.account,
-                "sub_account": account_info.sub_account,
-                "amount": account_info.amount,
-                "tax_amount": account_info.tax_amount,
-                "vendor": account_info.vendor,
-                "invoice_number": account_info.invoice_number,
-                "description": account_info.description,
-                "raw_text": ocr_result.raw_text,
-            }
+        if command == CommandType.APPROVE:
+            # CSVに保存
+            save_receipt_data(account_info, writer=writer).result()
 
-            save_success = save_receipt_data(final_data, writer=writer).result()
-
-            # 結果を状態に保存
+            # 状態を更新して完了とマーク
             state.update(
                 {
                     "ocr_result": ocr_result.model_dump(),
                     "account_info": account_info.model_dump(),
-                    "attempts": state.get("attempts", 1),
-                    "saved": save_success,
                     "completed": True,
                 }
             )
 
-            # 完了イベント送信
-            writer({"event": "workflow_completed", "success": save_success})
             break
 
-        # 修正コマンドの場合
-        elif command == "modify":
+        # フィードバックを受け取った場合
+        elif command == CommandType.REGENERATE:
             feedback = response.get("feedback", "")
             if feedback:
+                # フィードバック履歴に追加
+                state["feedback_history"] = state.get("feedback_history", []) + [
+                    feedback
+                ]
+
                 # フィードバックを使って勘定科目を再提案
                 account_info = generate_account_suggestion(
-                    ocr_result, hint=feedback, writer=writer
+                    ocr_result,
+                    feedback_history=state["feedback_history"],
+                    writer=writer,
                 ).result()
 
-                # 試行回数を更新
-                state["attempts"] = state.get("attempts", 1) + 1
-
-        # 自然言語フィードバックによる再生成
-        elif command == "regenerate":
-            feedback = response.get("feedback", "")
-            if feedback:
-                # フィードバックを使って勘定科目を再提案
-                account_info = generate_account_suggestion(
-                    ocr_result, hint=feedback, writer=writer
-                ).result()
-
-                # 試行回数を更新
-                state["attempts"] = state.get("attempts", 1) + 1
+        # 未知のコマンドが渡された場合
+        else:
+            # エラーイベントを送信
+            writer(
+                {
+                    "event": EventType.ERROR,
+                    "message": f"不正なコマンドです: {command}。'approve'または'regenerate'を使用してください。",
+                    "command": command,
+                }
+            )
+            # ループを継続して再度フィードバックを待機（明示的に何もしない）
 
     return state

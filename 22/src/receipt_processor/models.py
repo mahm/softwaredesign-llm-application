@@ -2,9 +2,26 @@
 データモデル定義
 """
 
+from enum import Enum
 from typing import List
 
 from pydantic import BaseModel, Field
+
+
+class EventType(str, Enum):
+    """イベントタイプを定義するEnum"""
+
+    OCR_DONE = "ocr_done"
+    ACCOUNT_SUGGESTED = "account_suggested"
+    SAVE_COMPLETED = "save_completed"
+    ERROR = "error"
+
+
+class CommandType(str, Enum):
+    """コマンドタイプを定義するEnum"""
+
+    APPROVE = "approve"
+    REGENERATE = "regenerate"
 
 
 class ReceiptItem(BaseModel):
@@ -42,30 +59,16 @@ class ReceiptOCRResult(BaseModel):
 
 
 class AccountInfo(BaseModel):
-    """勘定科目情報のデータモデル"""
+    """勘定科目情報のデータモデル（CSVにも保存される）"""
 
     date: str = Field(description="日付（YYYY-MM-DD形式）")
     account: str = Field(description="勘定科目")
     sub_account: str = Field(description="補助科目", default="")
-    vendor: str = Field(description="取引先", default="")
-    description: str = Field(description="摘要", default="")
     amount: str = Field(description="金額", default="")
     tax_amount: str = Field(description="消費税額", default="")
+    vendor: str = Field(description="取引先", default="")
     invoice_number: str = Field(
         description="インボイス番号（通常Tから始まる文字列）", default=""
     )
-    reason: str = Field(description="この勘定科目と判断した理由")
-
-
-class SavedReceiptData(BaseModel):
-    """CSVに保存するデータのモデル"""
-
-    date: str = Field(description="日付（YYYY-MM-DD形式）")
-    amount: str = Field(description="金額（数字のみ）")
-    account: str = Field(description="勘定科目")
-    sub_account: str = Field(description="補助科目", default="")
-    vendor: str = Field(description="取引先", default="")
     description: str = Field(description="摘要", default="")
-    raw_text: str = Field(description="OCR生テキスト")
-    tax_amount: str = Field(description="消費税額", default="")
-    invoice_number: str = Field(description="インボイス番号", default="")
+    reason: str = Field(description="この勘定科目と判断した理由")

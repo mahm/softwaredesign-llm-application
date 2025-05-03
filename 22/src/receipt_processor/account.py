@@ -8,6 +8,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
+from src.receipt_processor.constants import CLAUDE_SMART_MODEL
 from src.receipt_processor.models import AccountInfo, ReceiptOCRResult
 
 
@@ -18,7 +19,7 @@ def format_prompt(inputs: Dict[str, Any]) -> ChatPromptTemplate:
     Parameters:
     -----------
     inputs: Dict[str, Any]
-        OCR結果とヒント情報を含む辞書
+        OCR結果とフィードバック情報を含む辞書
 
     Returns:
     --------
@@ -26,7 +27,7 @@ def format_prompt(inputs: Dict[str, Any]) -> ChatPromptTemplate:
         適切に設定されたChatPromptTemplate
     """
     ocr_result = inputs["ocr_result"]
-    hint = inputs.get("hint", "")
+    feedback = inputs.get("feedback", "")
 
     # 品目情報のテキスト化
     items_text = ""
@@ -44,10 +45,10 @@ def format_prompt(inputs: Dict[str, Any]) -> ChatPromptTemplate:
 
     # フィードバックセクションの制御
     feedback_section = ""
-    if hint:
-        feedback_section = f"""
+    if feedback:
+        feedback_section = f"""\
 【ユーザーフィードバック】
-{hint}
+{feedback}
 """
 
     # システムプロンプト
@@ -94,8 +95,8 @@ def format_prompt(inputs: Dict[str, Any]) -> ChatPromptTemplate:
 
 def suggest_account_info(
     ocr_result: ReceiptOCRResult,
-    hint: str | None = None,
-    model_name: str = "claude-3-7-sonnet-20250219",
+    feedback: str | None = None,
+    model_name: str = CLAUDE_SMART_MODEL,
 ) -> AccountInfo:
     """
     OCR結果から適切な勘定科目情報を提案する
@@ -104,8 +105,8 @@ def suggest_account_info(
     -----------
     ocr_result: ReceiptOCRResult
         OCR処理結果の構造化データ
-    hint: str | None
-        ユーザーからの修正ヒント（あれば）
+    feedback: str | None
+        ユーザーからのフィードバック（あれば）
     model_name: str
         使用するClaudeモデル名
 
@@ -134,7 +135,7 @@ def suggest_account_info(
 
     # 勘定科目情報を生成
     account_info: AccountInfo = account_chain.invoke(
-        {"ocr_result": ocr_result, "hint": hint}
+        {"ocr_result": ocr_result, "feedback": feedback}
     )  # type: ignore
 
     return account_info

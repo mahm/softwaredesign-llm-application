@@ -9,16 +9,17 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from src.receipt_processor.models import SavedReceiptData
+from src.receipt_processor.constants import CSV_FILE_PATH
+from src.receipt_processor.models import AccountInfo
 
 
-def save_to_csv(data: Dict[str, Any], csv_path: str = "tmp/db.csv") -> bool:
+def save_to_csv(data: AccountInfo, csv_path: str = CSV_FILE_PATH) -> bool:
     """
     データをCSVファイルに保存する
 
     Parameters:
     -----------
-    data: Dict[str, Any]
+    data: AccountInfo
         保存するデータ（日付、金額、勘定科目情報など）
     csv_path: str
         CSVファイルのパス
@@ -33,26 +34,14 @@ def save_to_csv(data: Dict[str, Any], csv_path: str = "tmp/db.csv") -> bool:
     if not os.path.exists(csv_dir):
         os.makedirs(csv_dir)
 
-    # 検証用にpydanticモデルを使用
-    receipt_data = SavedReceiptData(**data)
-
     # ファイルが存在するかチェック
     file_exists = os.path.isfile(csv_path)
 
     # CSVに保存（新規作成または追記）
     try:
         with open(csv_path, mode="a", newline="", encoding="utf-8") as file:
-            fieldnames = [
-                "date",
-                "account",
-                "sub_account",
-                "amount",
-                "tax_amount",
-                "vendor",
-                "invoice_number",
-                "description",
-                "raw_text",
-            ]
+            # AccountInfoのフィールド名を動的に取得
+            fieldnames = list(AccountInfo.model_fields.keys())
             writer = csv.DictWriter(file, fieldnames=fieldnames)
 
             # ファイルが存在しない場合はヘッダーを書き込む
@@ -60,7 +49,7 @@ def save_to_csv(data: Dict[str, Any], csv_path: str = "tmp/db.csv") -> bool:
                 writer.writeheader()
 
             # データを書き込む
-            writer.writerow(receipt_data.model_dump())
+            writer.writerow(data.model_dump())
 
         return True
     except Exception as e:
@@ -68,7 +57,7 @@ def save_to_csv(data: Dict[str, Any], csv_path: str = "tmp/db.csv") -> bool:
         return False
 
 
-def get_saved_receipts(csv_path: str = "tmp/db.csv") -> List[Dict[str, Any]]:
+def get_saved_receipts(csv_path: str = CSV_FILE_PATH) -> List[Dict[str, Any]]:
     """
     保存された領収書データを取得する
 
@@ -88,6 +77,11 @@ def get_saved_receipts(csv_path: str = "tmp/db.csv") -> List[Dict[str, Any]]:
     try:
         # pandasでCSVを読み込む
         df = pd.read_csv(csv_path, encoding="utf-8")
+
+        # 古いフォーマットとの互換性のため、raw_textカラムが存在する場合は削除
+        if "raw_text" in df.columns:
+            df = df.drop(columns=["raw_text"])
+
         # DataFrame -> Dict変換
         receipts = df.to_dict(orient="records")
         return receipts
@@ -96,7 +90,7 @@ def get_saved_receipts(csv_path: str = "tmp/db.csv") -> List[Dict[str, Any]]:
         return []
 
 
-def backup_csv(csv_path: str = "tmp/db.csv") -> bool:
+def backup_csv(csv_path: str = CSV_FILE_PATH) -> bool:
     """
     CSVファイルのバックアップを作成する
 

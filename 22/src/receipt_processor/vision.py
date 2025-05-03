@@ -12,6 +12,7 @@ from typing import Any, Dict, List
 from langchain_anthropic import ChatAnthropic
 from PIL import Image, ImageEnhance
 
+from src.receipt_processor.constants import CLAUDE_FAST_MODEL
 from src.receipt_processor.models import ReceiptOCRResult
 
 
@@ -120,7 +121,7 @@ def preprocess_receipt_image(image_path: str) -> str:
 
 
 def ocr_receipt(
-    image_path: str, model_name: str = "claude-3-5-haiku-20241022"
+    image_path: str, model_name: str = CLAUDE_FAST_MODEL
 ) -> ReceiptOCRResult:
     """
     Claude Vision APIを使用して領収書画像からテキストを抽出し、構造化データとして返す
@@ -141,7 +142,7 @@ def ocr_receipt(
     processed_image_path = preprocess_receipt_image(image_path)
 
     try:
-        # Claude Vision APIを使用するLLMの初期化
+        # LLMの初期化
         llm = ChatAnthropic(
             model_name=model_name,
             temperature=0,

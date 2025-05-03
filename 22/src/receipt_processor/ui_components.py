@@ -57,9 +57,7 @@ def display_ocr_text(ocr_text: str) -> None:
         st.text_area("抽出されたテキスト", ocr_text, height=200, disabled=True)
 
 
-def account_info_editor(
-    account_info: Dict[str, Any], on_change: Optional[Callable] = None
-) -> Dict[str, Any]:
+def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
     """
     勘定科目情報の表示
 
@@ -67,8 +65,6 @@ def account_info_editor(
     -----------
     account_info: Dict[str, Any]
         表示する勘定科目情報
-    on_change: Optional[Callable]
-        値が変更されたときに呼び出すコールバック関数（現在は使用しない）
 
     Returns:
     --------
