@@ -8,8 +8,27 @@ from typing import List
 from pydantic import BaseModel, Field
 
 
+class WorkflowState(str, Enum):
+    """ワークフローの状態定義（UI）"""
+
+    IDLE = "idle"  # 初期状態、ユーザーがアクション（画像アップロードなど）を実行する前の待機状態
+    PROCESSING = "processing"  # データ処理中の状態（OCR処理や勘定科目の判定中など）
+    WAIT_FEEDBACK = "feedback"  # ユーザーからのフィードバック入力待ち状態
+    WORKFLOW_COMPLETED = "complete"  # 処理が完了し、結果が保存された状態
+    OCR_COMPLETED = "ocr_complete"  # OCR処理が完了した状態
+    ACCOUNT_SUGGESTED = "account_suggested"  # 会計処理の提案が完了した状態
+    ERROR = "error"  # エラーが発生した状態
+
+
+class DisplayMode(str, Enum):
+    """表示モード定義（UI）"""
+
+    INPUT = "input"  # 領収書入力モード
+    HISTORY = "history"  # 履歴表示モード
+
+
 class EventType(str, Enum):
-    """イベントタイプを定義するEnum"""
+    """イベントタイプ定義（ワークフロー）"""
 
     OCR_DONE = "ocr_done"
     ACCOUNT_SUGGESTED = "account_suggested"
@@ -18,10 +37,17 @@ class EventType(str, Enum):
 
 
 class CommandType(str, Enum):
-    """コマンドタイプを定義するEnum"""
+    """コマンドタイプ定義（ワークフロー）"""
 
     APPROVE = "approve"
     REGENERATE = "regenerate"
+
+
+class Feedback(BaseModel):
+    """フィードバックデータ（UI）"""
+
+    command: CommandType
+    feedback: str
 
 
 class ReceiptItem(BaseModel):

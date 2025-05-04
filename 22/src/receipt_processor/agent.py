@@ -15,6 +15,7 @@ from src.receipt_processor.models import (
     AccountInfo,
     CommandType,
     EventType,
+    Feedback,
     ReceiptOCRResult,
 )
 from src.receipt_processor.storage import backup_csv, save_to_csv
@@ -132,8 +133,7 @@ def save_receipt_data(data: AccountInfo, *, writer: StreamWriter) -> bool:
     writer(
         {
             "event": EventType.SAVE_COMPLETED,
-            "success": save_success,
-            "data": data.model_dump(),
+            "account_info": data.model_dump(),
         }
     )
 
@@ -195,11 +195,10 @@ def receipt_workflow(
             }
         )
 
-        # コマンドを取得
-        command = response.get("command", "")
+        feedback: Feedback = Feedback.model_validate(response)
 
         # 承認コマンドの場合
-        if command == CommandType.APPROVE:
+        if feedback.command == CommandType.APPROVE:
             # CSVに保存
             save_receipt_data(account_info, writer=writer).result()
 
@@ -215,14 +214,14 @@ def receipt_workflow(
             break
 
         # フィードバックを受け取った場合
-        elif command == CommandType.REGENERATE:
-            feedback = response.get("feedback", "")
+        elif feedback.command == CommandType.REGENERATE:
+            feedback = feedback.feedback
+
             if feedback:
                 # フィードバック履歴に追加
                 state["feedback_history"] = state.get("feedback_history", []) + [
                     feedback
                 ]
-
                 # フィードバックを使って勘定科目を再提案
                 account_info = generate_account_suggestion(
                     ocr_result,
@@ -236,10 +235,9 @@ def receipt_workflow(
             writer(
                 {
                     "event": EventType.ERROR,
-                    "message": f"不正なコマンドです: {command}。'approve'または'regenerate'を使用してください。",
-                    "command": command,
+                    "message": f"不正なコマンドです: {feedback.command}。'approve'または'regenerate'を使用してください。",
+                    "command": feedback.command,
                 }
             )
-            # ループを継続して再度フィードバックを待機（明示的に何もしない）
 
     return state

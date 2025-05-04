@@ -2,14 +2,14 @@
 Streamlit UI関連コンポーネント
 """
 
-import io
 import tempfile
 import time
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Optional
 
 import pandas as pd
 import streamlit as st
-from PIL import Image, ImageOps
+
+from src.receipt_processor.models import AccountInfo, CommandType, Feedback
 
 
 def setup_page() -> None:
@@ -57,7 +57,7 @@ def display_ocr_text(ocr_text: str) -> None:
         st.text_area("抽出されたテキスト", ocr_text, height=200, disabled=True)
 
 
-def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
+def account_info_editor(account_info: AccountInfo) -> None:
     """
     勘定科目情報の表示
 
@@ -71,8 +71,8 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
     Dict[str, Any]
         元の勘定科目情報
     """
-    # 生成理由（常に表示）
-    st.markdown(account_info.get("reason", ""))
+    # 生成理由
+    st.markdown(account_info.reason)
 
     st.subheader("勘定科目情報")
 
@@ -83,7 +83,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # 勘定科目
         st.text_input(
             "勘定科目",
-            value=account_info.get("account", ""),
+            value=account_info.account,
             key="account_input",
             disabled=True,
         )
@@ -91,7 +91,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # 取引先
         st.text_input(
             "取引先",
-            value=account_info.get("vendor", ""),
+            value=account_info.vendor,
             key="vendor_input",
             disabled=True,
         )
@@ -99,7 +99,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # 金額
         st.text_input(
             "金額",
-            value=account_info.get("amount", ""),
+            value=account_info.amount,
             key="amount_input",
             disabled=True,
         )
@@ -108,7 +108,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # 補助科目
         st.text_input(
             "補助科目",
-            value=account_info.get("sub_account", ""),
+            value=account_info.sub_account,
             key="sub_account_input",
             disabled=True,
         )
@@ -116,7 +116,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # インボイス番号
         st.text_input(
             "インボイス番号",
-            value=account_info.get("invoice_number", ""),
+            value=account_info.invoice_number,
             key="invoice_number_input",
             disabled=True,
         )
@@ -124,7 +124,7 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
         # 消費税額
         st.text_input(
             "消費税額",
-            value=account_info.get("tax_amount", ""),
+            value=account_info.tax_amount,
             key="tax_amount_input",
             disabled=True,
         )
@@ -132,86 +132,66 @@ def account_info_editor(account_info: Dict[str, Any]) -> Dict[str, Any]:
     # 摘要
     st.text_area(
         "摘要",
-        value=account_info.get("description", ""),
+        value=account_info.description,
         key="description_input",
         disabled=True,
     )
 
-    # 元の情報をそのまま返す
-    return account_info
 
-
-def display_action_buttons(is_modified: bool) -> Dict[str, bool]:
+def display_action_buttons() -> Optional[Feedback]:
     """
     アクションボタンを表示
 
-    Parameters:
-    -----------
-    is_modified: bool
-        フィールドが変更されたかどうか（現在は使用しない）
-
     Returns:
     --------
-    Dict[str, bool]
-        ボタン押下状態
+    Optional[Feedback]
+        フィードバック。ボタンが押されなかった場合はNone
     """
     st.subheader("アクション")
 
-    actions = {
-        "approved": False,
-        "feedback": False,
-    }
-
-    # 承認ボタン - 常に表示
-    if st.button("この情報で承認する", type="primary", use_container_width=True):
-        actions["approved"] = True
+    # 承認ボタン
+    if st.button(
+        "この情報で承認する",
+        type="primary",
+        use_container_width=True,
+    ):
+        feedback = Feedback(
+            command=CommandType.APPROVE,
+            feedback="",
+        )
+        return feedback
 
     # 罫線（区切り線）
     st.markdown("---")
 
-    # フィードバックボタンが押された時のコールバック
-    def on_feedback_submit() -> None:
-        # 送信後にテキストエリアをクリア
-        st.session_state.direct_feedback = ""
-        # フィードバックを送信するフラグを設定
-        st.session_state.submit_feedback = True
-
-    # フィードバック入力欄
-    feedback = st.text_area(
+    # 単純なform外テキストエリアとボタンの組み合わせ
+    feedback_text = st.text_area(
         "フィードバック内容",
         placeholder="例：「補助科目を交通費から駐車場代に変更して」「取引先名をカタカナで表記して」「摘要に日付を含めて」など",
         key="direct_feedback",
         height=100,
     )
+
+    # 説明文
     st.markdown(
         "自然言語でエージェントにフィードバックを送り、勘定科目情報を再生成できます"
     )
 
-    # フィードバックボタン
+    # 送信ボタン
     if st.button(
         "フィードバックを送信して再生成",
         type="secondary",
         use_container_width=True,
-        on_click=on_feedback_submit if feedback else None,
+        key="send_feedback",
     ):
-        if feedback:
-            actions["feedback"] = True
-            # セッションにフィードバックを保存
-            st.session_state.feedback_text = feedback
+        if feedback_text:
+            feedback = Feedback(
+                command=CommandType.REGENERATE,
+                feedback=feedback_text,
+            )
+            return feedback
 
-    # 前の実装との互換性のためのチェック（セッション状態から取得）
-    if "submit_feedback" in st.session_state and st.session_state.submit_feedback:
-        actions["feedback"] = True
-        st.session_state.feedback_text = st.session_state.get(
-            "direct_feedback_before_clear", ""
-        )
-        st.session_state.submit_feedback = False
-
-    # 送信前にフィードバックの内容を保存（クリアされる前に保存）
-    if feedback:
-        st.session_state.direct_feedback_before_clear = feedback
-
-    return actions
+    return None
 
 
 def display_receipt_history(receipts: list) -> None:
@@ -252,7 +232,6 @@ def display_receipt_history(receipts: list) -> None:
 def display_success_message() -> None:
     """保存成功メッセージを表示"""
     st.success("領収書データが正常に保存されました！", icon="✅")
-    print("成功メッセージを表示します")  # デバッグ出力
 
     # 次のアクションを促すメッセージ
     st.subheader("次のアクション")
