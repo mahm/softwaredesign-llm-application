@@ -215,12 +215,12 @@ def receipt_workflow(
 
         # フィードバックを受け取った場合
         elif feedback.command == CommandType.REGENERATE:
-            feedback = feedback.feedback
+            feedback_content = feedback.content
 
-            if feedback:
+            if feedback_content:
                 # フィードバック履歴に追加
                 state["feedback_history"] = state.get("feedback_history", []) + [
-                    feedback
+                    feedback_content
                 ]
                 # フィードバックを使って勘定科目を再提案
                 account_info = generate_account_suggestion(

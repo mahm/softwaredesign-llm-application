@@ -157,7 +157,7 @@ def display_action_buttons() -> Optional[Feedback]:
     ):
         feedback = Feedback(
             command=CommandType.APPROVE,
-            feedback="",
+            content="",
         )
         return feedback
 
@@ -187,7 +187,7 @@ def display_action_buttons() -> Optional[Feedback]:
         if feedback_text:
             feedback = Feedback(
                 command=CommandType.REGENERATE,
-                feedback=feedback_text,
+                content=feedback_text,
             )
             return feedback
 

@@ -47,7 +47,7 @@ class Feedback(BaseModel):
     """フィードバックデータ（UI）"""
 
     command: CommandType
-    feedback: str
+    content: str
 
 
 class ReceiptItem(BaseModel):

@@ -1006,21 +1006,21 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "langchain-anthropic", specifier = ">=0.1.9" },
-    { name = "langchain-core", specifier = ">=0.1.17" },
-    { name = "langgraph", specifier = ">=0.0.20" },
-    { name = "pandas", specifier = ">=2.0.0" },
-    { name = "pillow", specifier = ">=10.0.0" },
-    { name = "pydantic", specifier = ">=2.5.0" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "streamlit", specifier = ">=1.31.0" },
+    { name = "langchain-anthropic", specifier = ">=0.3.12" },
+    { name = "langchain-core", specifier = ">=0.3.58" },
+    { name = "langgraph", specifier = ">=0.4.1" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pillow", specifier = ">=11.2.1" },
+    { name = "pydantic", specifier = ">=2.11.4" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
+    { name = "streamlit", specifier = ">=1.45.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "black", specifier = ">=23.1.0" },
-    { name = "isort", specifier = ">=5.12.0" },
-    { name = "mypy", specifier = ">=1.1.1" },
+    { name = "black", specifier = ">=25.1.0" },
+    { name = "isort", specifier = ">=6.0.1" },
+    { name = "mypy", specifier = ">=1.15.0" },
     { name = "pandas-stubs", specifier = ">=2.2.3.250308" },
 ]
 

@@ -151,9 +151,7 @@ def process_workflow(
                 elif mode == "values":
                     # 割り込みの検出
                     if "__interrupt__" in payload:
-                        interrupt = payload["__interrupt__"][
-                            0
-                        ]  # Interruptオブジェクトを取得
+                        interrupt = payload["__interrupt__"][0]
 
                         ocr_result = ReceiptOCRResult.model_validate(
                             interrupt.value.get("ocr_result")
