@@ -1,0 +1,7 @@
+tmp/
+.claude/
+.ruff_cache/
+.mypy_cache/
+
+CLAUDE.md
+test_*.py
