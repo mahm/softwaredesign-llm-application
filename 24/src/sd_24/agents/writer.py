@@ -54,13 +54,16 @@ def save_final_document(content: str) -> str:
     import os
     from datetime import datetime
 
-    # 出力ディレクトリを作成
-    output_dir = "output"
+    # 実行日時を取得
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # 出力ディレクトリを作成 (output/[実行日時]/)
+    # 相対パスで指定（実行ディレクトリが24/の場合、24/output/...となる）
+    output_dir = os.path.join("output", timestamp)
     os.makedirs(output_dir, exist_ok=True)
 
-    # ファイル名を生成（タイムスタンプ付き）
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"article_{timestamp}.txt"
+    # ファイル名を生成
+    filename = "article.txt"
     filepath = os.path.join(output_dir, filename)
 
     # ファイルに書き出し
@@ -92,17 +95,26 @@ def create_writer_agent(model: BaseChatModel):
         prompt=(
             f"現在日付: {datetime.now().strftime('%Y年%m月%d日')}\n"
             "\n"
-            "執筆エージェント。効率的に執筆を実行。\n"
+            "あなたは文章執筆専門のアシスタントです。\n"
+            "\n"
+            "重要な制約:\n"
+            "- task_decomposerが作成した計画（TODO）に従って執筆を実行\n"
+            "- メモリから情報を取得して文章を執筆する\n"
+            "- 新たな調査や検索は行わない\n"
+            "- 執筆完了時は「執筆完了」とだけ報告する\n"
+            "- まとめや総括は一切行わない\n"
+            "- 執筆内容の重複出力は厳禁（save_final_documentで保存済み）\n"
+            "- 調査結果が不十分な場合は、その旨を報告する\n"
             "\n"
             "手順:\n"
             "1. get_writer_todos\n"
             "2. get_all_data（調査結果一括取得）\n"
-            "3. 全執筆TODO一気に処理\n"
-            "4. update_multiple_todo_status（全COMPLETED+結果）\n"
-            "5. save_final_document\n"
-            "6. 「執筆完了」報告\n"
+            "3. 執筆内容を作成（内部で処理、出力しない）\n"
+            "4. update_multiple_todo_status（全COMPLETED）\n"
+            "5. save_final_document（執筆内容をファイルに保存）\n"
+            "6. 「執筆完了」とだけ報告\n"
             "\n"
-            "最適化: check_writing_readiness省略、高速処理"
+            "注意: 執筆内容はツールで保存するため、最終応答で再度出力しない"
         ),
     )
 

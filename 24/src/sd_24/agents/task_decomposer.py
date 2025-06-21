@@ -45,7 +45,13 @@ def create_task_decomposer(model: BaseChatModel):
         prompt=(
             f"現在日付: {datetime.now().strftime('%Y年%m月%d日')}\n"
             "\n"
-            "タスク分解エージェント。\n"
+            "あなたはタスク分解専門のアシスタントです。\n"
+            "\n"
+            "重要な制約:\n"
+            "- タスクの分解とTODO作成のみを行う\n"
+            "- まとめや総括は一切行わない\n"
+            "- 「以上です」「まとめると」などの結語は使わない\n"
+            "- TODOを作成したら「TODOを作成しました」とだけ報告する\n"
             "\n"
             "手順:\n"
             "1. batch_compressed_search（テーマ構成情報収集）\n"
@@ -53,7 +59,7 @@ def create_task_decomposer(model: BaseChatModel):
             "3. create_multiple_todos:\n"
             "   - 調査: 最新動向、具体例、課題\n"
             "   - 執筆: 序論、本論、結論\n"
-            "4. 「TODOを作成しました」報告\n"
+            "4. 「TODOを作成しました」とだけ報告\n"
             "\n"
             "最適化: get_research_feedback, get_todo_progress省略"
         ),

@@ -31,7 +31,7 @@ async def save_research(topic: str, findings: str, needs_revision: bool = False)
 
     if needs_revision:
         return f"{topic}の調査結果を保存しました。ただし、情報が不十分なため再調査を推奨します。"
-    return f"{topic}の調査結果を圧縮して保存しました"
+    return f"{topic}の調査結果を保存しました"
 
 
 @tool  # No return_direct - let agent report the result
@@ -62,6 +62,7 @@ def create_research_agent(model: BaseChatModel):
         tools=[
             batch_compressed_search,
             get_search_results,
+            save_research,
             get_research_todos,
             update_multiple_todo_status,
         ],
@@ -69,7 +70,15 @@ def create_research_agent(model: BaseChatModel):
         prompt=(
             f"現在日付: {datetime.now().strftime('%Y年%m月%d日')}\n"
             "\n"
-            "調査エージェント。効率的に調査を実行。\n"
+            "あなたは情報収集専門のアシスタントです。\n"
+            "\n"
+            "重要な制約:\n"
+            "- task_decomposerが作成した計画（TODO）に従って調査を実行\n"
+            "- 情報収集とメモリへの保存のみを行う\n"
+            "- レポート執筆や文章作成は絶対に行わない\n"
+            "- まとめや総括は一切行わない\n"
+            "- 検索結果を保存したら「調査完了」とだけ報告する\n"
+            "- 計画が不適切な場合は、その旨を報告する\n"
             "\n"
             "手順:\n"
             "1. get_research_todos\n"
@@ -78,6 +87,11 @@ def create_research_agent(model: BaseChatModel):
             "4. 判断結果:\n"
             "   - 十分: update_multiple_todo_status（全COMPLETED）→「調査完了」\n"
             "   - 不十分: batch_compressed_search（追加検索）→ステップ3に戻る\n"
+            "\n"
+            "禁止事項:\n"
+            "- 記事や文章の執筆（それはWriterの仕事）\n"
+            "- 調査結果のまとめや要約の出力\n"
+            "- 「調査完了」以外の長い応答\n"
             "\n"
             "重要: 情報が不足している場合は追加調査を実行"
         ),
