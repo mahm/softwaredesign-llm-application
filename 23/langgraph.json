@@ -1,0 +1,9 @@
+{
+  "python_version": "3.12",
+  "dependencies": ["."],
+  "graphs": {
+    "supervisor": "src.sd_23.supervisor_graph:graph",
+    "swarm": "src.sd_23.swarm_graph:graph"
+  },
+  "env": "./.env"
+}
