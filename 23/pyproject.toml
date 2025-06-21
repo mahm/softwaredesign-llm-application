@@ -1,25 +1,32 @@
 [project]
-name = "23"
+name = "sd-23"
 version = "0.1.0"
 description = "LangGraph Supervisor & Swarm patterns sample"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "langchain>=0.3.25",
-    "langchain-anthropic>=0.3.15",
-    "langchain-openai>=0.3.24",
-    "langgraph>=0.4.8",
-    "langgraph-checkpoint>=2.1.0",
-    "langgraph-supervisor>=0.0.27",
-    "langgraph-swarm>=0.0.11",
-    "python-dotenv>=1.1.0",
+    "langchain",
+    "langchain-anthropic",
+    "langchain-openai",
+    "langgraph",
+    "langgraph-checkpoint",
+    "langgraph-supervisor",
+    "langgraph-swarm",
+    "python-dotenv",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sd_23"]
 
 [dependency-groups]
 dev = [
-    "langgraph-cli[inmem]>=0.3.3",
-    "mypy>=1.16.1",
-    "ruff>=0.12.0",
+    "langgraph-cli[inmem]",
+    "mypy",
+    "ruff",
 ]
 
 [tool.mypy]

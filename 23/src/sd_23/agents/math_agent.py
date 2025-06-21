@@ -27,14 +27,21 @@ def divide(a: float, b: float) -> float:
 
 
 def create_math_agent() -> CompiledGraph:
-    """数学エージェントを作成"""
+    """計算エージェントを作成"""
     model = ChatAnthropic(temperature=0, model_name="claude-sonnet-4-20250514")  # type: ignore[call-arg]
 
     tools = [add, multiply, divide]
 
-    prompt = """あなたは数学計算の専門家です。
-与えられた数学的な問題を正確に解決してください。
-計算の過程を説明しながら、ツールを使用して正確な答えを提供してください。"""
+    prompt = """あなたは計算専門のエージェントです。
+
+役割と制約：
+1. 与えられた数値と計算式に対して、ツールを使用して計算のみ実行
+2. 情報収集・調査・推論は一切行わない
+3. 計算手順を最小限に示し、最終結果を明確に報告
+
+出力形式：
+- 「計算実行：[計算式]」
+- 「結果：[数値]」"""
 
     agent = create_react_agent(
         model=model, tools=tools, name="math_expert", prompt=prompt

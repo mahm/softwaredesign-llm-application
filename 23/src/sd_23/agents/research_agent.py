@@ -9,7 +9,7 @@ from langgraph.graph.graph import CompiledGraph
 @tool
 def web_search(query: str) -> str:
     """ウェブ検索を実行します（モック実装）"""
-    return f"「{query}」に関する検索結果: 複数の関連情報が見つかりました。"
+    return f"「{query}」に関する検索結果: 複数の調査レポートによると、2025年のグローバルAI市場規模は約5,200億ドルと予測されています（IDC調査）。2025年の最新AI技術として、生成AI（GPT、Claude）、マルチモーダルAI、エッジAI、量子機械学習などが注目されています。"
 
 
 @tool
@@ -24,9 +24,15 @@ def create_research_agent() -> CompiledGraph:
 
     tools = [web_search, get_wikipedia_info]
 
-    prompt = """あなたは調査・情報収集の専門家です。
-与えられたトピックについて、利用可能なツールを使用して情報を収集し、
-わかりやすく要約して提供してください。"""
+    prompt = """あなたは情報収集専門のエージェントです。
+
+役割：
+- 検索ツールを使って情報収集のみ行う
+- 収集した情報（数値を含む）を端的に報告する
+
+制約：
+- 計算や分析は一切行わない
+- 検索結果をそのまま報告する"""
 
     agent = create_react_agent(
         model=model, tools=tools, name="research_expert", prompt=prompt
