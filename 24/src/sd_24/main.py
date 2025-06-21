@@ -7,11 +7,12 @@ from .agents.research import create_research_agent
 from .agents.writer import create_writer_agent
 
 
-def create_writing_assistant():
+def create_writing_assistant_workflow():
     """文章執筆支援システムのグラフを構築"""
 
     # モデル設定
-    model = ChatAnthropic(model_name="claude-sonnet-4-20250514", temperature=0.7)
+    model = ChatAnthropic(
+        model_name="claude-sonnet-4-20250514", temperature=0.7)
 
     # エージェントの作成（シングルトンメモリを内部で使用）
     task_decomposer = create_task_decomposer(model)
@@ -42,13 +43,8 @@ def create_writing_assistant():
         prompt=supervisor_prompt,
     )
 
-    # インメモリチェックポインター
-    checkpointer = MemorySaver()
-
-    return workflow.compile(
-        checkpointer=checkpointer
-    )
+    return workflow
 
 
 # グラフのエクスポート（LangGraph Studio用）
-graph = create_writing_assistant()
+graph = create_writing_assistant_workflow().compile()

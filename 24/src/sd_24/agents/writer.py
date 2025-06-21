@@ -53,24 +53,24 @@ def save_final_document(content: str) -> str:
     """最終文書をファイルに保存し、ファイルパスを返す"""
     import os
     from datetime import datetime
-    
+
     # 出力ディレクトリを作成
     output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # ファイル名を生成（タイムスタンプ付き）
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"article_{timestamp}.txt"
     filepath = os.path.join(output_dir, filename)
-    
+
     # ファイルに書き出し
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
-    
+
     # メモリにも保存（既存機能維持）
     memory.set("final_document", content)
     memory.set("final_document_path", filepath)
-    
+
     return f"最終文書を保存しました: {filepath}"
 
 
