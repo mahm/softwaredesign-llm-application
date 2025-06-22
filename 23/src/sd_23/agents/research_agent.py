@@ -19,7 +19,7 @@ def get_wikipedia_info(topic: str) -> str:
 
 
 def create_research_agent() -> CompiledGraph:
-    """調査エージェントを作成"""
+    """検索エージェントを作成"""
     model = ChatAnthropic(temperature=0, model_name="claude-sonnet-4-20250514")  # type: ignore[call-arg]
 
     tools = [web_search, get_wikipedia_info]

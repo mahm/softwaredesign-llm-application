@@ -83,7 +83,11 @@ def _print_node(
     parent_name: Optional[str] = None,
 ) -> None:
     """ノード出力を表示"""
-    label = f"[{parent_name}:{node_name}]" if parent_name else f"[{node_name}]"
+    # Swarmパターンで親グラフからの出力の場合、ノード名を "swarm" として表示
+    if is_swarm and not parent_name and node_name in ["faq_support", "tech_support"]:
+        label = "[swarm]"
+    else:
+        label = f"[{parent_name}:{node_name}]" if parent_name else f"[{node_name}]"
     print(label)
 
     if "messages" in output:
@@ -108,8 +112,7 @@ async def run_pattern_test(
     is_swarm: bool = False,
 ) -> None:
     """パターンのテストを実行"""
-    print(f"=== {pattern_name} Pattern Test ===\n")
-    print(f"--- {test_description} ---")
+    print(f"=== {test_description} ===")
     print(f"入力: {test_input}\n")
 
     workflow = create_workflow_fn()

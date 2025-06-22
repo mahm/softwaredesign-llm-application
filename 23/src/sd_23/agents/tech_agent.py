@@ -38,18 +38,17 @@ def read_manual(error_code: str) -> str:
     return f"エラーコード{error_code}のマニュアル情報は見つかりませんでした。"
 
 
-@tool
-def create_support_ticket(issue_description: str) -> str:
-    """サポートチケットを作成します（モック実装）"""
-    ticket_id = f"TICKET-{random.randint(1000, 9999)}"
-    return f"サポートチケット {ticket_id} を作成しました。技術チームが確認後、ご連絡いたします。"
-
-
 def create_tech_agent() -> CompiledGraph:
     """技術サポートエージェントを作成"""
-    model = ChatAnthropic(temperature=0, model_name="claude-sonnet-4-20250514")  # type: ignore[call-arg]
+    model = ChatAnthropic(temperature=0, model_name="claude-sonnet-4-20250514")
 
-    tools = [check_system_status, read_manual, create_support_ticket]
+    # FAQサポートへのハンドオフツール
+    faq_handoff = create_handoff_tool(
+        agent_name="faq_support",
+        description="一般的なFAQサポートが必要な場合はFAQサポートに転送",
+    )
+
+    tools = [check_system_status, read_manual, faq_handoff]
 
     prompt = """あなたの名前は「tech_support」です。技術サポートエージェントとして動作しています。
 
@@ -66,7 +65,8 @@ def create_tech_agent() -> CompiledGraph:
 重要：
 - あなたは「tech_support」という名前のエージェントです
 - FAQエージェントから転送された技術的な問題に対応します
-- 必ずツールを使用して具体的な診断を行ってください"""
+- 必ずツールを使用して具体的な診断を行ってください
+- プロダクトに関する一般的なFAQは、faq_supportへ転送してください"""
 
     agent = create_react_agent(
         model=model, tools=tools, name="tech_support", prompt=prompt
