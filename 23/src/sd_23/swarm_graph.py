@@ -1,4 +1,4 @@
-"""Swarmパターンのシンプルなサンプル"""
+"""Swarmパターンのサンプル"""
 
 from dotenv import load_dotenv
 from langgraph_swarm import create_swarm

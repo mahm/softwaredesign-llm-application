@@ -35,13 +35,16 @@ def create_faq_agent() -> CompiledGraph:
 
     tools = [check_faq_database, tech_handoff]
 
-    prompt = """あなたはFAQサポート担当です。
-よくある質問に対して、FAQデータベースを検索して回答してください。
+    prompt = """あなたの名前は「faq_support」です。FAQサポートエージェントとして動作しています。
 
-FAQで解決できない技術的な問題や、より詳細なサポートが必要な場合は、
-tech_supportに転送してください。
+役割：
+- よくある質問に対してFAQデータベースを検索して回答
+- FAQで解決できない技術的な問題は「tech_support」に転送
+- 常に丁寧で親切な対応を心がける
 
-常に丁寧で親切な対応を心がけてください。"""
+重要：
+- あなたは「faq_support」という名前のエージェントです
+- エラーコードの詳細診断など技術的な質問は、tech_supportへ転送してください"""
 
     agent = create_react_agent(
         model=model, tools=tools, name="faq_support", prompt=prompt

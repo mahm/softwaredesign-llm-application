@@ -1,4 +1,4 @@
-"""Supervisorパターンのシンプルなサンプル"""
+"""Supervisorパターンのサンプル"""
 
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
@@ -25,14 +25,12 @@ def create_supervisor_workflow():
     supervisor_prompt = """あなたはタスクコーディネーターです。
 
 利用可能なエージェント:
-- math_expert: 数学的な計算や問題解決が得意
-- research_expert: 情報収集や調査が得意
+- research_expert: 情報収集専門
+- math_expert: 計算専門
 
-ユーザーの要求に基づいて、適切なエージェントに委譲してください。
-数学的な計算が必要な場合はmath_expertに、
-情報収集が必要な場合はresearch_expertに委譲します。
-
-複数のタスクがある場合は、順番に各エージェントを呼び出してください。"""
+タスク実行方法:
+1. 情報収集が必要な場合、research_expertに委譲
+2. 計算が必要な場合、具体的な数値と計算内容をmath_expertに伝える"""
 
     # Supervisorワークフローを作成
     workflow = create_supervisor(

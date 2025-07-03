@@ -43,10 +43,17 @@ LangGraph Studioでの実行:
 uv run langgraph dev
 ```
 
-動作確認用スクリプトの実行:
+コマンドラインでの実行:
 
 ```bash
-uv run python test_graphs.py
+# 両方のパターンを実行
+uv run python main.py
+
+# Supervisorパターンのみ実行
+uv run python main.py supervisor
+
+# Swarmパターンのみ実行
+uv run python main.py swarm
 ```
 
 ## グラフの説明
@@ -87,3 +94,17 @@ src/sd_23/
 ## 使用モデル
 
 すべてのエージェントとSupervisorはAnthropic Claude 4 Sonnetを使用しています。
+
+## main.pyの詳細
+
+`main.py`は、両方のパターンの動作確認用スクリプトです。
+
+- **Supervisorパターンのテストケース**: AI技術の市場調査と成長率計算
+  - research_expertが最新のAI技術と市場規模を調査
+  - math_expertが5年後の市場規模を計算
+  
+- **Swarmパターンのテストケース**: エラーコード500の診断
+  - faq_supportが初期対応
+  - tech_supportが詳細な診断と解決策を提供
+
+各エージェントの動作やツール呼び出しがリアルタイムで表示され、マルチエージェントシステムの協調動作を確認できます。
