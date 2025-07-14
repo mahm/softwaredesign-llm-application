@@ -13,8 +13,8 @@ from ..utils.todo_tools import (
 )
 
 
-@tool(return_direct=True)
-async def check_research_data_sufficiency() -> dict:
+@tool
+async def check_research_data_sufficiency() -> str:
     """研究データが執筆に十分かどうかを簡易チェック"""
     research_data = memory.get("research", {})
     
@@ -22,14 +22,13 @@ async def check_research_data_sufficiency() -> dict:
     topics = list(research_data.keys())
     sufficient = len(topics) > 0 and any(research_data.values())
     
-    return {
-        "sufficient": sufficient,
-        "topic_count": len(topics),
-        "recommendation": "執筆可能" if sufficient else "追加調査が必要"
-    }
+    if sufficient:
+        return f"執筆可能です。{len(topics)}個のトピックについて調査データがあります。"
+    else:
+        return "追加調査が必要です。調査データが不足しています。"
 
 
-@tool(return_direct=True)
+@tool
 async def write_and_save_content(
     task_id: Annotated[str, "タスクID"],
     task_description: Annotated[str, "執筆するタスクの説明"]
@@ -52,16 +51,7 @@ async def write_and_save_content(
             - success: 実行成功フラグ
     """
     # 研究データを取得
-    raw_research_data = memory.get("research", {})
-    research_data = {}
-
-    for topic, data in raw_research_data.items():
-        if isinstance(data, dict) and "findings" in data:
-            research_data[topic] = data["findings"]
-        elif isinstance(data, str):
-            research_data[topic] = data
-        else:
-            research_data[topic] = str(data)
+    research_data = memory.get("research", {})
 
     # プロンプト構築
     research_sections = "\n".join(
@@ -120,7 +110,7 @@ async def write_and_save_content(
     }
 
 
-@tool(return_direct=True)
+@tool
 async def complete_writing_task(task_id: Annotated[str, "タスクID"]) -> str:
     """執筆タスクを完了状態に更新"""
     await update_multiple_todo_status.ainvoke({
@@ -129,7 +119,7 @@ async def complete_writing_task(task_id: Annotated[str, "タスクID"]) -> str:
     return f"タスク {task_id} を完了しました"
 
 
-@tool(return_direct=True)
+@tool
 async def check_all_tasks_completed() -> str:
     """すべてのライティングタスクが完了したかを確認"""
     get_writer_todos = create_get_my_todos_for_agent("writer")
@@ -163,13 +153,16 @@ def create_writer_agent():
     # システムプロンプトの定義
     system_prompt = f"""現在日付: {datetime.now().strftime('%Y年%m月%d日')}
 
-あなたは執筆エージェントです。研究データを使って記事を作成し、ファイルに保存します。
+あなたは執筆エージェントです。調査データを使って記事を作成し、ファイルに保存します。
 
 作業手順:
-1. 研究データの確認
-2. タスクを取得して執筆
-3. タスクを完了に更新
-4. 全タスク完了を確認"""
+1. 調査データの確認
+2. 調査データが不十分な場合はsupervisorに追加調査を依頼
+3. タスクに基づいて記事を執筆
+4. 執筆した記事をファイルに保存
+5. タスクを完了状態に更新
+
+全タスクが完了状態になるまで、執筆を進めてください。"""
 
     agent = create_react_agent(
         name="writer",

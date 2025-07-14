@@ -1,8 +1,6 @@
 from langgraph.prebuilt import create_react_agent
-from langchain_core.tools import tool
 from langchain_anthropic import ChatAnthropic
 from datetime import datetime
-from ..utils.memory import memory
 from ..utils.todo_tools import (
     create_todo_task,
     create_multiple_todos,
@@ -11,27 +9,6 @@ from ..utils.search_tools import (
     search_and_save,
     get_search_results,
 )
-
-
-@tool(return_direct=True)
-async def get_research_feedback() -> dict:
-    """調査結果のフィードバックを取得して計画修正の必要性を判断"""
-    research_data = memory.get("research", {})
-    topics_with_issues: list[str] = []
-    suggestions: list[str] = []
-
-    for topic, data in research_data.items():
-        if isinstance(data, dict) and data.get("needs_revision"):
-            topics_with_issues.append(topic)
-            suggestions.append(f"{topic}についてより具体的な調査項目を追加")
-
-    feedback = {
-        "has_feedback": bool(research_data),
-        "topics_with_issues": topics_with_issues,
-        "suggestions": suggestions,
-    }
-
-    return feedback
 
 
 def create_task_decomposer():

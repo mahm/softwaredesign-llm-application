@@ -44,7 +44,7 @@ def create_get_my_todos_for_agent(agent_name: str) -> Runnable:
 
 
 
-@tool  # No return_direct - part of sequential flow
+@tool
 def update_todo_status(update: TodoStatusUpdate) -> str:
     """TODOタスクのステータスを更新"""
     status = TaskStatus.COMPLETED if update.completed else TaskStatus.IN_PROGRESS
@@ -54,7 +54,7 @@ def update_todo_status(update: TodoStatusUpdate) -> str:
 
 
 
-@tool  # No return_direct - part of sequential flow
+@tool
 def create_todo_task(task: TodoTaskInput) -> str:
     """TODOタスクを作成"""
     task_id = todo_manager.add_task(

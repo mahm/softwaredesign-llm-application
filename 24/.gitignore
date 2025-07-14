@@ -8,3 +8,5 @@ tmp/
 
 CLAUDE.md
 test_*.py
+repomix.config.json
+.repomixignore

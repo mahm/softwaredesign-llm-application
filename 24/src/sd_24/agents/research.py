@@ -1,8 +1,6 @@
 from langgraph.prebuilt import create_react_agent
-from langchain_core.tools import tool
 from langchain_anthropic import ChatAnthropic
 from datetime import datetime
-from ..utils.memory import memory
 from ..utils.todo_tools import (
     create_get_my_todos_for_agent,
     update_multiple_todo_status,
@@ -11,44 +9,6 @@ from ..utils.search_tools import (
     search_and_save,
     get_search_results,
 )
-
-
-@tool(return_direct=True)
-async def save_research(topic: str, findings: str, needs_revision: bool = False) -> str:
-    """調査結果を圧縮して保存し、必要に応じて再調査を提案"""
-    # Web検索結果を圧縮
-    compressed = await memory.compress_research(topic, findings)
-    # 既存の調査結果に追加
-    research_data = memory.get("research", {})
-    research_data[topic] = {
-        "findings": compressed,
-        "needs_revision": needs_revision,
-        "timestamp": str(datetime.now()),
-    }
-    memory.set("research", research_data)
-
-    if needs_revision:
-        return f"{topic}の調査結果を保存しました。ただし、情報が不十分なため再調査を推奨します。"
-    return f"{topic}の調査結果を保存しました"
-
-
-@tool(return_direct=True)
-async def check_research_sufficiency() -> dict:
-    """調査結果の充足度をチェックし、追加調査の必要性を判断"""
-    research_data = memory.get("research", {})
-
-    insufficient_topics = []
-    for topic, data in research_data.items():
-        if isinstance(data, dict) and data.get("needs_revision"):
-            insufficient_topics.append(topic)
-
-    return {
-        "sufficient": len(insufficient_topics) == 0,
-        "insufficient_topics": insufficient_topics,
-        "recommendation": "すべての調査が完了しています"
-        if not insufficient_topics
-        else f"以下のトピックについて追加調査が必要です: {', '.join(insufficient_topics)}",
-    }
 
 
 def create_research_agent():
@@ -63,7 +23,6 @@ def create_research_agent():
         create_get_my_todos_for_agent("research"),
         search_and_save,
         get_search_results,
-        save_research,
         update_multiple_todo_status,
     ]
 

@@ -19,11 +19,11 @@ async def search_and_save(query: str, topic: str) -> str:
                 content += f"{i}. {result.get('title', '')}\n"
                 content += f"{result.get('content', '')}\n\n"
     
-    # 結果を圧縮して保存
+    # 結果を圧縮してresearchキーに直接保存
     compressed = await memory.compress_research(topic, content)
-    search_results = memory.get("search_results", {})
-    search_results[topic] = compressed
-    memory.set("search_results", search_results)
+    research_data = memory.get("research", {})
+    research_data[topic] = compressed
+    memory.set("research", research_data)
     
     return f"「{topic}」の検索完了"
 
@@ -31,14 +31,14 @@ async def search_and_save(query: str, topic: str) -> str:
 @tool
 def get_search_results(topic: str | None = None) -> str:
     """保存された検索結果を取得"""
-    search_results = memory.get("search_results", {})
+    research_data = memory.get("research", {})
     
-    if not search_results:
+    if not research_data:
         return "検索結果がありません"
         
     if topic:
-        result = search_results.get(topic)
+        result = research_data.get(topic)
         return result if result else f"「{topic}」の結果がありません"
     else:
-        topics = list(search_results.keys())
+        topics = list(research_data.keys())
         return f"保存されているトピック: {', '.join(topics)}"
