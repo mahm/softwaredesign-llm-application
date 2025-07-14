@@ -58,7 +58,7 @@ class TodoManager:
         self.task_counter += 1
         task_id = f"TASK-{self.task_counter:04d}"
         todo = TodoItem(
-            id=task_id, description=description, agent=agent, parent_id=parent_id
+            id=task_id, description=description, agent=agent, parent_id=parent_id, result=None
         )
         self.todos[task_id] = todo
         return task_id

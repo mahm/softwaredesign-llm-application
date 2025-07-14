@@ -1,8 +1,7 @@
-"""TODO管理用の共通ツール集"""
-
 from langchain_core.tools import tool
+from langchain_core.runnables import Runnable
 from .todo_manager import todo_manager, TaskStatus
-from typing import Callable, Optional
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -24,7 +23,7 @@ class TodoStatusUpdate(BaseModel):
     result: Optional[str] = Field(default="", description="実行結果（オプション）")
 
 
-def create_get_my_todos_for_agent(agent_name: str) -> Callable:
+def create_get_my_todos_for_agent(agent_name: str) -> Runnable:
     """特定のエージェント用のget_my_todos関数を作成"""
 
     @tool  # No return_direct - part of sequential flow
@@ -38,8 +37,28 @@ def create_get_my_todos_for_agent(agent_name: str) -> Callable:
 
     # 関数名とドキュメントを動的に設定
     get_agent_todos.name = f"get_{agent_name}_todos"  # type: ignore
-    get_agent_todos.description = f"{agent_name}エージェントの未完了TODOを取得"  # type: ignore
+    # type: ignore
+    get_agent_todos.description = f"{agent_name}エージェントの未完了TODOを取得"
     return get_agent_todos
+
+
+def create_has_pending_tasks_for_agent(agent_name: str) -> Runnable:
+    """特定のエージェント用のhas_pending_tasks関数を作成（軽量版）"""
+
+    @tool
+    def has_pending_tasks() -> dict:
+        """このエージェントに未完了TODOがあるかチェック（軽量版）"""
+        pending_tasks = todo_manager.get_pending_tasks(agent_name)
+        return {
+            "has_tasks": len(pending_tasks) > 0,
+            "count": len(pending_tasks)
+        }
+
+    # 関数名とドキュメントを動的に設定
+    has_pending_tasks.name = f"has_{agent_name}_pending_tasks"  # type: ignore
+    # type: ignore
+    has_pending_tasks.description = f"{agent_name}エージェントに未完了TODOがあるかチェック"
+    return has_pending_tasks
 
 
 @tool  # No return_direct - part of sequential flow
@@ -68,12 +87,17 @@ def create_todo_task(task: TodoTaskInput) -> str:
     return f"TODOタスク作成: {task_id} - {task.description}"
 
 
-@tool  # No return_direct - part of sequential flow
+class CreateMultipleTodosInput(BaseModel):
+    """複数TODO作成用の入力モデル"""
+    tasks: list[TodoTaskInput] = Field(..., description="作成するTODOタスクのリスト")
+
+
+@tool("create_multiple_todos", args_schema=CreateMultipleTodosInput)
 async def create_multiple_todos(tasks: list[TodoTaskInput]) -> str:
     """複数のTODOタスクを一度に作成
 
     Args:
-        tasks: TODOタスクのリスト
+        tasks: 作成するTODOタスクのリスト
 
     Returns:
         作成されたタスクのサマリー
@@ -92,12 +116,18 @@ async def create_multiple_todos(tasks: list[TodoTaskInput]) -> str:
     )
 
 
-@tool  # No return_direct - part of sequential flow
+class UpdateMultipleTodoStatusInput(BaseModel):
+    """複数TODOステータス更新用の入力モデル"""
+    updates: list[TodoStatusUpdate] = Field(...,
+                                            description="更新するTODOステータスのリスト")
+
+
+@tool("update_multiple_todo_status", args_schema=UpdateMultipleTodoStatusInput)
 async def update_multiple_todo_status(updates: list[TodoStatusUpdate]) -> str:
     """複数のTODOタスクのステータスを一度に更新
 
     Args:
-        updates: TodoStatusUpdateのリスト
+        updates: 更新するTODOステータスのリスト
 
     Returns:
         更新結果のサマリー
