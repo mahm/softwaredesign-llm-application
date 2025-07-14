@@ -17,9 +17,10 @@ class TerminalUI:
         self.task_monitor = TaskMonitor(self.task_display)
         self.seen_messages: Set = set()
         self.is_debug_mode = False
+        self.last_supervisor_message = None  # Supervisorの最終メッセージを保存
 
         # 表示設定
-        self.show_task_progress = False  # 一時的に無効化
+        self.show_task_progress = True  # タスク進捗表示を有効化
         self.show_subgraph_details = True
         self.auto_clear_screen = False
 
@@ -32,8 +33,6 @@ class TerminalUI:
         """起動時のバナー表示"""
         self.is_debug_mode = debug_mode
 
-        print(self.formatter.format_section_header("文章執筆支援システム 動作確認"))
-
         if debug_mode:
             print(self.formatter.format_info_message("\n🐛 デバッグモードで実行中..."))
             print(self.formatter.format_info_message(
@@ -45,12 +44,9 @@ class TerminalUI:
             print(self.formatter.format_info_message(
                 "例: uv run python main.py --debug"))
 
-        print(self.formatter.format_info_message(
-            "\n✍️ Writer実装: create_react_agent版（小さなツールの組み合わせ）"))
-
     def print_test_header(self, test_name: str, input_text: str):
-        """テストヘッダー表示"""
-        print(self.formatter.format_section_header(f"テスト: {test_name}"))
+        """ヘッダー表示"""
+        print(self.formatter.format_section_header(f"{test_name}"))
         print(f"入力: {input_text}\n")
 
     def print_node_output(self, node_name: str, node_output: Dict[str, Any], namespace: str = ""):
@@ -66,6 +62,11 @@ class TerminalUI:
                     hash(str(msg.content)))
                 if msg_id not in self.seen_messages:
                     self.seen_messages.add(msg_id)
+                    
+                    # Supervisorのメッセージを保存
+                    if node_name == "supervisor":
+                        self.last_supervisor_message = msg.content
+                    
                     formatted_message = self.formatter.format_message(msg)
                     if formatted_message:  # 空文字列でない場合のみ表示
                         print(formatted_message)
@@ -115,7 +116,8 @@ class TerminalUI:
             final_status = self.task_display.render_current_status()
             print(final_status)
 
-        print(self.formatter.format_completion_message("テスト完了"))
+        # 作成されたファイルパスのリストを最終結果として表示
+        self._display_final_supervisor_response()
 
     async def _run_main_execution(self, app: Any, input_data: Dict[str, Any], config: Optional[Dict]):
         """メイン実行処理"""
@@ -150,7 +152,9 @@ class TerminalUI:
         """タスク更新時のコールバック"""
         # 現在の表示領域を一時的にクリアして、タスク状況を上部に表示
         # この実装では、タスク状況が更新された時にのみ表示
-        pass  # 現在は何もしない（将来的にリアルタイム更新を実装）
+        print(f"\r{' ' * 100}\r", end="")  # 行クリア
+        print(status_display, end="")
+        print("\n" + "="*60)
 
     async def run_debug_mode(
         self,
@@ -217,7 +221,7 @@ class TerminalUI:
 
     def print_completion_summary(self):
         """完了時のサマリー表示"""
-        print(self.formatter.format_section_header("🎉 すべてのテストが完了しました！"))
+        print(self.formatter.format_section_header("🎉 すべてのタスクが完了しました！"))
 
     def print_error_summary(self, error: Exception):
         """エラー時のサマリー表示"""
@@ -237,3 +241,21 @@ class TerminalUI:
         self.show_task_progress = show_task_progress
         self.show_subgraph_details = show_subgraph_details
         self.auto_clear_screen = auto_clear_screen
+
+    def _display_final_supervisor_response(self):
+        """作成されたファイルパスのリストを最終結果として表示"""
+        from ..utils.memory import memory
+        
+        created_files = memory.get("created_files", [])
+        
+        if created_files:
+            print("\n" + "="*60)
+            print(self.formatter.format_section_header("🎯 最終結果"))
+            for filepath in created_files:
+                print(f"📄 {filepath}")
+            print("="*60)
+        else:
+            print("\n" + "="*60)
+            print(self.formatter.format_section_header("🎯 最終結果"))
+            print("📄 ファイルが作成されませんでした")
+            print("="*60)

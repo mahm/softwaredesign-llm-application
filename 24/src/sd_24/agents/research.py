@@ -8,12 +8,12 @@ from ..utils.todo_tools import (
     update_multiple_todo_status,
 )
 from ..utils.search_tools import (
-    batch_compressed_search,
+    search_and_save,
     get_search_results,
 )
 
 
-@tool  # No return_direct - part of sequential flow
+@tool(return_direct=True)
 async def save_research(topic: str, findings: str, needs_revision: bool = False) -> str:
     """調査結果を圧縮して保存し、必要に応じて再調査を提案"""
     # Web検索結果を圧縮
@@ -32,8 +32,8 @@ async def save_research(topic: str, findings: str, needs_revision: bool = False)
     return f"{topic}の調査結果を保存しました"
 
 
-@tool  # No return_direct - let agent report the result
-def check_research_sufficiency() -> dict:
+@tool(return_direct=True)
+async def check_research_sufficiency() -> dict:
     """調査結果の充足度をチェックし、追加調査の必要性を判断"""
     research_data = memory.get("research", {})
 
@@ -61,7 +61,7 @@ def create_research_agent():
     # ツールの定義
     tools = [
         create_get_my_todos_for_agent("research"),
-        batch_compressed_search,
+        search_and_save,
         get_search_results,
         save_research,
         update_multiple_todo_status,

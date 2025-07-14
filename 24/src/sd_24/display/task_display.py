@@ -3,7 +3,6 @@
 import asyncio
 from datetime import datetime
 from typing import Dict, Any
-from ..utils.memory import memory
 from ..utils.todo_manager import TaskStatus
 
 
@@ -135,9 +134,9 @@ class TaskDisplayEngine:
     def get_current_todos(self) -> Dict[str, Any]:
         """現在のTODOリストを取得"""
         try:
-            todo_manager = memory.get("todo_manager")
-            if todo_manager and hasattr(todo_manager, "todos"):
-                return {task_id: task.to_dict() for task_id, task in todo_manager.todos.items()}
+            # 直接todo_managerを参照
+            from ..utils.todo_manager import todo_manager
+            return {task_id: task.to_dict() for task_id, task in todo_manager.todos.items()}
         except Exception:
             pass
         return {}

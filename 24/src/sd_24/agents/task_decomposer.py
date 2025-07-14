@@ -8,13 +8,13 @@ from ..utils.todo_tools import (
     create_multiple_todos,
 )
 from ..utils.search_tools import (
-    batch_compressed_search,
+    search_and_save,
     get_search_results,
 )
 
 
-@tool  # No return_direct - agent needs to evaluate feedback
-def get_research_feedback() -> dict:
+@tool(return_direct=True)
+async def get_research_feedback() -> dict:
     """調査結果のフィードバックを取得して計画修正の必要性を判断"""
     research_data = memory.get("research", {})
     topics_with_issues: list[str] = []
@@ -43,7 +43,7 @@ def create_task_decomposer():
 
     # ツールの定義
     tools = [
-        batch_compressed_search,
+        search_and_save,
         get_search_results,
         create_todo_task,
         create_multiple_todos,

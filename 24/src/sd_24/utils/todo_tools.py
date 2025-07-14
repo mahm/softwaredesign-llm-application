@@ -42,23 +42,6 @@ def create_get_my_todos_for_agent(agent_name: str) -> Runnable:
     return get_agent_todos
 
 
-def create_has_pending_tasks_for_agent(agent_name: str) -> Runnable:
-    """特定のエージェント用のhas_pending_tasks関数を作成（軽量版）"""
-
-    @tool
-    def has_pending_tasks() -> dict:
-        """このエージェントに未完了TODOがあるかチェック（軽量版）"""
-        pending_tasks = todo_manager.get_pending_tasks(agent_name)
-        return {
-            "has_tasks": len(pending_tasks) > 0,
-            "count": len(pending_tasks)
-        }
-
-    # 関数名とドキュメントを動的に設定
-    has_pending_tasks.name = f"has_{agent_name}_pending_tasks"  # type: ignore
-    # type: ignore
-    has_pending_tasks.description = f"{agent_name}エージェントに未完了TODOがあるかチェック"
-    return has_pending_tasks
 
 
 @tool  # No return_direct - part of sequential flow
@@ -69,13 +52,6 @@ def update_todo_status(update: TodoStatusUpdate) -> str:
     return f"TODO {update.task_id} を{status.value}に更新しました"
 
 
-@tool  # No return_direct - let agent report the result
-def get_todo_progress() -> dict:
-    """現在のTODO進捗状況を取得"""
-    return {
-        "tree": todo_manager.get_task_tree(),
-        "progress": todo_manager.get_progress_report(),
-    }
 
 
 @tool  # No return_direct - part of sequential flow
@@ -87,21 +63,9 @@ def create_todo_task(task: TodoTaskInput) -> str:
     return f"TODOタスク作成: {task_id} - {task.description}"
 
 
-class CreateMultipleTodosInput(BaseModel):
-    """複数TODO作成用の入力モデル"""
-    tasks: list[TodoTaskInput] = Field(..., description="作成するTODOタスクのリスト")
-
-
-@tool("create_multiple_todos", args_schema=CreateMultipleTodosInput)
+@tool
 async def create_multiple_todos(tasks: list[TodoTaskInput]) -> str:
-    """複数のTODOタスクを一度に作成
-
-    Args:
-        tasks: 作成するTODOタスクのリスト
-
-    Returns:
-        作成されたタスクのサマリー
-    """
+    """複数のTODOタスクを一度に作成"""
     created_tasks = []
     for task in tasks:
         task_id = todo_manager.add_task(
@@ -110,36 +74,14 @@ async def create_multiple_todos(tasks: list[TodoTaskInput]) -> str:
             parent_id=task.parent_task_id,
         )
         created_tasks.append(f"{task_id}: {task.description} ({task.agent})")
-
-    return f"{len(created_tasks)}件のTODOタスクを作成しました:\n" + "\n".join(
-        created_tasks
-    )
+    
+    return f"{len(created_tasks)}件のTODOタスクを作成しました:\n" + "\n".join(created_tasks)
 
 
-class UpdateMultipleTodoStatusInput(BaseModel):
-    """複数TODOステータス更新用の入力モデル"""
-    updates: list[TodoStatusUpdate] = Field(...,
-                                            description="更新するTODOステータスのリスト")
-
-
-@tool("update_multiple_todo_status", args_schema=UpdateMultipleTodoStatusInput)
+@tool
 async def update_multiple_todo_status(updates: list[TodoStatusUpdate]) -> str:
-    """複数のTODOタスクのステータスを一度に更新
-
-    Args:
-        updates: 更新するTODOステータスのリスト
-
-    Returns:
-        更新結果のサマリー
-    """
-    updated_tasks = []
+    """複数のTODOタスクのステータスを一度に更新"""
     for update in updates:
         status = TaskStatus.COMPLETED if update.completed else TaskStatus.IN_PROGRESS
         todo_manager.update_status(update.task_id, status, update.result)
-
-        status_text = "完了" if update.completed else "進行中"
-        updated_tasks.append(f"{update.task_id}: {status_text}")
-
-    return f"{len(updated_tasks)}件のTODOステータスを更新しました:\n" + "\n".join(
-        updated_tasks
-    )
+    return f"{len(updates)}件のタスクを更新しました"

@@ -4,6 +4,10 @@ import asyncio
 import sys
 from dotenv import load_dotenv
 from src.sd_24.runner import AgentRunner
+import warnings
+
+# PythonのSyntaxWarningを無視
+warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 # 環境変数を読み込み
 load_dotenv()

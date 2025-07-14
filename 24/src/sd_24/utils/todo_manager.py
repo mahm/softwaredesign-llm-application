@@ -1,6 +1,6 @@
 """TODOタスク管理モジュール"""
 
-from typing import List, Dict, Any, Optional
+from typing import Any, Optional
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -33,7 +33,7 @@ class TodoItem(BaseModel):
         use_enum_values = False
         json_encoders = {datetime: lambda v: v.isoformat()}
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Pydanticモデルを辞書に変換"""
         data = self.model_dump()
         # statusを文字列に変換
@@ -48,7 +48,7 @@ class TodoManager:
     """TODO管理クラス"""
 
     def __init__(self):
-        self.todos: Dict[str, TodoItem] = {}
+        self.todos: dict[str, TodoItem] = {}
         self.task_counter = 0
 
     def add_task(
@@ -71,7 +71,7 @@ class TodoManager:
             if result:
                 self.todos[task_id].result = result
 
-    def get_pending_tasks(self, agent: Optional[str] = None) -> List[TodoItem]:
+    def get_pending_tasks(self, agent: Optional[str] = None) -> list[TodoItem]:
         """未完了タスクを取得"""
         tasks = []
         for todo in self.todos.values():
@@ -80,52 +80,6 @@ class TodoManager:
                     tasks.append(todo)
         return tasks
 
-    def get_task_tree(self) -> str:
-        """タスクツリーを文字列で返す"""
-
-        def build_tree(parent_id: Optional[str], indent: int = 0) -> List[str]:
-            lines = []
-            for todo in self.todos.values():
-                if todo.parent_id == parent_id:
-                    status_icon = {
-                        TaskStatus.PENDING: "⬜",
-                        TaskStatus.IN_PROGRESS: "🔄",
-                        TaskStatus.COMPLETED: "✅",
-                        TaskStatus.FAILED: "❌",
-                    }[todo.status]
-
-                    line = (
-                        "  " * indent
-                        + f"{status_icon} [{todo.id}] {todo.description} ({todo.agent})"
-                    )
-                    lines.append(line)
-                    lines.extend(build_tree(todo.id, indent + 1))
-            return lines
-
-        tree_lines = ["# TODO リスト", ""]
-        tree_lines.extend(build_tree(None))
-        return "\n".join(tree_lines)
-
-    def get_progress_report(self) -> Dict[str, Any]:
-        """進捗レポートを取得"""
-        total = len(self.todos)
-        completed = sum(
-            1 for t in self.todos.values() if t.status == TaskStatus.COMPLETED
-        )
-        in_progress = sum(
-            1 for t in self.todos.values() if t.status == TaskStatus.IN_PROGRESS
-        )
-        pending = sum(1 for t in self.todos.values() if t.status == TaskStatus.PENDING)
-        failed = sum(1 for t in self.todos.values() if t.status == TaskStatus.FAILED)
-
-        return {
-            "total": total,
-            "completed": completed,
-            "in_progress": in_progress,
-            "pending": pending,
-            "failed": failed,
-            "completion_rate": (completed / total * 100) if total > 0 else 0,
-        }
 
 
 # シングルトンインスタンス

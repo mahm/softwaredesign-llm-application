@@ -1,6 +1,3 @@
-"""エージェント実行ロジック"""
-
-import asyncio
 import sys
 import argparse
 import traceback
@@ -21,14 +18,14 @@ class AgentRunner:
         
     def parse_command_line_args(self):
         """コマンドライン引数を解析"""
+        epilog = """使用例:
+  uv run python main.py "LangChainについて教えて"
+  uv run python main.py "2025年のAI動向をレポートして" --debug"""
+
         parser = argparse.ArgumentParser(
             description="LangChain文章執筆支援システム",
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            epilog="""
-使用例:
-  uv run main.py "LangChainについて教えて"
-  uv run main.py "2025年のAI動向をレポートして" --debug
-            """
+            epilog=epilog
         )
         
         parser.add_argument(
@@ -53,7 +50,7 @@ class AgentRunner:
     def get_user_query(self, args) -> str:
         """ユーザークエリを取得"""
         if args.query:
-            return args.query
+            return str(args.query)
         
         # 引数でクエリが指定されていない場合は対話的に入力を求める
         print("📝 エージェントへの指示を入力してください:")
@@ -89,7 +86,6 @@ class AgentRunner:
         
         print("🤖 エージェント実行開始...")
         print(f"📝 指示内容: {query}")
-        print("="*60)
         
         try:
             if self.debug_mode:
@@ -115,22 +111,17 @@ class AgentRunner:
             self.ui.print_startup_banner(self.debug_mode)
             
             # ワークフロー作成
-            print("\n🔧 エージェントシステムを初期化中...")
             workflow = create_writing_assistant_workflow()
             app = workflow.compile(checkpointer=InMemorySaver())
-            print("✅ 初期化完了")
             
             # 実行設定作成
             config = self.create_execution_config()
             
             # エージェント実行
-            success = await self.run_agent_execution(app, query, config)
-            
-            if success:
-                self.ui.print_completion_summary()
-            
-            return success
-            
+            await self.run_agent_execution(app, query, config)
+
+            return True
+
         except Exception as e:
             self.ui.print_error_summary(e)
             if self.debug_mode:
