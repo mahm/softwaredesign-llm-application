@@ -1,0 +1,10 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "writing_assistant": "sd_24.main:graph",
+    "task_decomposer": "sd_24.agents.task_decomposer:graph",
+    "research": "sd_24.agents.research:graph",
+    "writer": "sd_24.agents.writer:graph"
+  },
+  "env": ".env"
+}

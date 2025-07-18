@@ -130,3 +130,6 @@ venv/
 
 .chainlit
 chainlit.md
+
+.claude/
+CLAUDE.md
