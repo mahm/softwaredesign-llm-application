@@ -17,11 +17,11 @@ from ..utils.todo_tools import (
 async def check_research_data_sufficiency() -> str:
     """研究データが執筆に十分かどうかを簡易チェック"""
     research_data = memory.get("research", {})
-    
+
     # シンプルな判定：トピックが1つ以上あり、内容があれば執筆可能
     topics = list(research_data.keys())
     sufficient = len(topics) > 0 and any(research_data.values())
-    
+
     if sufficient:
         return f"執筆可能です。{len(topics)}個のトピックについて調査データがあります。"
     else:
@@ -95,7 +95,7 @@ async def write_and_save_content(
 
     # メモリには最終成果物のパスのみ保存
     memory.set("final_document_path", filepath)
-    
+
     # 作成されたファイルパスをリストに追加
     created_files = memory.get("created_files", [])
     created_files.append(filepath)
@@ -125,10 +125,11 @@ async def check_all_tasks_completed() -> str:
     get_writer_todos = create_get_my_todos_for_agent("writer")
     todos_result = get_writer_todos.invoke({})
     todo_tasks = todos_result.get("tasks", [])
-    
-    pending_count = len([t for t in todo_tasks if t.get("status") == "pending"])
+
+    pending_count = len(
+        [t for t in todo_tasks if t.get("status") == "pending"])
     final_path = memory.get("final_document_path", "")
-    
+
     if pending_count == 0:
         return f"全タスク完了！ファイル: {final_path}"
     return f"残り{pending_count}件のタスクがあります"
@@ -156,11 +157,11 @@ def create_writer_agent():
 あなたは執筆エージェントです。調査データを使って記事を作成し、ファイルに保存します。
 
 作業手順:
-1. 調査データの確認
-2. 調査データが不十分な場合はsupervisorに追加調査を依頼
-3. タスクに基づいて記事を執筆
-4. 執筆した記事をファイルに保存
-5. タスクを完了状態に更新
+1. 調査データを確認する。
+2. 調査データが不十分な場合は執筆禁止。supervisorに追加調査を依頼すること。
+3. タスクに基づいて記事を執筆する。
+4. 執筆した記事をファイルに保存する。
+5. タスクを完了状態に更新する。
 
 全タスクが完了状態になるまで、執筆を進めてください。"""
 
