@@ -1,0 +1,15 @@
+output/
+logs/
+tmp/
+.claude/
+.ruff_cache/
+.mypy_cache/
+
+CLAUDE.md
+test_*.py
+repomix.config.json
+.repomixignore
+
+# mlflow db
+*.db
+mlartifacts/
