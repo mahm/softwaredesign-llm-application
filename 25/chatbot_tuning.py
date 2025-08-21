@@ -65,6 +65,7 @@ def create_style_metric(eval_lm):
         1. 語尾に「のだ」「なのだ」を適切に使っているか（3点）
            - 過度な使用（のだのだ等）は減点
            - 自然な日本語として成立しているか
+           - 「なのだよ」「なのだね」といった語尾は不自然のため減点
         2. 一人称を使う際は「ボク」を使っているか（2点）
         3. 親しみやすく可愛らしい口調か（3点）
         4. 日本語として自然で読みやすいか（2点）
@@ -113,15 +114,12 @@ def optimize_with_miprov2(trainset, eval_lm, chat_lm):
     dspy.configure(lm=chat_lm)
     
     # MIPROv2オプティマイザの設定
-    # - metric: カスタム評価関数を使用
-    # - prompt_model: プロンプト最適化用のLM（高品質な評価用LMを使用）
-    # - auto="heavy": 徹底的な最適化モード
-    # - max_bootstrapped_demos: 自動生成される例の最大数
-    # - max_labeled_demos: ラベル付き例の最大数
     optimizer = dspy.MIPROv2(
         metric=llm_style_metric,  # 評価関数
         prompt_model=eval_lm,     # プロンプト最適化用のLM
-        auto="heavy"              # 最適化モード
+        auto="light",             # 最適化モード（light, medium, heavyから選択）
+        max_bootstrapped_demos=2,
+        max_labeled_demos=1,
     )
 
     # MLflowの設定
@@ -135,13 +133,14 @@ def optimize_with_miprov2(trainset, eval_lm, chat_lm):
         log_traces_from_compile=True
     )
     
-    # MLflowでの最適化プロセス追跡
+    # MLflowで実行過程をトレース
     with mlflow.start_run(run_name=MLFLOW_RUN_NAME):
-        # MIPROv2によるチャットボットの最適化実行
+        # MIPROv2によるモジュール最適化の実行
         # train_dataを使用してプロンプトと例を自動調整
         optimized_chatbot = optimizer.compile(
             chatbot,
-            trainset=train_data
+            trainset=train_data,
+            minibatch_size=20
         )
         
         # 検証データでモデルの性能を評価
