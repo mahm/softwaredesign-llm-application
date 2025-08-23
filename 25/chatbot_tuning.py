@@ -7,7 +7,6 @@ from datasets import load_dataset
 from chatbot_module import EdamameFairyBot
 import mlflow
 import mlflow.dspy as mlflow_dspy
-from contextlib import contextmanager
 
 load_dotenv()
 
@@ -19,31 +18,6 @@ MLFLOW_RUN_NAME = "miprov2_optimization"
 
 # 最適化されたモジュールの保存先
 OPTIMIAZED_MODEL_PATH = "artifact/edamame_fairy_model.json"
-
-
-class MLflowTracker:
-    """MLflow実験追跡クラス"""
-    
-    def __init__(self):
-        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-        mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
-        
-        if mlflow_dspy:
-            mlflow_dspy.autolog(
-                log_compiles=True,
-                log_evals=True,
-                log_traces_from_compile=True
-            )
-    
-    @contextmanager
-    def track_optimization(self, run_name):
-        """最適化プロセスを追跡"""
-        with mlflow.start_run(run_name=run_name):
-            yield
-    
-    def log_metric(self, key, value):
-        """メトリクスをログ"""
-        mlflow.log_metric(key, value)
 
 
 def create_style_metric(eval_lm):
@@ -167,7 +141,7 @@ def main():
     
     # 評価用LLMの設定
     eval_lm = dspy.LM(
-        model="openai/gpt-4.1",
+        model="openai/gpt-4.1-mini",
         temperature=0.0,
         max_tokens=4096
     )

@@ -32,7 +32,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 MLFLOW_PORT=5000
 ```
 
-- `OPENAI_API_KEY`: OpenAI APIのキー（GPT-4.1, GPT-4.1-nano使用）
+- `OPENAI_API_KEY`: OpenAI APIのキー（gpt-4.1-mini, gpt-4.1-nano使用）
 - `MLFLOW_PORT`: MLflowサーバーのポート番号（デフォルト: 5000）
 
 ### 実行方法
@@ -42,10 +42,10 @@ MLFLOW_PORT=5000
 実験管理のためのMLflowサーバーを起動します：
 
 ```bash
-uv run mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 5000
+uv run mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 5001
 ```
 
-起動後、ブラウザで `http://localhost:5000` にアクセスすると、MLflow UIで実験結果を確認できます。
+起動後、ブラウザで `http://localhost:5001` にアクセスすると、MLflow UIで実験結果を確認できます。
 
 #### 2. チャットボットの最適化（オプション）
 
