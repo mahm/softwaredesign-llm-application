@@ -70,14 +70,14 @@ def optimize_with_miprov2(trainset, eval_lm, chat_lm):
     
     # DSPy Exampleのリストを分割
     train_data = trainset[:train_size]      # インデックス0からtrain_sizeまで（学習用）
-    val_data = trainset[train_size:]        # train_sizeから最後まで（検証用）
+    evaluation_data = trainset[train_size:] # train_sizeから最後まで（評価用）
     
     # 分割結果の確認と表示
     print("🌱 最適化開始")
     print(f"  総データ数: {total_examples}")
     print(f"  学習用データ: {len(train_data)} ({len(train_data)/total_examples:.1%})")
-    print(f"  検証用データ: {len(val_data)} ({len(val_data)/total_examples:.1%})")
-    
+    print(f"  評価用データ: {len(evaluation_data)} ({len(evaluation_data)/total_examples:.1%})")
+
     # 最適化対象のチャットボットモジュールを初期化
     chatbot = EdamameFairyBot()
     
@@ -116,23 +116,23 @@ def optimize_with_miprov2(trainset, eval_lm, chat_lm):
             trainset=train_data,
             minibatch_size=20
         )
-        
-        # 検証データでモデルの性能を評価
-        val_score = 0
-        for example in val_data:
+
+        # 評価データでモデルの性能を評価
+        eval_score = 0
+        for example in evaluation_data:
             # 最適化されたモデルで推論を実行
             prediction = optimized_chatbot(query=example.query, history=example.history)
             # スタイルスコアを計算
-            val_score += llm_style_metric(example, prediction)
-        
-        # 平均検証スコアを計算
-        avg_val_score = val_score / len(val_data)
-        
+            eval_score += llm_style_metric(example, prediction)
+
+        # 平均評価スコアを計算
+        avg_eval_score = eval_score / len(evaluation_data)
+
         # MLflowにメトリクスを記録
-        mlflow.log_metric("val_score", avg_val_score)
-        
-        print(f"📊 検証スコア: {avg_val_score:.3f}")
-    
+        mlflow.log_metric("last_eval_score", avg_eval_score)
+
+        print(f"📊 評価スコア: {avg_eval_score:.3f}")
+
     return optimized_chatbot
 
 
