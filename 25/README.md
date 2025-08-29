@@ -29,11 +29,11 @@ $ vi .env # お好きなエディタで編集してください
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
-MLFLOW_PORT=5000
+MLFLOW_PORT=5001
 ```
 
 - `OPENAI_API_KEY`: OpenAI APIのキー（gpt-4.1-mini, gpt-4.1-nano使用）
-- `MLFLOW_PORT`: MLflowサーバーのポート番号（デフォルト: 5000）
+- `MLFLOW_PORT`: MLflowサーバーのポート番号（デフォルト: 5001）
 
 ### 実行方法
 
