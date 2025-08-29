@@ -76,7 +76,7 @@ uv run python main.py
 
 - `chatbot_module.py`: DSPyチャットボットモジュール
 - `chatbot_tuning.py`: MIPROv2による最適化スクリプト
-- `main.py`: 対話型チャットインターフェース
+- `main.py`: DSPyモジュールのテスト用チャット
 - `artifact/`: 最適化済みモデルの保存先
-- `mlartifacts/`: MLflow実験のアーティファクト
-- `mlflow.db`: MLflow実験データベース
+- `mlartifacts/`: MLflow実験のアーティファクト（MLflow実行時に自動生成）
+- `mlflow.db`: MLflow実験データベース（MLflow実行時に自動生成）
