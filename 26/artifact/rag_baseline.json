@@ -1,0 +1,55 @@
+{
+  "rewrite": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "質問文を検索に適した形にリライト",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "ユーザーからの質問"
+        },
+        {
+          "prefix": "Rewritten Query:",
+          "description": "検索に最適化された質問文"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "generate.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "コンテキストと質問から回答を生成",
+      "fields": [
+        {
+          "prefix": "Context:",
+          "description": "検索で取得した文書群"
+        },
+        {
+          "prefix": "Question:",
+          "description": "ユーザーからの質問"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "質問に対する簡潔な回答"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.13",
+      "dspy": "3.0.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}
