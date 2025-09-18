@@ -1,0 +1,11 @@
+[project]
+name = "sd-26"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "datasets>=4.0.0",
+    "dspy>=3.0.3",
+    "openai",
+    "python-dotenv>=1.1.1",
+]
