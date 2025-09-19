@@ -3,27 +3,35 @@ JQaRAデータセットのロード機能
 """
 
 import numpy as np
+import pandas as pd # type: ignore
 import dspy # type: ignore
 from datasets import load_dataset # type: ignore
-from collections import defaultdict
 
 
-def load_jqara_dataset(num_questions: int = 30, max_passages_per_question: int = 10, dataset_split: str = 'dev'):
+def load_jqara_dataset(num_questions: int = 30, dataset_split: str = 'dev', random_seed: int = 42):
     """JQaRAデータセットの読み込みと前処理
 
     Args:
         num_questions: 読み込む質問数（デフォルト30）
-        max_passages_per_question: 各質問から使用する最大パッセージ数
         dataset_split: 使用するデータセット分割 ('dev' or 'test')
+        random_seed: ランダムシード（再現性のため）
 
     Returns:
         examples: DSPy用の質問・回答ペアのリスト
-        corpus_texts: 検索用のパッセージコーパス
+                  各Exampleはquestion, answer, positives, negativesフィールドを含む
+        corpus_texts: 検索用のパッセージコーパス（全パッセージの混在リスト）
 
     Note:
         - devセット: 1質問=50パッセージ（学習・検証用、1,737質問）
         - testセット: 1質問=100パッセージ（評価用、3,334質問）
+        - 各質問の全パッセージを使用
+        - パッセージはtitleとtextを結合
+        - positives: 正解を含むパッセージのリスト
+        - negatives: 正解を含まないパッセージのリスト
     """
+    # ランダムシードを固定（再現性のため）
+    np.random.seed(random_seed)
+
     # データセットに応じてパッセージ数を設定
     passages_per_question = 50 if dataset_split == 'dev' else 100
 
@@ -34,72 +42,72 @@ def load_jqara_dataset(num_questions: int = 30, max_passages_per_question: int =
     # データセット読み込み
     ds = load_dataset("hotchpotch/JQaRA", split=f"{dataset_split}[:{num_records}]")
 
-    # 質問ごとにデータを整理
-    qid_to_question = {}
-    qid_to_answer = {}
-    qid_to_passages = defaultdict(list)
-    qid_to_labels = defaultdict(list)
+    # pandasのDataFrameに変換
+    df = ds.to_pandas()
 
-    for ex in ds:
-        qid = ex["q_id"]
-        qid_to_question[qid] = ex["question"]
+    # パッセージを作成（title + text形式）
+    df['passage'] = df['title'] + '\n' + df['text']
 
-        # 正解は各行で同じなので先に1つ記録
-        if qid not in qid_to_answer and ex["answers"]:
-            qid_to_answer[qid] = ex["answers"][0]
+    def aggregate_group(group):
+        """グループごとに集約処理を行う"""
+        # 質問と回答を取得（グループ内では全て同じ）
+        question = group['question'].iloc[0]
+        answers = group['answers'].iloc[0]
 
-        # パッセージとラベルを記録
-        qid_to_passages[qid].append(ex["text"])
-        qid_to_labels[qid].append(ex.get("label", 0))  # label: 1=正解, 0=不正解
+        # 最初の回答のみ使用
+        answer = answers[0] if answers else ""
 
-    # 各質問につきExampleを作成
+        # labelに基づいてpositivesとnegativesを分離
+        mask_positive = group['label'] == 1
+        positives = group.loc[mask_positive, 'passage'].tolist()
+        negatives = group.loc[~mask_positive, 'passage'].tolist()
+
+        # シャッフル（numpy使用）
+        np.random.shuffle(positives)
+        np.random.shuffle(negatives)
+
+        return pd.Series({
+            'question': question,
+            'answer': answer,
+            'positives': positives,
+            'negatives': negatives,
+            'num_positives': len(positives),
+            'num_negatives': len(negatives)
+        })
+
+    # q_idでグループ化して集約
+    result = df.groupby('q_id', as_index=False).apply(
+        aggregate_group, include_groups=False
+    )
+
+    # 統計情報の計算
+    correct_counts = result['num_positives'].values
+    print(f"  質問数: {len(result)}")
+    print(f"  正解パッセージ数: 平均{np.mean(correct_counts):.1f}個 (最小{np.min(correct_counts)}個, 最大{np.max(correct_counts)}個)")
+
+    # DSPy用のExampleを作成
     examples = []
     corpus_texts = []
-    correct_counts = []  # 各質問の正解パッセージ数を記録
 
-    for qid in qid_to_question:
-        question = qid_to_question[qid]
-        answer = qid_to_answer.get(qid, "")
-        if not answer:
+    for _, row in result.iterrows():
+        if not row['answer']:
             continue
 
+        # 正例と負例を含むExampleを作成
         ex = dspy.Example(
-            question=question,
-            answer=answer
+            question=row['question'],
+            answer=row['answer'],
+            positives=row['positives'],
+            negatives=row['negatives']
         ).with_inputs("question")
+
         examples.append(ex)
 
-        # numpyで効率的にパッセージを選択
-        passages = np.array(qid_to_passages[qid])
-        labels = np.array(qid_to_labels[qid])
+        # コーパスに追加（全パッセージをシャッフルして混在）
+        all_passages = row['positives'] + row['negatives']
+        np.random.shuffle(all_passages)
+        corpus_texts.extend(all_passages)
 
-        # 正解・不正解のインデックスを取得
-        correct_indices = np.where(labels == 1)[0]
-        incorrect_indices = np.where(labels == 0)[0]
-
-        # 正解パッセージ数を記録
-        correct_counts.append(len(correct_indices))
-
-        # 全ての正解パッセージを選択
-        selected_passages = passages[correct_indices].tolist()
-
-        # 残りの枠を不正解パッセージで埋める
-        remaining_slots = max_passages_per_question - len(selected_passages)
-        if remaining_slots > 0 and len(incorrect_indices) > 0:
-            # ランダムに不正解パッセージを選択
-            sample_size = min(remaining_slots, len(incorrect_indices))
-            sampled_incorrect = np.random.choice(incorrect_indices, sample_size, replace=False)
-            selected_passages.extend(passages[sampled_incorrect].tolist())
-
-        corpus_texts.extend(selected_passages)
-
-    # 重複除去
-    corpus_texts = list(dict.fromkeys(corpus_texts))
-
-    # 統計情報を表示
-    if correct_counts:
-        print(f"  質問数: {len(examples)}")
-        print(f"  正解パッセージ数: 平均{np.mean(correct_counts):.1f}個 (最小{np.min(correct_counts)}個, 最大{np.max(correct_counts)}個)")
-        print(f"  コーパス文書数: {len(corpus_texts)}")
+    print(f"  コーパス文書数: {len(corpus_texts)}")
 
     return examples, corpus_texts

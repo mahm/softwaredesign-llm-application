@@ -4,26 +4,32 @@ RAG最適化スクリプト
 
 import os
 import random
+import argparse
 import dspy # type: ignore
 from datetime import datetime
 
 from config import configure_lm, configure_embedder, SMART_MODEL, FAST_MODEL
 from rag_module import RAGQA
 from dataset_loader import load_jqara_dataset
-from evaluator import evaluation
+from evaluator import evaluation, rag_comprehensive_metric
+from embeddings_cache import get_cached_embeddings_retriever
 
 # 最適化されたモデルの保存先（最新版へのリンク）
 OPTIMIZED_MODEL_LATEST = "artifact/rag_optimized_latest.json"
 
 
-def main():
-    """メイン実行関数"""
+def main(seed=42):
+    """メイン実行関数
+
+    Args:
+        seed: ランダムシード（デフォルト: 42）
+    """
 
     # データセット読み込み（devセットを使用）
-    examples, corpus_texts = load_jqara_dataset(num_questions=50, dataset_split='dev')
+    examples, corpus_texts = load_jqara_dataset(num_questions=50, dataset_split='dev', random_seed=seed)
 
     # Train/Val分割（50:50）
-    random.seed(7)
+    random.seed(seed)  # 引数のシードを使用
     random.shuffle(examples)
     split = int(len(examples) * 0.5)
     trainset = examples[:split]
@@ -31,7 +37,7 @@ def main():
     print(f"✂️ データ分割 (dev): train={len(trainset)}, val={len(valset)}")
 
     # testセット読み込み（30問）
-    testset, test_corpus_texts = load_jqara_dataset(num_questions=30, dataset_split='test')
+    testset, test_corpus_texts = load_jqara_dataset(num_questions=30, dataset_split='test', random_seed=seed)
 
     # LM設定
     print("\n🔧 モデル設定中...")
@@ -43,11 +49,11 @@ def main():
     # 埋め込みモデル設定
     embedder = configure_embedder()
 
-    # Retrieverの構築（devセットから得られたコーパスを使用）
+    # Retrieverの構築（キャッシュ機能付き）
     print("🔍 検索システムを構築中...")
-    retriever = dspy.retrievers.Embeddings(
+    retriever = get_cached_embeddings_retriever(
         embedder=embedder,
-        corpus=corpus_texts,
+        corpus_texts=corpus_texts,
         k=10  # 検索結果数
     )
 
@@ -65,17 +71,9 @@ def main():
     # 最適化対象のRAGモジュール
     rag = RAGQA()
 
-    # 評価メトリクス（Exact Matchを使用）
-    def metric(gold, pred, trace=None):
-        """完全一致スコアを返すメトリクス"""
-        # goldは例、predは予測結果
-        pred_answer = pred.answer if hasattr(pred, 'answer') else ""
-        gold_answer = gold.answer if hasattr(gold, 'answer') else ""
-        return float(pred_answer.strip() == gold_answer.strip())
-
     # MIPROv2の設定
     optimizer = dspy.MIPROv2(
-        metric=metric,
+        metric=rag_comprehensive_metric,  # メトリクス
         prompt_model=smart_lm,
         auto="medium",
     )
@@ -114,4 +112,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='RAGの最適化')
+    parser.add_argument('--seed', type=int, default=42,
+                       help='ランダムシード（デフォルト: 42）')
+    args = parser.parse_args()
+
+    print(f"🌱 シード値: {args.seed}")
+    main(seed=args.seed)

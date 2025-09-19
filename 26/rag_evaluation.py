@@ -1,12 +1,18 @@
 """評価スクリプト"""
+import argparse
 from rag_module import RAGQA
 from rag_optimization import OPTIMIZED_MODEL_LATEST
 from evaluator import evaluation
 from dataset_loader import load_jqara_dataset
 
 
-def main():
-    testset, test_corpus_texts = load_jqara_dataset(num_questions=30, dataset_split='test')
+def main(seed=42):
+    """メイン実行関数
+
+    Args:
+        seed: ランダムシード（デフォルト: 42）
+    """
+    testset, test_corpus_texts = load_jqara_dataset(num_questions=30, dataset_split='test', random_seed=seed)
 
     # ベースライン評価
     baseline = RAGQA()
@@ -23,4 +29,10 @@ def main():
     print("=" * 60)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='RAGシステムの評価')
+    parser.add_argument('--seed', type=int, default=42,
+                       help='ランダムシード（デフォルト: 42）')
+    args = parser.parse_args()
+
+    print(f"🌱 シード値: {args.seed}")
+    main(seed=args.seed)

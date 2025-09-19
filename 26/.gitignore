@@ -13,3 +13,6 @@ repomix.config.json
 # mlflow db
 *.db
 mlartifacts/
+
+# Embeddings cache
+artifact/embeddings_cache/
