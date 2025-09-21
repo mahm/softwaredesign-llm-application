@@ -7,12 +7,13 @@ import pickle
 import hashlib
 from pathlib import Path
 import dspy  # type: ignore
+from config import RETRIEVAL_K
 
 
 def get_cached_embeddings_retriever(
     embedder,
     corpus_texts,
-    k=10,
+    k=RETRIEVAL_K,
     cache_dir="artifact/embeddings_cache"
 ):
     """キャッシュ機能付きEmbeddings Retrieverを取得
@@ -22,7 +23,7 @@ def get_cached_embeddings_retriever(
     Args:
         embedder: DSPy Embedderインスタンス
         corpus_texts: 検索対象のテキストコーパス
-        k: 検索結果数（デフォルト10）
+        k: 検索結果数（デフォルト: config.RETRIEVAL_K）
         cache_dir: キャッシュディレクトリ（デフォルト: artifact/embeddings_cache）
 
     Returns:

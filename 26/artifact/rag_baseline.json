@@ -4,7 +4,7 @@
     "train": [],
     "demos": [],
     "signature": {
-      "instructions": "質問文を検索に適した形にリライト",
+      "instructions": "質問文を検索用のクエリにリライト",
       "fields": [
         {
           "prefix": "Question:",
@@ -12,7 +12,7 @@
         },
         {
           "prefix": "Rewritten Query:",
-          "description": "検索に最適化された質問文"
+          "description": "埋め込みベクトルによる類似度検索に最適化されたクエリ"
         }
       ]
     },
@@ -32,10 +32,6 @@
         {
           "prefix": "Question:",
           "description": "ユーザーからの質問"
-        },
-        {
-          "prefix": "Reasoning: Let's think step by step in order to",
-          "description": "${reasoning}"
         },
         {
           "prefix": "Answer:",

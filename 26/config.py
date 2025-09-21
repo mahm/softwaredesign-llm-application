@@ -19,8 +19,11 @@ FAST_MODEL = os.getenv("FAST_MODEL", "gpt-4.1-nano")
 # 埋め込みモデル設定
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 
+# 検索設定
+RETRIEVAL_K = 10  # 検索結果の取得数
 
-def configure_lm(model_name: str | None = None, temperature: float = 0.0, max_tokens: int = 1000) -> dspy.LM:
+
+def configure_lm(model_name: str | None = None, temperature: float = 0.0, max_tokens: int = 4096) -> dspy.LM:
     """DSPy用のLM設定を作成"""
     if model_name is None:
         model_name = FAST_MODEL

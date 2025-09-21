@@ -7,9 +7,9 @@ import dspy # type: ignore
 
 
 class RewriteQuery(dspy.Signature):
-    """質問文を検索に適した形にリライト"""
+    """質問文を検索用のクエリにリライト"""
     question = dspy.InputField(desc="ユーザーからの質問")
-    rewritten_query = dspy.OutputField(desc="検索に最適化された質問文")
+    rewritten_query = dspy.OutputField(desc="埋め込みベクトルによる類似度検索に最適化されたクエリ")
 
 
 class GenerateAnswer(dspy.Signature):
@@ -25,7 +25,7 @@ class RAGQA(dspy.Module):
     def __init__(self):
         super().__init__()
         self.rewrite = dspy.Predict(RewriteQuery)
-        self.generate = dspy.ChainOfThought(GenerateAnswer)
+        self.generate = dspy.Predict(GenerateAnswer)
 
     def forward(self, question: str):
         # 1) クエリ最適化

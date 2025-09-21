@@ -104,8 +104,8 @@ uv run python rag_evaluation.py --seed 123
 ```
 ============================================================
 🔬 RAG評価
-[Baseline]  EM: 26.7%
-[Optimized] EM: 86.7% (Δ +60.0%)
+[Baseline]  EM: 6.7%
+[Optimized] EM: 83.3% (Δ +76.7%)
 ============================================================
 ```
 
@@ -126,7 +126,6 @@ uv run python rag_evaluation.py --seed 123
 - `artifact/`: 最適化済みモデルの保存先
 - `artifact/embeddings_cache/`: Embeddingキャッシュの保存先（.gitignoreで除外）
 - `.env.sample`: 環境変数のテンプレート
-- `CLAUDE.md`: Claude Code (claude.ai/code)用のプロジェクト設定ファイル
 
 ### 技術概要
 
@@ -138,6 +137,7 @@ uv run python rag_evaluation.py --seed 123
 2. **回答生成（GenerateAnswer）**: 検索結果と質問から回答を生成（CoT）
 3. **MIPROv2最適化**: プロンプトと少数ショット例の自動最適化
 
-#### 評価メトリクス
+#### 最適化時の評価メトリクス
 
 回答精度（生成された回答の完全一致率）と検索精度（正答を含むコーパスの検索再現率）の2つの指標を元に評価を行います。
+最終評価は回答精度のみで評価を行います。

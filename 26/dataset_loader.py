@@ -46,7 +46,7 @@ def load_jqara_dataset(num_questions: int = 30, dataset_split: str = 'dev', rand
     df = ds.to_pandas()
 
     # パッセージを作成（title + text形式）
-    df['passage'] = df['title'] + '\n' + df['text']
+    df['passage'] = 'title: ' + df['title'] + '\ntext: ' + df['text'] + '\n---'
 
     def aggregate_group(group):
         """グループごとに集約処理を行う"""
@@ -62,7 +62,7 @@ def load_jqara_dataset(num_questions: int = 30, dataset_split: str = 'dev', rand
         positives = group.loc[mask_positive, 'passage'].tolist()
         negatives = group.loc[~mask_positive, 'passage'].tolist()
 
-        # シャッフル（numpy使用）
+        # シャッフル
         np.random.shuffle(positives)
         np.random.shuffle(negatives)
 

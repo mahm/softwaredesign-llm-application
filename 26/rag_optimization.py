@@ -8,7 +8,7 @@ import argparse
 import dspy # type: ignore
 from datetime import datetime
 
-from config import configure_lm, configure_embedder, SMART_MODEL, FAST_MODEL
+from config import configure_lm, configure_embedder, SMART_MODEL, FAST_MODEL, RETRIEVAL_K
 from rag_module import RAGQA
 from dataset_loader import load_jqara_dataset
 from evaluator import evaluation, rag_comprehensive_metric
@@ -29,9 +29,9 @@ def main(seed=42):
     examples, corpus_texts = load_jqara_dataset(num_questions=50, dataset_split='dev', random_seed=seed)
 
     # Train/Val分割（50:50）
-    random.seed(seed)  # 引数のシードを使用
+    random.seed(seed)  # 乱数のシード値を固定
     random.shuffle(examples)
-    split = int(len(examples) * 0.5)
+    split = int(len(examples) * 0.3)
     trainset = examples[:split]
     valset = examples[split:]
     print(f"✂️ データ分割 (dev): train={len(trainset)}, val={len(valset)}")
@@ -44,7 +44,7 @@ def main(seed=42):
     # 最適化用（高性能モデル）
     smart_lm = configure_lm(SMART_MODEL, temperature=0.0, max_tokens=4096)
     # 推論用（高速モデル）
-    fast_lm = configure_lm(FAST_MODEL, temperature=0.0, max_tokens=1000)
+    fast_lm = configure_lm(FAST_MODEL, temperature=0.0, max_tokens=4096)
 
     # 埋め込みモデル設定
     embedder = configure_embedder()
@@ -54,7 +54,7 @@ def main(seed=42):
     retriever = get_cached_embeddings_retriever(
         embedder=embedder,
         corpus_texts=corpus_texts,
-        k=10  # 検索結果数
+        k=RETRIEVAL_K  # 検索結果数
     )
 
     # DSPyで使用するデフォルトを設定
@@ -73,7 +73,7 @@ def main(seed=42):
 
     # MIPROv2の設定
     optimizer = dspy.MIPROv2(
-        metric=rag_comprehensive_metric,  # メトリクス
+        metric=rag_comprehensive_metric,  # メトリクス関数
         prompt_model=smart_lm,
         auto="medium",
     )
@@ -83,6 +83,7 @@ def main(seed=42):
         rag,
         trainset=trainset,
         valset=valset,
+        minibatch=True,
     )
 
     # 最適化後の評価（testセット）
