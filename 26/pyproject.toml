@@ -1,0 +1,18 @@
+[project]
+name = "sd-26"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "datasets>=4.0.0",
+    "dspy>=3.0.3",
+    "openai",
+    "pandas>=2.3.2",
+    "pandas-stubs>=2.3.2.250827",
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+]
