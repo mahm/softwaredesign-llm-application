@@ -133,3 +133,6 @@ chainlit.md
 
 .claude/
 CLAUDE.md
+
+# macOS system files
+.DS_Store

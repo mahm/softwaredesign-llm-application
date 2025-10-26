@@ -1288,12 +1288,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "datasets", specifier = ">=4.0.0" },
-    { name = "dspy", specifier = ">=3.0.3" },
-    { name = "openai" },
-    { name = "pandas", specifier = ">=2.3.2" },
-    { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
-    { name = "python-dotenv", specifier = ">=1.1.1" },
+    { name = "datasets", specifier = "==4.1.0" },
+    { name = "dspy", specifier = "==3.0.3" },
+    { name = "openai", specifier = "==1.108.0" },
+    { name = "pandas", specifier = "==2.3.2" },
+    { name = "pandas-stubs", specifier = "==2.3.2.250827" },
+    { name = "python-dotenv", specifier = "==1.1.1" },
 ]
 
 [package.metadata.requires-dev]
