@@ -1,0 +1,75 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "ファイル探索タスクのシグネチャ\n\nエージェントは、利用可能なファイルシステムツール（ls_directory, read_file, write_file）を使用して、\n指定されたディレクトリを分析し、要求されたタスクを完了する必要があります。\n\nYou are an Agent. In each episode, you will be given the fields `task`, `working_directory` as input. And you can see your past trajectory so far.\nYour goal is to use one or more of the supplied tools to collect any necessary information for producing `report`.\n\nTo do this, you will interleave next_thought, next_tool_name, and next_tool_args in each turn, and also when finishing the task.\nAfter each tool call, you receive a resulting observation, which gets appended to your trajectory.\n\nWhen writing next_thought, you may reason about the current situation and plan for future steps.\nWhen selecting the next_tool_name and its next_tool_args, the tool must be one of:\n\n(1) ls_directory, whose description is <desc>  ディレクトリの内容を一覧表示（フィルタリングと再帰オプション付き）    Args:      path: 一覧表示するディレクトリパス（デフォルト: カレントディレクトリ）      recursive: Trueの場合、サブディレクトリを再帰的に表示      pattern: 結果をフィルタリングするGlobパターン（デフォルト: \"*\" 全てのファイル）      max_depth: 再帰表示の最大深度（None = 無制限）    Returns:      フォーマットされたディレクトリ一覧またはエラーメッセージの文字列    Examples:      ls_directory(\".\")  # カレントディレクトリを一覧表示      ls_directory(\".\", recursive=True, pattern=\"*.py\")  # 全てのPythonファイルを一覧表示      ls_directory(\"src\", max_depth=2)  # 最大2階層まで表示  </desc>. It takes arguments {'path': {'type': 'string', 'default': '.'}, 'recursive': {'type': 'boolean', 'default': False}, 'pattern': {'type': 'string', 'default': '*'}, 'max_depth': {'anyOf': [{'type': 'integer'}, {'type': 'null'}], 'default': None}}.\n(2) read_file, whose description is <desc>  ファイルの内容を読み取る（文字数制限とエンコーディング対応）    Args:      file_path: 読み取るファイルのパス      max_chars: 読み取る最大文字数（デフォルト: 5000）      encoding: ファイルエンコーディング（デフォルト: utf-8）    Returns:      ファイルの内容またはエラーメッセージの文字列    Examples:      read_file(\"README.md\")  # 最初の5000文字を読み取り      read_file(\"data.txt\", max_chars=1000)  # 最初の1000文字を読み取り  </desc>. It takes arguments {'file_path': {'type': 'string'}, 'max_chars': {'type': 'integer', 'default': 5000}, 'encoding': {'type': 'string', 'default': 'utf-8'}}.\n(3) write_file, whose description is <desc>  ファイルにコンテンツを書き込む（複数のモードをサポート）    重要: 相対パスはPythonスクリプト起動ディレクトリに対して解決されます。  探索中のディレクトリではなく、コマンドを実行したディレクトリに作成されます。    Args:      file_path: 書き込むファイルのパス（相対パスまたは絶対パス）      content: 書き込むコンテンツ      mode: 書き込みモード - \"overwrite\"（上書き）, \"append\"（追記）, \"create_new\"（新規作成のみ）    Returns:      成功またはエラーメッセージ    Examples:      write_file(\"report.txt\", \"Analysis results\")  # スクリプト起動ディレクトリにreport.txtを作成      write_file(\"logs/output.txt\", \"New entry\", mode=\"append\")  # logs/output.txtに追記  </desc>. It takes arguments {'file_path': {'type': 'string'}, 'content': {'type': 'string'}, 'mode': {'enum': ['overwrite', 'append', 'create_new'], 'type': 'string', 'default': 'overwrite'}}.\n(4) finish, whose description is <desc>Marks the task as complete. That is, signals that all information for producing the outputs, i.e. `report`, are now available to be extracted.</desc>. It takes arguments {}.\nWhen providing `next_tool_args`, the value inside the field must be in JSON format",
+      "fields": [
+        {
+          "prefix": "Task:",
+          "description": "タスクの説明（例: 'ディレクトリ構造を分析してレポートを作成'）"
+        },
+        {
+          "prefix": "Working Directory:",
+          "description": "探索する作業ディレクトリのパス"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "ファイル探索タスクのシグネチャ\n\nエージェントは、利用可能なファイルシステムツール（ls_directory, read_file, write_file）を使用して、\n指定されたディレクトリを分析し、要求されたタスクを完了する必要があります。",
+      "fields": [
+        {
+          "prefix": "Task:",
+          "description": "タスクの説明（例: 'ディレクトリ構造を分析してレポートを作成'）"
+        },
+        {
+          "prefix": "Working Directory:",
+          "description": "探索する作業ディレクトリのパス"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Report:",
+          "description": "発見事項、分析、洞察を含む包括的なレポート"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.13",
+      "dspy": "3.0.4",
+      "cloudpickle": "3.1"
+    }
+  }
+}
