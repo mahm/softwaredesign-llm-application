@@ -57,11 +57,23 @@ def evaluate_agent_detailed(agent, examples, metric, eval_lm, agent_name="Agent"
         # Create evaluator for detailed feedback
         evaluator = dspy.ChainOfThought(ReportEvaluation)
 
+        # Format trajectory for evaluation
+        trajectory_str = ""
+        if hasattr(pred, 'trajectory') and pred.trajectory:
+            trajectory_items = []
+            for k, v in pred.trajectory.items():
+                v_str = str(v)
+                if len(v_str) > 500:
+                    v_str = v_str[:500] + "... (truncated)"
+                trajectory_items.append(f"{k}: {v_str}")
+            trajectory_str = "\n".join(trajectory_items)
+
         with dspy.context(lm=eval_lm):
             eval_result = evaluator(
                 task=ex.task,
                 report=pred.report if hasattr(pred, 'report') else "",
-                criteria=ex.criteria
+                criteria=ex.criteria,
+                trajectory=trajectory_str
             )
 
         # Display results

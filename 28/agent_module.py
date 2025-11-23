@@ -27,25 +27,24 @@ def ls_directory(
     path: str = ".",
     recursive: bool = False,
     pattern: str = "*",
-    max_depth: Optional[int] = None,
 ) -> str:
     """
     ディレクトリの内容を一覧表示（フィルタリングと再帰オプション付き）
 
     Args:
         path: 一覧表示するディレクトリパス（デフォルト: カレントディレクトリ）
-        recursive: Trueの場合、サブディレクトリを再帰的に表示
+        recursive: Trueの場合、サブディレクトリを無制限に再帰的に表示
         pattern: 結果をフィルタリングするGlobパターン（デフォルト: "*" 全てのファイル）
-        max_depth: 再帰表示の最大深度（None = 無制限）
 
     Returns:
         フォーマットされたディレクトリ一覧またはエラーメッセージの文字列
 
     Examples:
         ls_directory(".")  # カレントディレクトリを一覧表示
-        ls_directory(".", recursive=True, pattern="*.py")  # 全てのPythonファイルを一覧表示
-        ls_directory("src", max_depth=2)  # 最大2階層まで表示
+        ls_directory(".", recursive=True, pattern="*.py")  # 全てのPythonファイルを再帰的に一覧表示
+        ls_directory("src", recursive=True)  # srcディレクトリを再帰的に一覧表示
     """
+
     try:
         path_obj = Path(path).resolve()
 
@@ -58,47 +57,30 @@ def ls_directory(
         results = []
 
         if recursive:
-            # Recursive listing
-            if max_depth is None:
-                glob_pattern = f"**/{pattern}"
-            else:
-                # Build pattern for max depth
-                depth_patterns = [pattern]
-                for d in range(1, max_depth + 1):
-                    depth_patterns.append("/".join(["*"] * d) + f"/{pattern}")
-
-                # Use first depth pattern for simplicity in this implementation
-                glob_pattern = f"**/{pattern}"
-
+            # Recursive listing (unlimited depth)
+            glob_pattern = f"**/{pattern}"
             items = sorted(path_obj.glob(glob_pattern))
 
-            # Filter by depth if specified
-            if max_depth is not None:
-                base_depth = len(path_obj.parts)
-                items = [
-                    item for item in items
-                    if len(item.parts) - base_depth <= max_depth
-                ]
-
             for item in items:
-                rel_path = item.relative_to(path_obj)
+                # Return absolute path for consistency
                 item_type = "DIR" if item.is_dir() else "FILE"
                 try:
                     size = item.stat().st_size if item.is_file() else 0
-                    results.append(f"{item_type:4s} {size:>10d} {rel_path}")
+                    results.append(f"{item_type:4s} {size:>10d} {item}")
                 except (PermissionError, OSError):
-                    results.append(f"{item_type:4s} {'N/A':>10s} {rel_path} (permission denied)")
+                    results.append(f"{item_type:4s} {'N/A':>10s} {item} (permission denied)")
         else:
             # Non-recursive listing
             items = sorted(path_obj.glob(pattern))
 
             for item in items:
+                # Return absolute path for consistency
                 item_type = "DIR" if item.is_dir() else "FILE"
                 try:
                     size = item.stat().st_size if item.is_file() else 0
-                    results.append(f"{item_type:4s} {size:>10d} {item.name}")
+                    results.append(f"{item_type:4s} {size:>10d} {item}")
                 except (PermissionError, OSError):
-                    results.append(f"{item_type:4s} {'N/A':>10s} {item.name} (permission denied)")
+                    results.append(f"{item_type:4s} {'N/A':>10s} {item} (permission denied)")
 
         if not results:
             return f"No items found matching pattern '{pattern}' in '{path}'"
@@ -119,29 +101,32 @@ def ls_directory(
 
 def read_file(
     file_path: str,
-    max_chars: int = 5000,
+    max_chars: int = 10_000,
     encoding: str = "utf-8",
 ) -> str:
     """
     ファイルの内容を読み取る（文字数制限とエンコーディング対応）
 
     Args:
-        file_path: 読み取るファイルのパス
-        max_chars: 読み取る最大文字数（デフォルト: 5000）
+        file_path: 読み取るファイルのパス（絶対パス推奨。ls_directoryの出力をそのまま使用可能）
+        max_chars: 読み取る最大文字数（デフォルト: 10000）
         encoding: ファイルエンコーディング（デフォルト: utf-8）
 
     Returns:
         ファイルの内容またはエラーメッセージの文字列
 
     Examples:
-        read_file("README.md")  # 最初の5000文字を読み取り
-        read_file("data.txt", max_chars=1000)  # 最初の1000文字を読み取り
+        read_file("/workspaces/project/README.md")  # 絶対パスで読み取り（推奨）
+        read_file("data.txt", max_chars=1000)  # 相対パスも可
+
+    Note:
+        ls_directoryは絶対パスを返すので、その出力をそのままfile_pathに渡すことを推奨
     """
     try:
         path_obj = Path(file_path).resolve()
 
         if not path_obj.exists():
-            return f"Error: File '{file_path}' does not exist"
+            return f"Error: File '{file_path}' does not exist. Use absolute path (copy the path directly from ls_directory output)"
 
         if not path_obj.is_file():
             return f"Error: Path '{file_path}' is not a file"
@@ -258,79 +243,12 @@ class FileExplorationSignature(dspy.Signature):
     )
 
 
-class VerboseToolWrapper:
-    """ツール呼び出しに詳細ログを追加するラッパー"""
-
-    def __init__(self, tool, verbose=True):
-        self.tool = tool
-        self.verbose = verbose
-        # functools.update_wrapperで全メタデータを自動コピー
-        functools.update_wrapper(self, tool)
-
-    def __call__(self, *args, **kwargs):
-        """
-        ツールを普通のPython関数として呼び出す
-
-        DSPy ReActはツールを通常のPython関数として呼び出します。
-        例: tool(city="Tokyo") または tool("/path/to/dir", recursive=True)
-
-        DSPyが試行的に args={}, kwargs={...} 形式で呼び出す場合にも対応します。
-        """
-        # DSPyが args/kwargs という名前のキーワード引数を渡す場合に対応
-        # これはDSPyの探索フェーズで発生する可能性がある
-        if 'args' in kwargs and 'kwargs' in kwargs and len(args) == 0:
-            # DSPyの探索形式: tool(args=[], kwargs={...})
-            actual_args = kwargs.pop('args', [])
-            actual_kwargs = kwargs.pop('kwargs', {})
-            # argsとkwargsを展開
-            if isinstance(actual_args, (list, tuple)):
-                args = tuple(actual_args)
-            if isinstance(actual_kwargs, dict):
-                kwargs = actual_kwargs
-
-        if self.verbose:
-            # 引数の表示（長い文字列は切り詰め）
-            args_repr = []
-            for a in args:
-                if isinstance(a, str) and len(a) > 50:
-                    args_repr.append(f"'{a[:50]}...'")
-                else:
-                    args_repr.append(repr(a))
-
-            kwargs_repr = []
-            for k, v in kwargs.items():
-                if isinstance(v, str) and len(v) > 50:
-                    kwargs_repr.append(f"{k}='{v[:50]}...'")
-                else:
-                    kwargs_repr.append(f"{k}={repr(v)}")
-
-            all_args = ", ".join(args_repr + kwargs_repr)
-            print(f"\n[ACTION] {self.__name__}({all_args})")
-
-        try:
-            # ツールを直接呼び出す
-            result = self.tool(*args, **kwargs)
-
-            if self.verbose:
-                result_str = str(result)
-                if len(result_str) > 500:
-                    result_str = result_str[:500] + f"\n... (truncated, total: {len(result_str)} chars)"
-                print(f"[OBSERVATION] {result_str}\n")
-
-            return result
-
-        except Exception as e:
-            if self.verbose:
-                print(f"[ERROR] {type(e).__name__}: {str(e)}\n")
-            raise
-
-
 class FileExplorationAgent(dspy.Module):
     """
     ReActベースのファイル探索エージェント
 
     このエージェントは、ReAct（Reasoning + Acting）フレームワークを使用して、
-    ファイルシステムを探索し、ディレクトリ構造を分析し、包括的なレポートを生成します。
+    ファイルシステムを探索し、ディレクトリ構造を分析し、適切なレポートを生成します。
     """
 
     def __init__(self, max_iters: int = 10, verbose: bool = True):
@@ -345,18 +263,14 @@ class FileExplorationAgent(dspy.Module):
         self.max_iters = max_iters
         self.verbose = verbose
 
-        # Define raw tool functions (before verbose wrapping)
-        raw_tools = [ls_directory, read_file, write_file]
+        # Define tool functions
+        tools = [ls_directory, read_file, write_file]
 
-        # Generate tool specifications from raw tool functions
-        self.tool_spec = generate_tool_specifications(raw_tools)
-
-        # Wrap tools with verbose logging if enabled
-        tools = raw_tools
-        if verbose:
-            tools = [VerboseToolWrapper(tool, verbose=True) for tool in raw_tools]
+        # Generate tool specifications from tool functions
+        self.tool_spec = generate_tool_specifications(tools)
 
         # Create ReAct agent with file system tools
+        # DSPy ReAct provides trajectory in Prediction automatically
         self.agent = dspy.ReAct(
             signature=FileExplorationSignature,
             tools=tools,
@@ -369,24 +283,27 @@ class FileExplorationAgent(dspy.Module):
 
         Args:
             task: タスクの説明
-            working_directory: 探索するディレクトリ
+            working_directory: 探索するディレクトリ（相対パスまたは絶対パス）
 
         Returns:
             レポートと実行トレースを含むPrediction
         """
+        # Convert working_directory to absolute path for clarity
+        working_directory_abs = str(Path(working_directory).resolve())
+
         if self.verbose:
             print(f"\n{'=' * 80}")
             print(f"FILE EXPLORATION AGENT")
             print(f"{'=' * 80}")
             print(f"Task: {task}")
-            print(f"Working Directory: {working_directory}")
+            print(f"Working Directory: {working_directory_abs}")
             print(f"Max Iterations: {self.max_iters}")
             print(f"{'=' * 80}\n")
 
-        # Execute ReAct agent (tool calls will be logged by VerboseToolWrapper)
+        # Execute ReAct agent with absolute path
         result = self.agent(
             task=task,
-            working_directory=working_directory,
+            working_directory=working_directory_abs,
             tool_spec=self.tool_spec
         )
 

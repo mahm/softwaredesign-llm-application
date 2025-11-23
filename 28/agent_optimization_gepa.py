@@ -69,7 +69,35 @@ class ReportEvaluation(dspy.Signature):
 - 情報統合の評価基準
 
 曖昧な表現（「等」「など」「主要な」）は一切含まれません。
-このcriteriaに記載された基準に厳密に従ってください。"""
+このcriteriaに記載された基準に厳密に従ってください。
+
+【重要】必須ファイル未読時の評価ルール:
+1. 必須ファイルを全く読んでいない場合（0ファイル）: 総合スコア0点
+2. 必須ファイルを一部読んでいる場合: 読んだファイル数に応じて部分点を付与
+   - ファイル読み取り点: 読んだファイル数 / 必須ファイル総数 × 配点
+   - 必須要素の言及: 読んだファイルに関連する要素のみ評価、未読ファイルの要素は0点
+   - 情報統合: 読んだファイルの範囲内で評価
+3. ファイルを読まずに推測や一般知識のみで説明している場合は評価しない（ハルシネーション）
+4. 読んだファイルの内容に基づく説明は、たとえ一部のファイルのみでも評価対象"""
+    )
+
+    trajectory: str = dspy.InputField(
+        desc="""エージェントのツール呼び出し履歴（オプショナル）。
+
+フォーマット:
+- thought_0, tool_name_0, tool_args_0, observation_0
+- thought_1, tool_name_1, tool_args_1, observation_1
+- ...
+
+この情報を使って、エージェントが実際にどのファイルを読んだかを確認できます。
+reportに証拠が不足している場合でも、trajectoryで確認してください。
+
+例: tool_name_2="read_file", tool_args_2={"file_path": "constants.py"}
+→ constants.pyを確実に読んでいる
+
+【重要】trajectoryで確認できることが優先されます。reportの記述が不十分でも、
+trajectoryでファイルを読んでいることが確認できれば、ファイル読み取り点は付与してください。
+ただし、reportの品質が低い場合はimprovement_suggestionsで指摘してください。"""
     )
 
     score: int = dspy.OutputField(
@@ -80,7 +108,11 @@ class ReportEvaluation(dspy.Signature):
         desc="""評価理由の詳細（200-400文字）。
 
 以下を含めてください：
-1. ファイル読み取り評価: どのファイルを読んだか、criteriaの必須ファイルと照合
+1. ファイル読み取り評価: trajectoryとreportの両方を確認
+   - trajectoryで tool_name_N="read_file" を確認（確実な証拠）
+   - reportに具体的な値の引用があるか確認（補助的証拠）
+   ⚠️ trajectoryで読んでいることが確認できれば、reportが不十分でもファイル読み取り点を付与
+   ⚠️ trajectoryにもreportにも証拠がない場合は「ハルシネーション」と明記
 2. 必須要素評価: criteriaの必須要素リストと照合、含まれた要素/欠落要素
 3. 情報統合評価: 複数ファイル間の関係性説明の質
 4. スコア内訳: 各項目で何点獲得したか"""
@@ -90,9 +122,11 @@ class ReportEvaluation(dspy.Signature):
         desc="""GEPAリフレクション用の改善提案（150-300文字）。
 
 具体的で実行可能な提案を記述してください：
-- "taskにファイル名が含まれていたら、まずそのファイルを読むべき"
+- "taskにファイル名が含まれていたら、まずそのファイルを必ず読むべき"
+- "ファイルが見つからない場合は、recursive=True と pattern='*.py' で再帰探索すべき"
 - "import文を見つけたら、そのインポート元ファイルも読むべき"
 - "変数定義を見つけたら、その変数の使用箇所も探すべき"
+- "必須ファイル未読の場合は、推測で回答せず必ずファイルを探すべき"
 
 抽象的な提案（「もっと詳しく」など）は避けてください。"""
     )
@@ -130,12 +164,26 @@ def create_llm_judge_metric(eval_lm):
         if not hasattr(gold, 'criteria') or not gold.criteria:
             raise ValueError("Gold example must have 'criteria' field for LLM as a Judge evaluation")
 
+        # trajectoryをフォーマットして渡す
+        trajectory_str = ""
+        if hasattr(pred, 'trajectory') and pred.trajectory:
+            # trajectoryを整形（長すぎる場合は切り詰め）
+            trajectory_items = []
+            for k, v in pred.trajectory.items():
+                v_str = str(v)
+                # 各観測結果は最大500文字まで
+                if len(v_str) > 500:
+                    v_str = v_str[:500] + "... (truncated)"
+                trajectory_items.append(f"{k}: {v_str}")
+            trajectory_str = "\n".join(trajectory_items)
+
         # LLM as a Judgeで評価
         with dspy.context(lm=eval_lm):
             eval_result = evaluator(
                 task=gold.task,
                 report=pred.report,
-                criteria=gold.criteria
+                criteria=gold.criteria,
+                trajectory=trajectory_str
             )
 
         # スコアを0-10から0-1に正規化
@@ -183,7 +231,7 @@ def create_gepa_llm_judge_metric(eval_lm):
         if not hasattr(pred, 'report') or not pred.report:
             return dspy.Prediction(
                 score=0.0,
-                feedback="❌ No report generated",
+                feedback="[ERROR] No report generated",
                 improvement_suggestions="レポートを生成するために、ls_directory、read_file、write_fileツールを適切に使用してください。"
             )
 
@@ -191,12 +239,26 @@ def create_gepa_llm_judge_metric(eval_lm):
         if not hasattr(gold, 'criteria') or not gold.criteria:
             raise ValueError("Gold example must have 'criteria' field for LLM as a Judge evaluation")
 
+        # trajectoryをフォーマットして渡す
+        trajectory_str = ""
+        if hasattr(pred, 'trajectory') and pred.trajectory:
+            # trajectoryを整形（長すぎる場合は切り詰め）
+            trajectory_items = []
+            for k, v in pred.trajectory.items():
+                v_str = str(v)
+                # 各観測結果は最大500文字まで
+                if len(v_str) > 500:
+                    v_str = v_str[:500] + "... (truncated)"
+                trajectory_items.append(f"{k}: {v_str}")
+            trajectory_str = "\n".join(trajectory_items)
+
         # LLM as a Judgeで評価
         with dspy.context(lm=eval_lm):
             eval_result = evaluator(
                 task=gold.task,
                 report=pred.report,
-                criteria=gold.criteria
+                criteria=gold.criteria,
+                trajectory=trajectory_str
             )
 
         # スコアを0-10から0-1に正規化
@@ -238,120 +300,12 @@ def create_gepa_llm_judge_metric(eval_lm):
     return gepa_llm_judge_metric
 
 
-def gepa_metric_with_feedback(gold, pred, trace=None, pred_name=None, pred_trace=None):
-    """
-    GEPA metric function with score + textual feedback.
 
-    Args:
-        gold: Gold standard data
-        pred: Prediction result
-        trace: Program execution trace (optional)
-        pred_name: Name of specific predictor being optimized (optional)
-        pred_trace: Execution trace of specific predictor (optional)
-
-    Returns:
-        dspy.Prediction: ScoreWithFeedback type (with score and feedback fields)
-    """
-    # Calculate base score
-    score = file_exploration_metric(gold, pred, trace)
-
-    # Generate feedback
-    feedback_parts = []
-
-    # Evaluate report quality
-    if not hasattr(pred, 'report') or not pred.report:
-        feedback_parts.append(" No report generated")
-    else:
-        report = pred.report.strip()
-        report_len = len(report)
-
-        if report_len >= 100:
-            feedback_parts.append(f" Substantial report ({report_len} chars)")
-        else:
-            feedback_parts.append(f"� Short report ({report_len} chars)")
-
-        # Check for error messages
-        if any(err in report.lower() for err in ['error:', 'failed', 'could not']):
-            feedback_parts.append("� Contains error messages")
-
-        # Check structure
-        lines = len(report.split('\n'))
-        if lines >= 5:
-            feedback_parts.append(f" Well-structured ({lines} lines)")
-        elif lines >= 2:
-            feedback_parts.append(f"� Basic structure ({lines} lines)")
-
-    # Task-specific feedback
-    if hasattr(gold, 'task'):
-        task_lower = gold.task.lower()
-        if 'list' in task_lower or 'find' in task_lower:
-            if hasattr(pred, 'report') and pred.report:
-                # Check if report contains file listings
-                if any(ext in pred.report for ext in ['.py', '.json', '.md', '.txt', 'FILE', 'DIR']):
-                    feedback_parts.append(" Contains file information")
-
-    # Add predictor name if specified
-    if pred_name:
-        feedback_parts.append(f"[{pred_name}]")
-
-    # Generate feedback string
-    feedback = " | ".join(feedback_parts)
-
-    # GEPA expects ScoreWithFeedback type (dspy.Prediction)
-    return dspy.Prediction(
-        score=score,
-        feedback=feedback
-    )
-
-
-def log_metric_evaluation(gold, pred, trace, pred_name, pred_trace, result):
-    """
-    Log metric evaluation.
-
-    Args:
-        gold: Gold standard data
-        pred: Prediction result
-        trace: Program execution trace
-        pred_name: Predictor name
-        pred_trace: Predictor execution trace
-        result: Metric calculation result (dspy.Prediction)
-    """
-    logger = logging.getLogger("gepa_optimization")
-
-    # Log input arguments
-    logger.info(f"gold = {repr(gold)}")
-    logger.info(f"pred = {repr(pred)}")
-    logger.info(f"trace = {repr(trace) if trace is not None else 'None'}")
-    logger.info(f"pred_name = {repr(pred_name) if pred_name is not None else 'None'}")
-    logger.info(f"pred_trace = {repr(pred_trace) if pred_trace is not None else 'None'}")
-
-    logger.info("-" * 80)
-
-    # Log calculation results
-    logger.info(f"score = {result.score}")
-    logger.info(f"feedback = {result.feedback}")
-    logger.info("=" * 80)
-
-
-def gepa_metric_with_feedback_logged(gold, pred, trace=None, pred_name=None, pred_trace=None):
-    """
-    GEPA metric function with logging.
-
-    Args:
-        gold: Gold standard data
-        pred: Prediction result
-        trace: Program execution trace (optional)
-        pred_name: Name of specific predictor being optimized (optional)
-        pred_trace: Execution trace of specific predictor (optional)
-
-    Returns:
-        dspy.Prediction: ScoreWithFeedback type (with score and feedback fields)
-    """
-    result = gepa_metric_with_feedback(gold, pred, trace, pred_name, pred_trace)
-    log_metric_evaluation(gold, pred, trace, pred_name, pred_trace, result)
-
-    return result
-
+# Removed deprecated functions (2025-11-22):
+# - gepa_metric_with_feedback (unused, called undefined file_exploration_metric)
+# - log_metric_evaluation (only used by gepa_metric_with_feedback_logged)
+# - gepa_metric_with_feedback_logged (unused)
+# Replaced by: create_llm_judge_metric() and create_gepa_llm_judge_metric()
 
 def setup_logging(timestamp: str) -> tuple:
     """
@@ -393,8 +347,8 @@ def setup_logging(timestamp: str) -> tuple:
     tee = Tee(stdout_path, original_stdout)
     sys.stdout = tee
 
-    print(f"=� Log file: {log_path}")
-    print(f"=� Stdout log: {stdout_path}")
+    print(f"[LOG] Log file: {log_path}")
+    print(f"[LOG] Stdout log: {stdout_path}")
 
     return original_stdout, tee, log_path, stdout_path
 
@@ -420,9 +374,9 @@ def cleanup_logging(original_stdout, tee: Tee, log_path: str, stdout_path: str) 
     tee.close()
 
     # Display file paths
-    print("\n Optimization complete!")
-    print(f"=� Detailed log: {log_path}")
-    print(f"=� Standard output: {stdout_path}")
+    print("\n[DONE] Optimization complete!")
+    print(f"[LOG] Detailed log: {log_path}")
+    print(f"[LOG] Standard output: {stdout_path}")
 
 
 def main(seed=42, dataset="train"):
@@ -440,13 +394,13 @@ def main(seed=42, dataset="train"):
 
     try:
         # Load dataset
-        print("=� Loading file exploration dataset...")
+        print("[LOG] Loading file exploration dataset...")
         train_examples = load_file_exploration_dataset(dataset_type=dataset, random_seed=seed)
         # Note: test set is loaded separately in agent_evaluation.py
         # For GEPA optimization, we use train set only (no val set)
 
         # LM configuration
-        print("\n=' Configuring models...")
+        print("\n[CONFIG] Configuring models...")
         # GEPA reflection LM (high temperature)
         reflection_lm = configure_lm(SMART_MODEL, temperature=1.0, max_tokens=8192)
         # Inference LM (fast model)
@@ -459,12 +413,12 @@ def main(seed=42, dataset="train"):
         dspy.configure(lm=fast_lm)
 
         # Create LLM as a Judge metrics
-        print("\n=\u2696\ufe0f Creating LLM as a Judge evaluation metrics...")
+        print("\n[EVAL] Creating LLM as a Judge evaluation metrics...")
         llm_judge_metric = create_llm_judge_metric(eval_lm)
         gepa_llm_metric = create_gepa_llm_judge_metric(eval_lm)
 
         # Baseline evaluation
-        print("\n=� Evaluating baseline (train set)...")
+        print("\n[EVAL] Evaluating baseline (train set)...")
         baseline_agent = FileExplorationAgent(max_iters=10, verbose=False)
 
         baseline_scores = []
@@ -477,7 +431,7 @@ def main(seed=42, dataset="train"):
         print(f"  Baseline average score: {baseline_avg:.3f} (on {len(baseline_scores)} examples)")
 
         # GEPA optimization
-        print("\n=� Starting GEPA optimization...")
+        print("\n[START] Starting GEPA optimization...")
 
         # Target agent for optimization
         agent = FileExplorationAgent(max_iters=10, verbose=False)
@@ -485,7 +439,7 @@ def main(seed=42, dataset="train"):
         # GEPA configuration
         optimizer = dspy.GEPA(
             metric=gepa_llm_metric,  # LLM as a Judge metric with feedback
-            auto="light",  # Optimization intensity
+            auto="light",  # Optimization intensity (light=6 candidates)
             reflection_lm=reflection_lm,  # LM for reflection (strong model recommended)
         )
 
@@ -496,7 +450,7 @@ def main(seed=42, dataset="train"):
         )
 
         # Post-optimization evaluation
-        print("\n=� Evaluating optimized agent (train set)...")
+        print("\n[EVAL] Evaluating optimized agent (train set)...")
         opt_scores = []
         for ex in train_examples[:3]:  # Use first 3 examples for quick check
             pred = optimized_agent(task=ex.task, working_directory=ex.working_directory)
@@ -517,14 +471,14 @@ def main(seed=42, dataset="train"):
         # Save model
         os.makedirs("artifact", exist_ok=True)
         optimized_agent.save(model_path)
-        print(f"\n=� Saved optimized model: {model_path}")
+        print(f"\n[SAVE] Saved optimized model: {model_path}")
 
         # Create symlink to latest version
         if os.path.exists(GEPA_OPTIMIZED_MODEL_LATEST):
             os.remove(GEPA_OPTIMIZED_MODEL_LATEST)
         os.symlink(model_filename, GEPA_OPTIMIZED_MODEL_LATEST)
 
-        print(f"  � Latest link: {GEPA_OPTIMIZED_MODEL_LATEST}")
+        print(f"  [LINK] Latest link: {GEPA_OPTIMIZED_MODEL_LATEST}")
 
     finally:
         # Cleanup logging environment
@@ -540,7 +494,7 @@ if __name__ == "__main__":
                        help='Dataset to use: train (10 examples) or mini_test (3 examples)')
     args = parser.parse_args()
 
-    print(f"<1 Seed value: {args.seed}")
-    print(">� Optimization method: GEPA (Genetic-Pareto)")
-    print(f"📊 Dataset: {args.dataset}")
+    print(f"[SEED] Seed value: {args.seed}")
+    print(f"[METHOD] Optimization method: GEPA (Genetic-Pareto)")
+    print(f"[DATA] Dataset: {args.dataset}")
     main(seed=args.seed, dataset=args.dataset)
