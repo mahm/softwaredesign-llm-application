@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Dataset loader for file exploration agent training and evaluation - DIVERSE MULTI-DIRECTORY VERSION
 

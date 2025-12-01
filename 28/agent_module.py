@@ -1,14 +1,10 @@
 """
-DSPy ReActを使用したファイル探索エージェントモジュール
-
-このモジュールは、ディレクトリをナビゲートし、ファイルを読み取り、
-ディレクトリ構造に関する包括的なレポートを生成するファイルシステム探索エージェントを実装します。
+DSPy ReActを使用したファイル探索エージェント
 """
 
 import os
-import functools
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 import dspy
 
 from agent_tool_specs import generate_tool_specifications
@@ -22,6 +18,8 @@ _INITIAL_CWD = os.getcwd()
 # File System Tools
 # ============================================================================
 
+# ツールのdocstringはそのままエージェントのプロンプトとして使用されます。
+# 変更することにより、エージェントの振る舞い／精度が変わる可能性があります。
 
 def ls_directory(
     path: str = ".",

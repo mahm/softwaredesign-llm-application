@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
 """
-File Exploration Agent Optimization Script (GEPA)
-
-This script optimizes the file exploration agent using GEPA (Genetic-Pareto) optimization.
+ファイル探索エージェント最適化スクリプト（GEPA）
 """
 
 import os
 import sys
-import random
 import argparse
 import logging
 import dspy

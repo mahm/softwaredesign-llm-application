@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
 """
-File Exploration Agent Evaluation Script
-
-This script evaluates the file exploration agent on the test dataset using LLM as a Judge.
+ファイル探索エージェント評価スクリプト
 """
 
 import os
-import sys
 import argparse
 import dspy
 from datetime import datetime
 
-from config import configure_lm, SMART_MODEL, FAST_MODEL, EVAL_MODEL
+from config import configure_lm, FAST_MODEL, EVAL_MODEL
 from agent_module import FileExplorationAgent
 from dataset_loader import load_file_exploration_dataset
 from agent_optimization_gepa import create_llm_judge_metric, ReportEvaluation

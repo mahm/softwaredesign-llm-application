@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-Tool Specification Generator for File Exploration Agent
-
-This module provides utilities to dynamically generate tool specifications
-for DSPy ReAct agents using dspy.Tool properties.
+ツール仕様ジェネレータ
 """
 
 import dspy
