@@ -41,7 +41,8 @@ def configure_lm(model_name: str | None = None, temperature: float = 0.0, max_to
             api_key=api_key,
             api_version=api_version,
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            cache=False  # Disable prompt caching for accurate evaluation
         )
     else:
         # OpenAIの設定
@@ -51,7 +52,8 @@ def configure_lm(model_name: str | None = None, temperature: float = 0.0, max_to
             model=f"openai/{model_name}",
             api_key=api_key,
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            cache=False  # Disable prompt caching for accurate evaluation
         )
 
 
