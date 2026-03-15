@@ -1,0 +1,6 @@
+# workspace内はエージェントスキルと行動指針のみ追跡
+*
+!.gitignore
+!AGENTS.md
+!.agent/
+!.agent/**
