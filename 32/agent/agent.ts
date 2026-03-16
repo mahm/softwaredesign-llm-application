@@ -2,7 +2,7 @@ import path from "node:path";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { MemorySaver } from "@langchain/langgraph";
 import { LocalShellBackend, createDeepAgent } from "deepagents";
-import { generatePptxTool } from "./generate-pptx-tool";
+import { createGeneratePptxTool } from "./generate-pptx-tool";
 import { SYSTEM_PROMPT } from "./system-prompt";
 
 const workspaceDir = path.resolve(process.cwd(), "workspace");
@@ -21,7 +21,7 @@ export function createSlideAgent() {
   return createDeepAgent({
     model,
     systemPrompt: SYSTEM_PROMPT,
-    tools: [generatePptxTool],
+    tools: [createGeneratePptxTool(workspaceDir)],
     skills: ["./.agent/skills/"],
     memory: ["./AGENTS.md"],
     backend,

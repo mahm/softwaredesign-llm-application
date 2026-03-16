@@ -167,25 +167,30 @@ function DownloadCard() {
 }
 
 function GeneratePptxHandler({
-  args,
+  result,
   status,
-}: { args: Record<string, unknown>; status: string }) {
+}: { result: unknown; status: string }) {
   const { setSlideData, setPptxBase64 } = useSlideData();
   const generatedRef = useRef(false);
 
   useEffect(() => {
     if (status !== "complete" || generatedRef.current) return;
+
+    const parsed =
+      typeof result === "string" ? JSON.parse(result) : result;
+    if (!parsed?.success) return;
+
     generatedRef.current = true;
 
     const data: SlideData = {
-      title: (args.title as string) ?? "",
-      author: args.author as string | undefined,
-      slides: (args.slides as SlideData["slides"]) ?? [],
+      title: (parsed.title as string) ?? "",
+      author: parsed.author as string | undefined,
+      slides: (parsed.slides as SlideData["slides"]) ?? [],
     };
 
     setSlideData(data);
     generatePptxBase64(data).then(setPptxBase64);
-  }, [status, args, setSlideData, setPptxBase64]);
+  }, [status, result, setSlideData, setPptxBase64]);
 
   if (status === "complete") {
     return <DownloadCard />;
@@ -209,7 +214,7 @@ export function ToolCallRenderer() {
         const { status, name, args } = props;
 
         if (name === "generate_pptx") {
-          return <GeneratePptxHandler args={args} status={status} />;
+          return <GeneratePptxHandler result={props.result} status={status} />;
         }
 
         if (status === "inProgress") {
