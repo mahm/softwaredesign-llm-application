@@ -176,8 +176,7 @@ function GeneratePptxHandler({
   useEffect(() => {
     if (status !== "complete" || generatedRef.current) return;
 
-    const parsed =
-      typeof result === "string" ? JSON.parse(result) : result;
+    const parsed = typeof result === "string" ? JSON.parse(result) : result;
     if (!parsed?.success) return;
 
     generatedRef.current = true;

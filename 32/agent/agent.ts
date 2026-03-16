@@ -21,7 +21,7 @@ export function createSlideAgent() {
   return createDeepAgent({
     model,
     systemPrompt: SYSTEM_PROMPT,
-    tools: [createGeneratePptxTool(workspaceDir)],
+    tools: [createGeneratePptxTool(backend)],
     skills: ["./.agent/skills/"],
     memory: ["./AGENTS.md"],
     backend,

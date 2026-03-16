@@ -1,6 +1,5 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { tool } from "@langchain/core/tools";
+import type { BackendProtocol } from "deepagents";
 import { z } from "zod";
 
 const slideSchema = z.object({
@@ -19,19 +18,16 @@ const slideDataSchema = z.object({
 const inputSchema = z.object({
   filePath: z
     .string()
-    .describe(
-      "スライドJSONファイルのパス(例: ./slides/2603.03303.json)",
-    ),
+    .describe("スライドJSONファイルのパス(例: ./slides/2603.03303.json)"),
 });
 
-export function createGeneratePptxTool(workspaceDir: string) {
+export function createGeneratePptxTool(backend: BackendProtocol) {
   return tool(
     async (input) => {
-      const resolved = path.resolve(workspaceDir, input.filePath);
-
       let raw: string;
       try {
-        raw = await readFile(resolved, "utf-8");
+        const fileData = await backend.readRaw(input.filePath);
+        raw = fileData.content.join("\n");
       } catch {
         return JSON.stringify({
           success: false,
