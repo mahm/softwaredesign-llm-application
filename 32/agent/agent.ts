@@ -10,7 +10,6 @@ const workspaceDir = path.resolve(process.cwd(), "workspace");
 export function createSlideAgent() {
   const model = new ChatAnthropic({
     model: "claude-sonnet-4-6",
-    temperature: 0,
   });
 
   const backend = new LocalShellBackend({

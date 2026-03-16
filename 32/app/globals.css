@@ -17,6 +17,12 @@
   pointer-events: auto !important;
 }
 
+/* ── Feedback icon spacing ──────────────────── */
+
+.copilotkit-response-buttons {
+  margin-bottom: 0.75em;
+}
+
 /* ── Agent message typography ────────────────── */
 
 .copilotKitMarkdown {
