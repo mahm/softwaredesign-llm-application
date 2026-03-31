@@ -1,141 +1,50 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
+.pytest_cache/
 .coverage
 .coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
+htmlcov/
 
-# Translations
-*.mo
-*.pot
+# Virtual environments
+.venv/
+venv/
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media
+# Node.js
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
 
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# IPython Notebook
-.ipynb_checkpoints
-
-# PyCharm
-*.iml
-.idea/
-.idea_modules/
-*.pyc
-
-# dotenv
+# Environment variables
 .env
 .env.local
 
-# Local .terraform directories
-**/.terraform/*
-
-# .tfstate files
-*.tfstate
-*.tfstate.*
-
-# Crash log files
-crash.log
-
-# Ignore any .tfvars files that are automatically generated for each Terraform run.
-*.auto.tfvars
-*.auto.tfvars.json
-*.tfvars.json
-
-# Ignore override files as they are usually used to override resources locally and so
-# are not checked in
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Ignore CLI configuration files
-.terraformrc
-terraform.rc
-
-# Ignore the .terraform.lock.hcl file, which is used to record the versions of
-# modules installed from the Terraform Registry
-.terraform.lock.hcl
-
-# Ignore the .terraform/providers directory, which contains the installed provider
-# binaries for each configured provider
-.terraform/providers
-
-# Ignore the .terraform/plugins directory, which contains the installed plugin
-# binaries for each provider
-.terraform/plugins
-
-.pytest_cache
-.venv
-venv/
-
-.chainlit
-chainlit.md
-
-.claude/
-CLAUDE.md
-
-# macOS system files
+# macOS
 .DS_Store
 
+# IDE
+.idea/
+
+# Logs
+*.log
+
+# Chainlit
+.chainlit/
+chainlit.md
+
+# AI tooling
+.aidlc/
+.agents/
+.claude/
+CLAUDE.md
+AGENTS.md
+skills-lock.json
+
+# Misc
 tmp/
 repomix.config.json

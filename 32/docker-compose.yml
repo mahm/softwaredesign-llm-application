@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    volumes:
+      - workspace-data:/app/workspace
+
+volumes:
+  workspace-data:

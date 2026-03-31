@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["agent/index.ts"],
+  "project": ["app/**/*.{ts,tsx}", "agent/**/*.ts"],
+  "ignoreDependencies": [
+    "langchain-copilotkit",
+    "@textlint-ja/textlint-rule-preset-ai-writing",
+    "textlint-rule-preset-ja-technical-writing",
+    "postcss",
+    "tailwindcss",
+    "zod"
+  ]
+}

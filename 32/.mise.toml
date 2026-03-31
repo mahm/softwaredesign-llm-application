@@ -1,0 +1,30 @@
+[env]
+_.file = ".env"
+
+[tools]
+node = "22"
+bun = "latest"
+
+[tasks.install]
+description = "Install dependencies"
+run = "bun install"
+
+[tasks.dev]
+description = "Start the Next.js dev server"
+run = "bun run dev"
+
+[tasks.lint]
+description = "Run all linters (biome, knip, textlint)"
+run = """
+bun run lint
+bun run knip
+bun run lint:text
+"""
+
+[tasks.build]
+description = "Build Docker image"
+run = "docker compose build"
+
+[tasks.up]
+description = "Start application in Docker"
+run = "docker compose up"

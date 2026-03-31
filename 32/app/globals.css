@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+.copilotKitChat {
+  height: 100%;
+  min-height: 0;
+}
+
+.copilotKitWindow {
+  position: relative !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-height: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+/* ── Feedback icon spacing ──────────────────── */
+
+.copilotkit-response-buttons {
+  margin-bottom: 0.75em;
+}
+
+/* ── Agent message typography ────────────────── */
+
+.copilotKitMarkdown {
+  line-height: 1.7;
+}
+
+.copilotKitMarkdown p {
+  margin-bottom: 0.5em;
+}
+
+.copilotKitMarkdown h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+  color: #1e293b;
+}
+
+.copilotKitMarkdown h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  color: #334155;
+}
+
+.copilotKitMarkdown ul,
+.copilotKitMarkdown ol {
+  padding-left: 1.4em;
+  margin-bottom: 0.6em;
+}
+
+.copilotKitMarkdown li {
+  margin-bottom: 0.25em;
+}
+
+.copilotKitMarkdown hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 1em 0;
+}
+
+.copilotKitMarkdown strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ── Tables ──────────────────────────────────── */
+
+.copilotKitMarkdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.85rem;
+}
+
+.copilotKitMarkdown th,
+.copilotKitMarkdown td {
+  border: 1px solid #cbd5e1;
+  padding: 0.45em 0.7em;
+  text-align: left;
+}
+
+.copilotKitMarkdown th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+}
+
+.copilotKitMarkdown tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* ── Code blocks ─────────────────────────────── */
+
+.copilotKitMarkdown code {
+  font-size: 0.85em;
+  background-color: #f1f5f9;
+  padding: 0.15em 0.35em;
+  border-radius: 0.25em;
+  color: #334155;
+}
+
+.copilotKitMarkdown pre {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  padding: 0.8em 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+
+.copilotKitMarkdown pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
