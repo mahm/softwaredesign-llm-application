@@ -95,3 +95,38 @@ HTML版が公開されていない論文(PDFのみ)は対象外です。
 ├── .mise.toml                      # タスクランナー設定
 └── .env.sample
 ```
+
+## サンプルコードの処理フロー
+
+サンプルコードの処理フローは、次のシーケンス図の通りです。[langchain-copilotkit](https://github.com/mahm/langchain-copilotkit/)がフロントエンドとバックエンド（エージェント）とのハブとなって動作します。
+
+```mermaid
+sequenceDiagram
+    participant User as ユーザー
+    participant UI as CopilotKit<br/>(React)
+    participant Runtime as CopilotRuntime
+    participant Adapter as LangChainAgentAdapter<br/>(langchain-copilotkit)
+    participant Agent as Deep Agents<br/>エージェント
+    participant arXiv as arXiv
+
+    User->>UI: 論文URLを入力
+    UI->>Runtime: メッセージ送信
+    Runtime->>Adapter: エージェント呼び出し
+    Adapter->>Agent: streamEvents
+    Agent->>arXiv: curl で論文HTML取得
+    arXiv-->>Agent: HTML
+    Agent-->>Adapter: アウトライン提案
+    Adapter-->>Runtime: レスポンス
+    Runtime-->>UI: ストリーミング表示
+    UI-->>User: アウトライン表示
+
+    User->>UI: 修正指示 / OK
+    UI->>Runtime: メッセージ送信
+    Runtime->>Adapter: エージェント呼び出し
+    Adapter->>Agent: streamEvents
+    Agent-->>Adapter: generate_pptxツール呼び出し
+    Adapter-->>Runtime: ツール呼び出し結果
+    Runtime-->>UI: スライドデータ
+    UI->>UI: PptxGenJSでPPTX生成
+    UI-->>User: ダウンロードボタン表示
+```
