@@ -42,6 +42,14 @@ type AcpxToolResult = {
   stderr?: string;
 };
 
+type AcpxSupervisorResult = Omit<
+  AcpxToolResult,
+  "prompt" | "events" | "stderr"
+> & {
+  eventCount: number;
+  hasStderr: boolean;
+};
+
 const AGENT_CONFIG: Record<
   AcpAgentName,
   { model: string; acpxModel: string; reasoningEffort?: "low" }
@@ -559,6 +567,23 @@ async function promptAcpAgent(params: {
   };
 }
 
+function toSupervisorResult(result: AcpxToolResult): AcpxSupervisorResult {
+  return {
+    agent: result.agent,
+    session: result.session,
+    turn: result.turn,
+    model: result.model,
+    acpxModel: result.acpxModel,
+    reasoningEffort: result.reasoningEffort,
+    permissionMode: result.permissionMode,
+    commandOptions: result.commandOptions,
+    promptPreview: result.promptPreview,
+    finalText: result.finalText,
+    eventCount: result.events.length,
+    hasStderr: Boolean(result.stderr),
+  };
+}
+
 export const askAcpAgents = tool(
   async ({
     repoPath,
@@ -600,7 +625,7 @@ export const askAcpAgents = tool(
       humanAnswer,
       permissionMode: "read-only",
       commandOptions: [...READ_ONLY_ACPX_ARGS],
-      results,
+      results: results.map(toSupervisorResult),
     });
   },
   {
@@ -649,7 +674,7 @@ export const askAcpAgent = tool(
       prompt,
       timeoutSec,
     });
-    return JSON.stringify(result);
+    return JSON.stringify(toSupervisorResult(result));
   },
   {
     name: "ask_acp_agent",
