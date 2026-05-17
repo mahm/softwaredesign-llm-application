@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+body {
+  background: #f8fafc;
+  font-family:
+    "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", system-ui,
+    sans-serif;
+  overflow: hidden;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}

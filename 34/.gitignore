@@ -1,0 +1,8 @@
+.env
+.next
+node_modules
+tsconfig.tsbuildinfo
+tmp
+workspace/large_tool_results
+AGENTS.md
+!workspace/AGENTS.md

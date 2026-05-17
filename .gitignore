@@ -43,8 +43,13 @@ chainlit.md
 .claude/
 CLAUDE.md
 AGENTS.md
+!34/AGENTS.md
+!34/workspace/AGENTS.md
 skills-lock.json
 
 # Misc
 tmp/
+!34/tmp/
+34/tmp/*
+!34/tmp/PLAN.md
 repomix.config.json
