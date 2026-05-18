@@ -71,6 +71,35 @@ PORT=8080 mise run dev
 5. 回答を送ると、Supervisorが同じACPXセッションへその回答だけを返します。
 6. 追加の確認質問があれば同じ流れを繰り返し、十分な分析が揃ったらSupervisorが最終レポートをまとめます。
 
+## 注意事項
+
+このサンプルアプリケーションは、実行中に作成したACPXセッションを自動では破棄しません。Claude CodeとCodexには別々の名前付きセッションが作成されるため、デモ実行後は両方を手動で閉じてください。
+
+セッション名は、画面のClaude CodeペインとCodexペインの上部に表示されます。サンプルアプリケーションが作るセッション名は、通常 `claude-xxxxxxxx` と `codex-xxxxxxxx` の形です。
+
+まず、必要に応じて対象リポジトリに紐づくセッションを確認します。
+
+```bash
+bun x acpx --cwd <調査対象リポジトリ> claude sessions list
+bun x acpx --cwd <調査対象リポジトリ> codex sessions list
+```
+
+次に、Claude Code側のセッションとCodex側のセッションをそれぞれ閉じます。
+
+```bash
+bun x acpx --cwd <調査対象リポジトリ> claude sessions close <Claude Codeのセッション名>
+bun x acpx --cwd <調査対象リポジトリ> codex sessions close <Codexのセッション名>
+```
+
+例えば、対象リポジトリが`/Users/mah/ghq/github.com/openclaw/acpx`で、セッション名が`claude-demo`と`codex-demo`の場合は次のように実行します。
+
+```bash
+bun x acpx --cwd /Users/mah/ghq/github.com/openclaw/acpx claude sessions close claude-demo
+bun x acpx --cwd /Users/mah/ghq/github.com/openclaw/acpx codex sessions close codex-demo
+```
+
+この操作はACPXのセッションをcloseするもので、セッション履歴レコードはACPX側に残ります。履歴ファイルまで削除したい場合は、ACPXの `sessions prune` を別途使ってください。
+
 ## 処理の流れ
 
 ```mermaid
