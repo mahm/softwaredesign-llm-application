@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+tmp/
+
+# Harbor run directories contain large per-trial traces.
+# Keep only final score summaries under results/.
+results/harbor/*/**
+!results/harbor/*/
+!results/harbor/*/result.json
+!results/harbor/*/suite-summary.json

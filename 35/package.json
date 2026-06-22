@@ -1,0 +1,28 @@
+{
+  "name": "sd-35-deepagents-tbench-autotune",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "bun src/main.ts run",
+    "report": "bun src/main.ts report",
+    "harbor:report": "bun src/harbor-report.ts",
+    "check": "tsc --noEmit",
+    "tbench:smoke": "bash scripts/run_tbench_smoke.sh",
+    "harbor:dev5": "bash scripts/run_harbor_tb2_dev5.sh",
+    "harbor:test10": "bash scripts/run_harbor_tb2_test10.sh"
+  },
+  "dependencies": {
+    "@langchain/core": "1.1.49",
+    "@langchain/langgraph": "1.4.2",
+    "@langchain/langgraph-checkpoint": "1.1.1",
+    "@langchain/openrouter": "0.3.0",
+    "deepagents": "1.10.2",
+    "dotenv": "17.2.4",
+    "langchain": "1.4.5",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.8.0",
+    "typescript": "6.0.3"
+  }
+}

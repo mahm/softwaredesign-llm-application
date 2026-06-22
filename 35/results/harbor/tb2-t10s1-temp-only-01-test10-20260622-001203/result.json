@@ -1,0 +1,50 @@
+{
+    "id": "c9d69770-411d-4c08-8c43-325f2156bacb",
+    "started_at": "2026-06-22T00:12:06.500687",
+    "updated_at": "2026-06-22T01:35:03.780946",
+    "finished_at": "2026-06-22T01:35:03.780946",
+    "n_total_trials": 10,
+    "stats": {
+        "n_completed_trials": 10,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "deepagents-ts-openrouter__terminal-bench/terminal-bench-2": {
+                "n_trials": 10,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.6
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "crack-7z-hash__er2qeZU",
+                            "kv-store-grpc__NwJtwzH",
+                            "raman-fitting__7HUQADS",
+                            "polyglot-c-py__WRGzzL4"
+                        ],
+                        "1.0": [
+                            "extract-elf__ATjeV7A",
+                            "merge-diff-arc-agi-task__Yo8HUtP",
+                            "sqlite-with-gcov__WyPR9vT",
+                            "cobol-modernization__UzUkEgq",
+                            "pypi-server__s7ga36n",
+                            "sqlite-db-truncate__C2ooQXj"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

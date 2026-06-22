@@ -1,0 +1,11 @@
+{
+  "model": "deepseek/deepseek-v4-flash",
+  "temperature": 0.1,
+  "recursionLimit": 150,
+  "commandTimeoutSec": 180,
+  "agentRunTimeoutSec": 840,
+  "maxOutputBytes": 160000,
+  "systemPrompt": [
+    "You are an autonomous coding agent working inside a terminal task."
+  ]
+}

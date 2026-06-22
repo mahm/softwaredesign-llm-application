@@ -1,0 +1,174 @@
+{
+  "jobDir": "/Users/mah/ghq/github.com/mahm/softwaredesign-llm-application/35/results/harbor/tb2-t10s1-short-discipline-01-test10-20260622-065033",
+  "expectedAttempts": 1,
+  "trialCount": 10,
+  "trialPasses": 7,
+  "trialMean": 0.7,
+  "strictTaskPasses": 7,
+  "taskCount": 10,
+  "strictTaskMean": 0.7,
+  "exceptionCount": 3,
+  "failedToolCalls": 0,
+  "tasks": [
+    {
+      "taskName": "terminal-bench/cobol-modernization",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "cobol-modernization__To7g6KD",
+          "reward": 1,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/crack-7z-hash",
+      "attempts": 1,
+      "passes": 0,
+      "strictPass": false,
+      "trials": [
+        {
+          "trialName": "crack-7z-hash__LGyP3V9",
+          "reward": 0,
+          "exceptionType": "AgentTimeoutError",
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/extract-elf",
+      "attempts": 1,
+      "passes": 0,
+      "strictPass": false,
+      "trials": [
+        {
+          "trialName": "extract-elf__2Qs8z7D",
+          "reward": 0,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/kv-store-grpc",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "kv-store-grpc__XDPKjMu",
+          "reward": 1,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/merge-diff-arc-agi-task",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "merge-diff-arc-agi-task__wJNjUAo",
+          "reward": 1,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/polyglot-c-py",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "polyglot-c-py__kseabYJ",
+          "reward": 1,
+          "exceptionType": "AgentTimeoutError",
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/pypi-server",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "pypi-server__apRg9cG",
+          "reward": 1,
+          "exceptionType": "AgentTimeoutError",
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/raman-fitting",
+      "attempts": 1,
+      "passes": 0,
+      "strictPass": false,
+      "trials": [
+        {
+          "trialName": "raman-fitting__ExFfAA2",
+          "reward": 0,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/sqlite-db-truncate",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "sqlite-db-truncate__FzsTj64",
+          "reward": 1,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    },
+    {
+      "taskName": "terminal-bench/sqlite-with-gcov",
+      "attempts": 1,
+      "passes": 1,
+      "strictPass": true,
+      "trials": [
+        {
+          "trialName": "sqlite-with-gcov__wFwguL2",
+          "reward": 1,
+          "exceptionType": null,
+          "failedToolCalls": null,
+          "toolCalls": null,
+          "checkpointCount": null
+        }
+      ]
+    }
+  ]
+}
