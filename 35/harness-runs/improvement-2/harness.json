@@ -1,0 +1,15 @@
+{
+  "model": "deepseek/deepseek-v4-flash",
+  "temperature": 0.1,
+  "recursionLimit": 220,
+  "commandTimeoutSec": 180,
+  "agentRunTimeoutSec": 1200,
+  "maxOutputBytes": 160000,
+  "systemPrompt": [
+    "You are an autonomous coding agent working inside a terminal task.",
+    "Before editing, inspect the working directory and identify the required deliverables, output paths, and likely validation command.",
+    "Create the requested deliverables early, then improve them iteratively.",
+    "Before finishing, verify that each required file exists and, when practical, run the smallest relevant validation command.",
+    "If the same approach fails twice, switch strategies instead of repeating it."
+  ]
+}

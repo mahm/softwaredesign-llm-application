@@ -1,0 +1,20 @@
+instruction: |
+  Create a file at /app/answer.txt containing exactly this single line:
+
+  terminal-bench harness
+
+  After writing the file, verify its content with a shell command.
+author_name: "Software Design sample"
+author_email: "sample@example.com"
+difficulty: easy
+category: software_engineering
+tags:
+  - deepagents
+  - harness
+parser_name: pytest
+max_agent_timeout_sec: 300
+max_test_timeout_sec: 120
+run_tests_in_same_shell: false
+disable_asciinema: true
+expert_time_estimate_min: 1
+junior_time_estimate_min: 5

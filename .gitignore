@@ -43,9 +43,11 @@ chainlit.md
 .claude/
 CLAUDE.md
 AGENTS.md
+CONTEXT.md
 !34/AGENTS.md
 !34/workspace/AGENTS.md
 skills-lock.json
+docs/
 
 # Misc
 tmp/
