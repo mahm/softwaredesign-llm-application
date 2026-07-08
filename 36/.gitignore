@@ -1,0 +1,13 @@
+node_modules/
+.venv/
+uv.lock
+__pycache__/
+.deepeval/
+.deepeval_telemetry.txt
+
+# Workspace AGENTS.md files are part of the sample (root .gitignore hides AGENTS.md).
+!AGENTS.md
+
+# Agent run byproducts inside workspaces. Evaluated artifacts live in results/.
+workspaces/*/slides/
+workspaces/*/large_tool_results/

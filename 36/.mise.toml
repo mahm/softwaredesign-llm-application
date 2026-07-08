@@ -1,0 +1,13 @@
+[env]
+_.file = ".env"
+
+[tools]
+bun = "1.3.5"
+
+[tasks.install]
+description = "Install TypeScript and Python dependencies"
+run = "bun install && uv sync"
+
+[tasks.check]
+description = "Run TypeScript typecheck"
+run = "bun run check"

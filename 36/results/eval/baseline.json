@@ -1,0 +1,137 @@
+{
+  "variant": "baseline",
+  "runs": [
+    {
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.75,
+          "reason": "The score is 0.75 because the summary captures the paper’s positive findings about HumanLM reasonably well, but it overstates several claims. It adds unsupported conclusions about avoiding local optima, higher-quality exploration, SFT worsening with scale, future work on simulator diversity and multi-domain training, and specific applications not stated in the text. It also exaggerates the results by saying HumanLM significantly outperforms baselines on all metrics, whereas the original only reports strong gains on some evaluated measures."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7904650535100891,
+          "reason": "論文内容との対応は概ね良く、背景→手法→結果→考察/人間評価→結論という流れも自然で、HumanLMの6状態次元、Humanualの6データセット・26Kユーザ・216K応答、平均16.3%改善、111名評価など主要パラメータを押さえている。各スライドタイトルも具体的で抽象的すぎない。一方で、各スライドに複数論点がやや詰め込まれており、特に結果・考察スライドはベンチマーク、訓練動態、評価頑健性、人間評価、SFT批判まで混在するため『1スライド1メッセージ』の観点では減点。加えて、プレゼン資料としてはやや文字量が多く、Problem Formulationや応答合成の要点が独立して整理されていない点も惜しい。"
+        }
+      },
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.5454545454545454,
+          "reason": "The score is 0.55 because the summary captures some core Transformer ideas, but it includes several factual errors and unsupported additions. It misstates key details such as attention scaling, overgeneralizes claims about RNNs and sequence length, and gives incorrect convolution path-length information. It also adds many slide-style labels and broader claims about future work and NLP impact that are not in the original text, while omitting at least one answerable detail about the training setup."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8,
+          "reason": "主要論点は背景・手法・利点・結果・結論に整理され、各スライドも概ね1論点に絞られており、流れも動機→手法→結果→結論で自然。Transformerの中核要素（self-attentionのみ、6層Encoder/Decoder、scaled dot-product、multi-head、positional encoding）や結果（英独28.4 BLEU、英仏41.8、8GPUで3.5日/12時間）は適切に拾えている。一方で、論文にある学習データ設定や英語構文解析の具体的数値、モデル変種比較などが省略され、結果スライドに正則化・最適化詳細まで混在していて1論点性がやや弱い。さらに最後の『LLMの基盤技術』『NLPに革命』は入力論文にない付加情報で、スライドタイトルもやや一般的で情報量に伸びしろがある。"
+        }
+      },
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.5,
+          "reason": "The score is 0.50 because the summary captures some main themes, but it includes multiple inaccuracies and unsupported specifics. It misstates how samples were defined and adds details not in the original, such as market projections, exact correlation coefficients, ranked sectors and AAR values, precise subtopic/task percentages, a “for the first time” claim, and a normative claim about widening gaps. It also misses an answerable detail from the original about Comet’s July 9, 2025 launch, so overall it is only moderately faithful."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8,
+          "reason": "全体は背景→手法→結果→結論の順で自然に並び、論文の主要主張（Comet/Comet Assistant、3サンプル、AAR/AUR、57%を占める上位2トピック、Personal 55%など）も概ね正しく要約できている。各スライドタイトルも「背景と課題」「提案手法」「実験結果①/②」「まとめと展望」と内容対応は良い。ただしSlide 3はデータ設計・タクソノミー・指標・期間/匿名化を1枚に詰め込み、Slide 4も採用コホート・国相関・職業差を混在させており、1枚1論点の観点でやや減点。加えてタイトルは機能的だが、論文固有の具体性（例: Cometの採用格差、ユースケース分類結果）をもう少し含める余地がある。文字量は過剰ではなく簡潔性は保たれている。"
+        }
+      }
+    },
+    {
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.3333333333333333,
+          "reason": "The score is 0.33 because the summary includes several unsupported or incorrect claims—such as calling 2025 the year of Agentic AI, misdefining the adoption and usage ratios, misstating cohort and sector comparisons, and adding normative conclusions about inequality and policy that the original explicitly does not make. It also adds many specific figures and details not in the source, including market forecasts, correlation coefficients, exact task percentages, and future research agendas. In addition, it omits answerable basics like Comet’s July 9, 2025 launch and that Comet Assistant is an autonomous agent acting on users’ behalf."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8,
+          "reason": "スライド全体は背景→手法→結果→まとめの順で自然に流れ、Inputの中心論点である採用者属性、利用強度、ユースケース、階層タクソノミーを概ね対応づけている。各スライドもおおむね1論点に絞られ、3サンプル設計、AAR/AUR、GA前後比較、GDP/教育との相関、上位トピック57%、Personal 55%など主要数値も押さえている。一方で、Slide 2と3は複数論点を詰め込み気味で、タイトルも『実験結果①』『実験結果②』のように具体性がやや弱い。さらに環境別集中度やデータ除外条件・分類精度の詳細など重要情報は省略されており、箇条書きの情報量もやや多くスライドとして少し密度が高い。"
+        }
+      },
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.45,
+          "reason": "The score is 0.45 because the summary captures some main ideas—such as SFT missing deeper human states and HumanLM outperforming baselines—but it repeatedly overstates or reframes the paper’s claims. It adds causal interpretations and future-looking points not in the original, misdescribes parts of the training setup (e.g., implying all state dimensions are optimized at once or calling it ad-hoc alignment), and makes stronger dataset-wide or statistical claims than the text supports. Overall, it is partially faithful but contains enough exaggeration and unsupported additions to significantly reduce quality."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8,
+          "reason": "The slides cover the paper’s core points well: motivation about surface-level imitation failing to capture latent user states, the HumanLM method with six state dimensions and GRPO-based state alignment, the Humanual benchmark with 6 datasets/26K users/216K responses, and key results including 16.3% average improvement and the 111-participant study. The overall flow is logical from background to method to benchmark/results to conclusion. Titles are mostly specific and aligned with content. Weaknesses are that some slides mix multiple ideas—especially Slide 4 combining benchmark description, main results, training dynamics, and judge robustness, and Slide 5 combining analysis, case studies, human evaluation, and an extra SFT claim—so single-point focus is imperfect. There is also a bit of excessive detail in places, while the omission of the formal problem setup is acceptable for concision."
+        }
+      },
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.5925925925925926,
+          "reason": "The score is 0.59 because the summary captures the main Transformer/RNN-attention topic, but it overstates and adds several claims not supported by the original text. It incorrectly says attention must be used with RNNs, while the original only says it was often used that way. It also introduces unsupported generalizations and interpretations such as calling prior architectures \"complex,\" explaining issues via vanishing/exploding gradients, assigning purposes like stabilizing gradient flow, adding specific path-length disadvantages for CNNs, claiming heads learn distinct syntactic/semantic patterns, mentioning FLOPs, future multimodal extensions, and later historical impact. It also misses at least one answerable detail from the original, such as the training setup with 8 NVIDIA P100 GPUs."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7952574126822434,
+          "reason": "スライド構成は背景→提案手法→自己注意の利点→実験結果→まとめと、論文の動機・手法・結果・結論に概ね沿って自然です。各スライドも背景、Transformer構成、自己注意の比較優位、WMT英独28.4/英仏41.8や8GPU・3.5日など主要論点を押さえており、タイトルも具体的です。一方で、手法スライドにEncoder/Decoder、Scaled Dot-Product、Multi-Head、Positional Encoding、Residual/LayerNormを一度に詰め込み気味で、結果スライドも性能と学習設定・正則化が混在しています。また最後の『LLMの基盤技術』『革命をもたらした』は論文本文の要約を超える後知恵的内容です。文字量はやや多めですが、主要内容は保持されています。"
+        }
+      }
+    },
+    {
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.6666666666666666,
+          "reason": "The score is 0.67 because the summary captures the main topic and some key findings, but it introduces several unsupported specifics and a couple of inaccurate phrasings. It overstates claims about HumanLM being best on every dataset, gives unmentioned quantitative and future-work details, and adds applications not stated in the text. It also mislabels the training setup as 'ad-hoc alignment' and says Humanual is 'global scale,' which the original does not say."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8047425873177566,
+          "reason": "論文の主要論点である課題設定、HumanLMの状態整合型手法、Humanualベンチマーク、定量結果、人間評価、結論を概ね対応づけて要約できており、全体も背景→手法→結果→考察→結論の順で自然です。各スライドタイトルも具体的で、6状態次元や6データセット・26Kユーザ・216K応答、16.3%改善、111名評価など重要パラメータを押さえています。一方で各スライドの箇条書きがやや多く情報密度が高めで、1スライド1論点という点ではSlide 4がベンチマーク説明・主結果・訓練動態・評価頑健性を混在させ、Slide 5も考察と人間評価を併載しているためやや焦点が分散しています。また『SFTはスケール比例して悪化』は入力本文の主張より強く、表現の正確性にやや難があります。"
+        }
+      },
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.52,
+          "reason": "The score is 0.52 because the summary captures some broad themes about agent adoption and usage, but it includes a key factual error about which cohort the first cohort is compared against and adds many unsupported details—such as market forecasts, coined ratios and definitions, correlation coefficients, occupational breakdown specifics, policy implications, and future research claims—that are not stated in the original text."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.814804719803169,
+          "reason": "スライド全体は論文の主要構成に概ね対応しており、背景→手法→結果→結論の流れも自然です。各スライドも背景、分析設計、採用・利用結果、ユースケース、含意に大筋で1論点ずつ整理され、AAR/AUR、3サンプル、Topic→Subtopic→Task、57%・55%・Personal 55%など重要数値も押さえています。一方で、タイトルが「実験結果①/②」「まとめと展望」などやや抽象的で、内容の具体性を十分に反映しきれていません。また職業別結果では論文要旨の『digital technology, academia, finance, marketing, entrepreneurship が中心』に対し、スライドは『学生・教育・金融が続く』とやや焦点がずれ、手法スライドもデータ除外条件や分類精度の詳細はかなり省略されています。文字量は許容範囲で要約性は保たれています。"
+        }
+      },
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.6666666666666666,
+          "reason": "The score is 0.67 because the summary captures the main Transformer motivation and ideas, but it adds several unsupported claims and overstatements—such as calling prior models complex RNN/CNN encoder-decoders, saying attention was always auxiliary to RNNs, attributing gradient issues and stabilization purposes not stated, claiming specific disadvantages for ByteNet/ConvS2S, and extending to future modalities, non-autoregressive methods, and LLM impact that the original text does not mention. It also omits at least one concrete detail the original provides, such as the training setup with 8 NVIDIA P100 GPUs."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.8,
+          "reason": "スライド構成は背景→提案手法→自己注意の利点→結果→まとめと展望で、論文の主要構成に沿って自然に展開している。各スライドも概ね1論点に集中し、タイトルも『背景と課題』『提案: Transformerアーキテクチャ』『実験結果』など具体的で分かりやすい。WMT14英独28.4 BLEU、英仏41.8、8 GPUで3.5日、Base 12時間など主要結果も適切に要約できている。一方で『実験結果』に正則化や最適化設定まで混在しており論点がやや広いこと、英仏は本文要約部に41.0との記述揺れがある中で41.8のみを提示して補足がないこと、最後のLLMへの言及や『自閉的世代』など入力にない/不自然な表現が含まれる点は減点要素。"
+        }
+      }
+    }
+  ]
+}

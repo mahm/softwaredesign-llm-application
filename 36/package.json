@@ -1,0 +1,21 @@
+{
+  "name": "sd-36-deepeval-slide-eval",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "agent": "bun agent-run/run.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/core": "1.1.49",
+    "@langchain/langgraph-checkpoint": "1.1.1",
+    "@langchain/openrouter": "0.3.0",
+    "deepagents": "1.10.2",
+    "dotenv": "17.2.4",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "25.8.0",
+    "typescript": "6.0.3"
+  }
+}
