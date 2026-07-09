@@ -14,183 +14,45 @@
       }
     },
     {
-      "name": "write_todos",
+      "name": "execute",
       "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)を取得し分析、JSONファイルに保存する\",\"status\":\"in_progress\"},{\"content\":\"スライド構成のダイジェストをユーザーに提示し確認を得る\",\"status\":\"pending\"},{\"content\":\"ユーザー確認後、generate_pptxでスライドを生成する\",\"status\":\"pending\"}]}"
-      }
-    },
-    {
-      "name": "task",
-      "args": {
-        "input": "{\"description\":\"arXiv論文(2512.07828)の分析とスライドJSONの作成を以下の手順で実行してください。\\n\\n## 論文の取得と分析\\n\\n1. arXiv ID: 2512.07828\\n2. `curl -sL https://arxiv.org/abs/2512.07828` でアブストラクトページを取得する\\n3. `curl -sL https://arxiv.org/html/2512.07828` でHTML本文を取得する\\n4. HTML本文が取得できない場合や数百字程度のスタブしか返らない場合は、`curl -sL https://ar5iv.labs.arxiv.org/html/2512.07828` で全文を取得する\\n5. HTMLタグからセクション構造(h2, h3)を読み取る\\n6. 数式はTeX表記のまま抽出し、図表の参照はテキストで要約する\\n7. タイトル、著者、アブストラクト、各セクションの内容を抽出する\\n\\n## スライドJSONの作成・保存\\n\\n分析結果をもとに、以下の構成でスライドJSONを作成してください。\\n\\n- スライド枚数: タイトルスライド1枚 + コンテンツスライド5枚 = 計6枚\\n- 基本的な流れ: タイトル → 背景と課題 → 提案手法 → 実験設定 → 実験結果 → まとめと展望\\n\\nJSON形式:\\n```json\\n{\\n  \\\"title\\\": \\\"論文タイトル\\\",\\n  \\\"author\\\": \\\"著者名（所属もあれば）\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"メインタイトル\\\",\\n      \\\"subtitle\\\": \\\"サブタイトル（著者など）\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"セクションタイトル\\\",\\n      \\\"bullets\\\": [\\\"項目1\\\", \\\"項目2\\\", \\\"項目3\\\", \\\"項目4\\\"]\\n    }\\n  ]\\n}\\n```\\n\\n- 各contentスライドのbulletsは最大6項目、各項目は1〜2行に収める\\n- 1枚のスライドで1つのメッセージを伝える\\n- 論文の主張を正確に反映し、推測による補完は行わない\\n- 専門用語はそのまま使用し、必要に応じて簡潔な説明を添える\\n\\n保存先: `./slides/2512.07828.json`\\n\\n完了したら、保存先ファイルパス(`./slides/2512.07828.json`)のみを報告してください。分析内容のテキスト出力は不要です。\",\"subagent_type\":\"general-purpose\"}"
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828\"}"
       }
     },
     {
       "name": "read_file",
       "args": {
-        "input": "{\"file_path\":\"./.agent/skills/pptx-generator/SKILL.md\",\"limit\":1000,\"offset\":0}"
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"offset\":0,\"limit\":200}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":300,\"offset\":200}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":300,\"offset\":500}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":200,\"offset\":680}"
       }
     },
     {
       "name": "execute",
       "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/abs/2512.07828\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | head -500\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"ls ./slides/ 2>/dev/null || mkdir -p ./slides/\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | grep -oP '<h2 class=\\\"ltx_title ltx_title_section\\\">.*?</h2>' | head -20\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<section class=\\\"ltx_section\\\" id=\\\"S3/,/<section class=\\\"ltx_section\\\" id=\\\"S4/p' | head -200\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<section class=\\\"ltx_section\\\" id=\\\"S4/,/<section class=\\\"ltx_section\\\" id=\\\"S5/p' | head -100\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<section class=\\\"ltx_section\\\" id=\\\"S5\\\"/,/<section class=\\\"ltx_section\\\" id=\\\"S6\\\"/p' | head -300\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<section class=\\\"ltx_section\\\" id=\\\"S6\\\"/,/<section class=\\\"ltx_section\\\" id=\\\"A1\\\"/p' | head -200\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<h3 class=\\\"ltx_title ltx_title_subsection\\\"><span class=\\\"ltx_tag ltx_tag_subsection\\\">5.2/,/<section class=\\\"ltx_section\\\" id=\\\"S6\\\"/p' | head -400\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | grep -n \\\"5.2\\\" | head -20\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<h3 class=\\\"ltx_title ltx_title_subsection\\\"><span class=\\\"ltx_tag ltx_tag_subsection\\\">5.2/,/<section class=\\\"ltx_section\\\" id=\\\"S6\\\"/p' | wc -c\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<h3 class=\\\"ltx_title ltx_title_subsection\\\"><span class=\\\"ltx_tag ltx_tag_subsection\\\">5.2/,/<section class=\\\"ltx_section\\\" id=\\\"S6\\\"/p'\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | grep -n \\\"5.2\\\" | grep -v \\\"tocentry\\\\|toclist\\\\|appendix\\\\|href=\\\" | head -20\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | grep -n \\\"Use Cases\\\" | head -10\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '1066,1160p'\"}"
-      }
-    },
-    {
-      "name": "write_todos",
-      "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)の取得と分析（完了）\",\"status\":\"completed\"},{\"content\":\"スライドJSONの作成・保存（./slides/2512.07828.json）\",\"status\":\"in_progress\"}]}"
+        "input": "{\"command\":\"mkdir -p ./slides\"}"
       }
     },
     {
       "name": "write_file",
       "args": {
-        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents:\\\\nEarly Evidence from Perplexity\\\",\\n      \\\"subtitle\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\\nHundreds of millions of anonymized user interactions from Comet browser\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"背景と課題\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「AIエージェントの年」と称され、LLMチャットボットから行動志向のAIエージェントへと最前線がシフト\\\",\\n        \\\"AIエージェントは自律的にマルチステップのタスクを計画・実行（思考→行動→観察のReActサイクル）\\\",\\n        \\\"しかし、実環境での大規模な行動データに基づく採用・利用実態の体系的エビデンスは不足\\\",\\n        \\\"PerplexityのAIブラウザ「Comet」と統合エージェント「Comet Assistant」を対象に調査\\\",\\n        \\\"3つの基本質問：(1)誰が使っているか？(2)どの程度使っているか？(3)何に使っているか？\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"提案手法：エージェント利用分析の枠組み\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年7月9日〜10月22日のCometデスクトップユーザーの大規模データを3種類のサンプルで分析\\\",\\n        \\\"サンプルA: 全Cometユーザー（数百万人）と全クエリ（数億件）— 採用・利用強度の全体像\\\",\\n        \\\"サンプルB: 10万人の無作為抽出ユーザー — O*NET職業クラスターごとの分析\\\",\\n        \\\"サンプルC: 10万人のエージェントユーザーの全エージェントクエリ — 階層的エージェントタクソノミーで分類\\\",\\n        \\\"3階層のタクソノミー：Topic（6分類）→ Subtopic → Task（計90タスク）、分類精度はTopicで89%\\\",\\n        \\\"Personal / Professional / Educational の3コンテキストに分類\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験設定：データと分析設計\\\",\\n      \\\"bullets\\\": [\\n        \\\"Comet: 2025年7月9日ローンチ（Max購読者→8月13日Pro→10月2日一般公開）\\\",\\n        \\\"エージェントクエリ定義：ブラウザ制御またはMCP/API経由で外部アプリに働きかけるクエリ\\\",\\n        \\\"GDP・教育年数はWorld Bank / UNDP（2024年）データ、職業分類はO*NETフレームワーク\\\",\\n        \\\"AAR（Agent Adoption Ratio）= セグメントのエージェント採用率 / ユーザー占有率\\\",\\n        \\\"AUR（Agent Usage Ratio）= セグメントのエージェントクエリ率 / ユーザー占有率\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験結果：誰が・どのように使っているか\\\",\\n      \\\"bullets\\\": [\\n        \\\"初期コホート（7月9日アクセス）は一般公開コホート比で2倍採用され、9倍多くのクエリを実行\\\",\\n        \\\"GDP per capita（r=0.85）および教育年数（r=0.75）とエージェント採用率に強い正の相関\\\",\\n        \\\"デジタルテクノロジー職が最大：採用28%、クエリ30%（ソフトウェアエンジニアが14%）\\\",\\n        \\\"最大トピックはProductivity & Workflow（36%）とLearning & Research（21%）、合計57%\\\",\\n        \\\"トップサブトピック：Courses(13%)、Goods Shopping(9%)、Document Editing(8%)\\\",\\n        \\\"用途内訳：Personal 55%、Professional 30%、Educational 16%\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"まとめと展望\\\",\\n      \\\"bullets\\\": [\\n        \\\"初期の知見：早期採用者・高GDP/高教育国・知識集約型職種がエージェントをより積極的に活用\\\",\\n        \\\"短期的にはユースケースの粘着性が強いが、時間とともに認知志向トピックへ移行\\\",\\n        \\\"不均等な採用・利用は生産性・学習格差を拡大させる可能性があり、政策的含意が大きい\\\",\\n        \\\"今後の課題：モバイル対応、企業組織での研究、エージェント性能評価・失敗モード分析\\\",\\n        \\\"エコノミックバリューの定量化や最適な人間-エージェント協調ワークフローの設計が重要\\\"\\n      ]\\n    }\\n  ]\\n}\\n\"}"
-      }
-    },
-    {
-      "name": "read_file",
-      "args": {
-        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"limit\":100,\"offset\":0}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 2>&1 | sed -n '/<h4 class=\\\"ltx_title ltx_title_subsubsection\\\">Tasks/,/<h4 class=\\\"ltx_title ltx_title_subsubsection\\\">Environments/p' | head -200\"}"
-      }
-    },
-    {
-      "name": "write_file",
-      "args": {
-        "input": "{\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents:\\\\nEarly Evidence from Perplexity\\\",\\n      \\\"subtitle\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\\narXiv: 2512.07828 (cs.LG) — Dec 2025\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"背景と課題\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「Agentic AIの年」— 会話型LLMから行動指向のAIエージェントへパラダイムシフト\\\",\\n        \\\"AIエージェントはReActフレームワーク(思考→行動→観察)で自律的にマルチステップのタスクを実行\\\",\\n        \\\"市場予測：2025年$8B→2034年$199B、経済効果は年間$2.6〜4.4Tに達する可能性(PwC)\\\",\\n        \\\"しかし実環境での大規模行動データに基づくエージェント採用・利用の体系的エビデンスは不足\\\",\\n        \\\"PerplexityのAIブラウザ「Comet」と組込みエージェント「Comet Assistant」の大規模フィールドスタディを実施\\\",\\n        \\\"数億件の匿名化ユーザーインタラクションから3問に答える：(1)誰が？(2)どの程度？(3)何に使う？\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"提案手法：データとエージェントタクソノミー\\\",\\n      \\\"bullets\\\": [\\n        \\\"3サンプルで分析：A)全Cometユーザー・全クエリ(数百万人/数億件)、B)10万人無作為抽出+O*NET職業分類、C)10万人エージェントユーザーの全エージェントクエリ\\\",\\n        \\\"新規に階層的エージェントタクソノミーを開発：3階層(Topic→Subtopic→Task、計90タスク)、精度はTopic 89%\\\",\\n        \\\"ボトムアップ開発：埋め込み+K-meansクラスタリング→手動精査→分類器\\\",\\n        \\\"環境(Environment)と利用コンテキスト(Personal 55% / Professional 30% / Educational 16%)も分析\\\",\\n        \\\"AAR(Agent Adoption Ratio)とAUR(Agent Usage Ratio)でセグメント間の過不足を定量化\\\",\\n        \\\"分析期間：2025年7月9日〜10月22日（主要アップデート前の安定期間）\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験結果①：誰が・どの程度使っているか\\\",\\n      \\\"bullets\\\": [\\n        \\\"エージェント採用・クエリは持続的に成長。一般公開(GA)後に60%の採用者・50%のクエリを獲得\\\",\\n        \\\"第1コホート(7/9)はGAコホート(10/2)比で採用確率2倍、クエリ数9倍と不均衡に集中的\\\",\\n        \\\"GDP per capita(r=0.85)と教育年数(r=0.75)がエージェント採用と強い正の相関\\\",\\n        \\\"デジタルテクノロジー職が最大：採用28%・クエリ30%。学生・教育・金融が10%超\\\",\\n        \\\"AAR最高: Hospitality(1.36) > Marketing(1.24) > Entrepreneurship(1.17)\\\",\\n        \\\"知識集約・デジタルセクターほど採用と利用強度が高い\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験結果②：何に使っているか（ユースケース分析）\\\",\\n      \\\"bullets\\\": [\\n        \\\"最大Topic: Productivity & Workflow (36%)、Learning & Research (21%)、Media (16%) — 上位2トピックで57%\\\",\\n        \\\"最大Subtopic: Courses (13%)、Goods Shopping (9%)、Research (8%)、Document Editing (8%)\\\",\\n        \\\"Top 10 Task（90タスク中）が全体クエリの55%を占める：Exercise Assistance (9.4%)が最多\\\",\\n        \\\"Productivity・Learning・Careerはトピック内粘着性が高く、長期的には認知志向トピックへ移行\\\",\\n        \\\"環境の集中度はサブトピックにより大きく異なる（Music 97% vs Account Management 28%）\\\",\\n        \\\"職業別でもユースケースが異なる：学生はLearning(43%)、金融はProductivity(47%)\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"まとめと展望\\\",\\n      \\\"bullets\\\": [\\n        \\\"初期採用者・高GDP/高教育国・知識集約職種ほどエージェントの採用・利用が活発であることを実証\\\",\\n        \\\"エージェント利用はProductivityとLearningが中心で、時間とともにより認知的なタスクへシフト\\\",\\n        \\\"不均等な採用・利用は生産性・学習格差を拡大する可能性があり、政策的対応が重要\\\",\\n        \\\"今後の課題：モバイル対応、企業組織での研究、エージェント評価・失敗モード分析\\\",\\n        \\\"経済価値の定量化と最適な人間-エージェント協調ワークフローの設計が次の重要な問い\\\"\\n      ]\\n    }\\n  ]\\n}\\n\",\"file_path\":\"./slides/2512.07828.json\"}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"ls -la ./slides/2512.07828.json\"}"
-      }
-    },
-    {
-      "name": "read_file",
-      "args": {
-        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"limit\":1000,\"offset\":0}"
-      }
-    },
-    {
-      "name": "execute",
-      "args": {
-        "input": "{\"command\":\"rm ./slides/2512.07828.json\"}"
-      }
-    },
-    {
-      "name": "write_file",
-      "args": {
-        "input": "{\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents:\\\\nEarly Evidence from Perplexity\\\",\\n      \\\"subtitle\\\": \\\"Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\\\\narXiv: 2512.07828 (cs.LG) — Dec 2025\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"背景と課題\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「Agentic AIの年」。AIエージェントはLLMを「脳」、ツールを「手」として自律的にマルチステップタスクを計画・実行\\\",\\n        \\\"市場は2025年$8Bから2034年$199Bに成長見込みだが、実環境での大規模行動データに基づく採用・利用の体系的エビデンスは不足\\\",\\n        \\\"本論文はPerplexityのAIブラウザ「Comet」と組込みエージェント「Comet Assistant」を対象に大規模フィールドスタディを実施\\\",\\n        \\\"数億件の匿名化ユーザーインタラクションを分析し、3つの基本質問に答える：(1)誰が？(2)どの程度？(3)何に使う？\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"提案手法：データ分析設計とエージェントタクソノミー\\\",\\n      \\\"bullets\\\": [\\n        \\\"3サンプルで分析：A)全Cometユーザー・全クエリ(数百万人/数億件)、B)10万人無作為抽出+O*NET職業分類、C)10万人エージェントユーザーの全エージェントクエリ\\\",\\n        \\\"新規に階層的エージェントタクソノミーを開発：3階層(Topic→Subtopic→Task、計90タスク)、分類精度はTopic 89%\\\",\\n        \\\"AAR(Agent Adoption Ratio)=セグメント採用率/ユーザー占有率、AUR(Agent Usage Ratio)=セグメントクエリ率/ユーザー占有率で相対比較\\\",\\n        \\\"分析期間は2025年7月9日〜10月22日（一般公開は10月2日）。すべてのクエリを匿名化し集計値のみ報告\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験結果①：誰が・どの程度使っているか\\\",\\n      \\\"bullets\\\": [\\n        \\\"早期採用者(GA前)はユーザーの30%だがエージェント採用の50%、クエリの70%を占め、第1コホートはGA比で採用確率2倍・クエリ数9倍\\\",\\n        \\\"GDP per capita(r=0.85)および平均教育年数(r=0.75)とエージェント採用に強い正の相関—経済発展・教育水準が高い国ほど活発\\\",\\n        \\\"デジタルテクノロジー職が採用28%・クエリ30%で最大、学生・教育・金融が続く。AAR最高はHospitality(1.36) > Marketing(1.24) > Entrepreneurship(1.17)\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"実験結果②：何に使っているか（ユースケース分析）\\\",\\n      \\\"bullets\\\": [\\n        \\\"最大トピック：Productivity & Workflow (36%)、Learning & Research (21%) → 上位2トピックで全体の57%\\\",\\n        \\\"最大サブトピック：Courses (13%)、Goods Shopping (9%)、Research (8%)、Document Editing (8%)\\\",\\n        \\\"Top 10 Task（90タスク中）が全クエリの55%：最多はExercise Assistance (9.4%)、次いでResearch Summarization (6.7%)、Document Editing (6.6%)\\\",\\n        \\\"利用コンテキスト：Personal 55%、Professional 30%、Educational 16%。短期ではトピック内粘着性が強いが長期で認知志向へ移行\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"まとめと展望\\\",\\n      \\\"bullets\\\": [\\n        \\\"初期採用者・高GDP/高教育国・知識集約的職種ほどエージェントの採用・利用が活発であることを初めて大規模データで実証\\\",\\n        \\\"不均衡な採用・利用は生産性・学習格差を拡大する可能性があり、政策立案者・教育者への重要な含意\\\",\\n        \\\"今後の課題：モバイル対応、企業組織での研究、エージェント性能評価と失敗モード分析\\\",\\n        \\\"エコノミックバリューの定量化、最適な人間-エージェント協調ワークフローの設計が次の重要な問い\\\"\\n      ]\\n    }\\n  ]\\n}\\n\",\"file_path\":\"./slides/2512.07828.json\"}"
-      }
-    },
-    {
-      "name": "write_todos",
-      "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)の取得と分析（完了）\",\"status\":\"completed\"},{\"content\":\"スライドJSONの作成・保存（./slides/2512.07828.json）\",\"status\":\"completed\"}]}"
-      }
-    },
-    {
-      "name": "read_file",
-      "args": {
-        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"limit\":1000,\"offset\":0}"
-      }
-    },
-    {
-      "name": "write_todos",
-      "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)を取得し分析、JSONファイルに保存する\",\"status\":\"completed\"},{\"content\":\"スライド構成のダイジェストをユーザーに提示し確認を得る\",\"status\":\"in_progress\"},{\"content\":\"ユーザー確認後、generate_pptxでスライドを生成する\",\"status\":\"pending\"}]}"
+        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"J. Yang, N. Yang (Harvard Business School / Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents\\\",\\n      \\\"subtitle\\\": \\\"Early Evidence from Perplexity\\\\narXiv: 2512.07828 | July–October 2025\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"研究の背景と定義\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「Agentic AIの年」— LLMチャットボットから行動志向のAIエージェントへシフト\\\",\\n        \\\"AIエージェントの定義: ユーザーの目標を自律的に計画・実行し、実環境に働きかけるシステム\\\",\\n        \\\"ReActフレームワーク: 思考(Think)→行動(Act)→観察(Observe)の反復サイクル\\\",\\n        \\\"研究設定: Perplexityが開発したAIブラウザ「Comet」と内蔵エージェント「Comet Assistant」\\\",\\n        \\\"研究課題: (1)誰が使っているか? (2)どのくらい使っているか? (3)何に使っているか?\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"データと分析手法\\\",\\n      \\\"bullets\\\": [\\n        \\\"期間: 2025年7月9日～10月22日（CometローンチからGA後20日間）\\\",\\n        \\\"サンプルA: 全Cometユーザー（数百万ユーザー／数億クエリ）— 普及度・使用頻度の全体像\\\",\\n        \\\"サンプルB: 無作為抽出100,000ユーザー — O*NET職業クラスター分析\\\",\\n        \\\"サンプルC: 無作為抽出100,000エージェントユーザー — 全エージェントクエリを分類\\\",\\n        \\\"階層的エージェント分類法(Taxonomy): Topic → Subtopic → Task の3階層\\\",\\n        \\\"プライバシー保護: PII不使用、自動分類器、集計結果のみ開示\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"普及度と使用頻度の実態\\\",\\n      \\\"bullets\\\": [\\n        \\\"エージェントの普及・使用は持続的に成長、GA(一般提供)後に加速（GA後: 採用者60%、クエリ50%）\\\",\\n        \\\"早期アクセスコホート(7/9)のユーザーはGAコホート(10/2)と比較し、採用率2倍、クエリ数9倍\\\",\\n        \\\"国別: GDP per capitaや平均教育年数と正の相関\\\",\\n        \\\"職業別: デジタル技術職が最大(採用者28%、クエリ30%)、次いでアカデミア、金融、マーケティング、起業家\\\",\\n        \\\"これら知識集約型セクターは全採用者・クエリの70%超を占める\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"ユースケース分析（エージェント分類法）\\\",\\n      \\\"bullets\\\": [\\n        \\\"トピック別: Productivity & Workflow (36%) > Learning & Research (21%) > Media & Entertainment (16%) > Shopping (10%)\\\",\\n        \\\"サブトピック上位: Courses (13%), Goods Shopping (9%), Research (8%), Document Editing (8%)\\\",\\n        \\\"タスク上位: Exercise assistance (9%), Research summarization (7%), Document creation (7%), Product search (6%)\\\",\\n        \\\"利用コンテキスト: Personal (55%), Professional (30%), Educational (16%)\\\",\\n        \\\"短期では同一トピックへの stickiness が強いが、時間とともにより高認知トピックへ遷移\\\",\\n        \\\"分類精度: Topic 89%, Subtopic 83%, Task 81%\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"結論とインプリケーション\\\",\\n      \\\"bullets\\\": [\\n        \\\"AIエージェントの普及はまだ初期段階だが、知識集約型セクターを中心に急速に浸透\\\",\\n        \\\"エコノミックインパクト: エージェントAI市場は2025年80億ドル→2034年1,990億ドルに成長見込み\\\",\\n        \\\"PwC試算: 年換算で2.6～4.4兆ドルの経済貢献の可能性（2030年）\\\",\\n        \\\"企業・教育機関はAIエージェント活用に向けた戦略的準備が必要\\\",\\n        \\\"限界: Cometユーザーに限定、観察期間が短い、因果推論ではない\\\",\\n        \\\"今後の課題: 長期的なエージェント利用の進化、他プラットフォームとの比較、生産性への因果効果\\\"\\n      ]\\n    }\\n  ]\\n}\"}"
       }
     },
     {
@@ -198,81 +60,78 @@
       "args": {
         "input": "{\"filePath\":\"./slides/2512.07828.json\"}"
       }
-    },
-    {
-      "name": "write_todos",
-      "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)を取得し分析、JSONファイルに保存する\",\"status\":\"completed\"},{\"content\":\"スライド構成のダイジェストをユーザーに提示し確認を得る\",\"status\":\"completed\"},{\"content\":\"generate_pptxでスライドを生成する\",\"status\":\"in_progress\"}]}"
-      }
-    },
-    {
-      "name": "write_todos",
-      "args": {
-        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)を取得し分析、JSONファイルに保存する\",\"status\":\"completed\"},{\"content\":\"スライド構成のダイジェストをユーザーに提示し確認を得る\",\"status\":\"completed\"},{\"content\":\"generate_pptxでスライドを生成する\",\"status\":\"completed\"}]}"
-      }
     }
   ],
   "slides": {
     "title": "The Adoption and Usage of AI Agents: Early Evidence from Perplexity",
-    "author": "Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)",
+    "author": "J. Yang, N. Yang (Harvard Business School / Perplexity)",
     "slides": [
       {
         "type": "title",
-        "title": "The Adoption and Usage of AI Agents:\nEarly Evidence from Perplexity",
-        "subtitle": "Jeremy Yang, Noah Yonack, Kate Zyskowski, Denis Yarats, Johnny Ho, Jerry Ma (Perplexity)\narXiv: 2512.07828 (cs.LG) — Dec 2025"
+        "title": "The Adoption and Usage of AI Agents",
+        "subtitle": "Early Evidence from Perplexity\narXiv: 2512.07828 | July–October 2025"
       },
       {
         "type": "content",
-        "title": "背景と課題",
+        "title": "研究の背景と定義",
         "bullets": [
-          "2025年は「Agentic AIの年」。AIエージェントはLLMを「脳」、ツールを「手」として自律的にマルチステップタスクを計画・実行",
-          "市場は2025年$8Bから2034年$199Bに成長見込みだが、実環境での大規模行動データに基づく採用・利用の体系的エビデンスは不足",
-          "本論文はPerplexityのAIブラウザ「Comet」と組込みエージェント「Comet Assistant」を対象に大規模フィールドスタディを実施",
-          "数億件の匿名化ユーザーインタラクションを分析し、3つの基本質問に答える：(1)誰が？(2)どの程度？(3)何に使う？"
+          "2025年は「Agentic AIの年」— LLMチャットボットから行動志向のAIエージェントへシフト",
+          "AIエージェントの定義: ユーザーの目標を自律的に計画・実行し、実環境に働きかけるシステム",
+          "ReActフレームワーク: 思考(Think)→行動(Act)→観察(Observe)の反復サイクル",
+          "研究設定: Perplexityが開発したAIブラウザ「Comet」と内蔵エージェント「Comet Assistant」",
+          "研究課題: (1)誰が使っているか? (2)どのくらい使っているか? (3)何に使っているか?"
         ]
       },
       {
         "type": "content",
-        "title": "提案手法：データ分析設計とエージェントタクソノミー",
+        "title": "データと分析手法",
         "bullets": [
-          "3サンプルで分析：A)全Cometユーザー・全クエリ(数百万人/数億件)、B)10万人無作為抽出+O*NET職業分類、C)10万人エージェントユーザーの全エージェントクエリ",
-          "新規に階層的エージェントタクソノミーを開発：3階層(Topic→Subtopic→Task、計90タスク)、分類精度はTopic 89%",
-          "AAR(Agent Adoption Ratio)=セグメント採用率/ユーザー占有率、AUR(Agent Usage Ratio)=セグメントクエリ率/ユーザー占有率で相対比較",
-          "分析期間は2025年7月9日〜10月22日（一般公開は10月2日）。すべてのクエリを匿名化し集計値のみ報告"
+          "期間: 2025年7月9日～10月22日（CometローンチからGA後20日間）",
+          "サンプルA: 全Cometユーザー（数百万ユーザー／数億クエリ）— 普及度・使用頻度の全体像",
+          "サンプルB: 無作為抽出100,000ユーザー — O*NET職業クラスター分析",
+          "サンプルC: 無作為抽出100,000エージェントユーザー — 全エージェントクエリを分類",
+          "階層的エージェント分類法(Taxonomy): Topic → Subtopic → Task の3階層",
+          "プライバシー保護: PII不使用、自動分類器、集計結果のみ開示"
         ]
       },
       {
         "type": "content",
-        "title": "実験結果①：誰が・どの程度使っているか",
+        "title": "普及度と使用頻度の実態",
         "bullets": [
-          "早期採用者(GA前)はユーザーの30%だがエージェント採用の50%、クエリの70%を占め、第1コホートはGA比で採用確率2倍・クエリ数9倍",
-          "GDP per capita(r=0.85)および平均教育年数(r=0.75)とエージェント採用に強い正の相関—経済発展・教育水準が高い国ほど活発",
-          "デジタルテクノロジー職が採用28%・クエリ30%で最大、学生・教育・金融が続く。AAR最高はHospitality(1.36) > Marketing(1.24) > Entrepreneurship(1.17)"
+          "エージェントの普及・使用は持続的に成長、GA(一般提供)後に加速（GA後: 採用者60%、クエリ50%）",
+          "早期アクセスコホート(7/9)のユーザーはGAコホート(10/2)と比較し、採用率2倍、クエリ数9倍",
+          "国別: GDP per capitaや平均教育年数と正の相関",
+          "職業別: デジタル技術職が最大(採用者28%、クエリ30%)、次いでアカデミア、金融、マーケティング、起業家",
+          "これら知識集約型セクターは全採用者・クエリの70%超を占める"
         ]
       },
       {
         "type": "content",
-        "title": "実験結果②：何に使っているか（ユースケース分析）",
+        "title": "ユースケース分析（エージェント分類法）",
         "bullets": [
-          "最大トピック：Productivity & Workflow (36%)、Learning & Research (21%) → 上位2トピックで全体の57%",
-          "最大サブトピック：Courses (13%)、Goods Shopping (9%)、Research (8%)、Document Editing (8%)",
-          "Top 10 Task（90タスク中）が全クエリの55%：最多はExercise Assistance (9.4%)、次いでResearch Summarization (6.7%)、Document Editing (6.6%)",
-          "利用コンテキスト：Personal 55%、Professional 30%、Educational 16%。短期ではトピック内粘着性が強いが長期で認知志向へ移行"
+          "トピック別: Productivity & Workflow (36%) > Learning & Research (21%) > Media & Entertainment (16%) > Shopping (10%)",
+          "サブトピック上位: Courses (13%), Goods Shopping (9%), Research (8%), Document Editing (8%)",
+          "タスク上位: Exercise assistance (9%), Research summarization (7%), Document creation (7%), Product search (6%)",
+          "利用コンテキスト: Personal (55%), Professional (30%), Educational (16%)",
+          "短期では同一トピックへの stickiness が強いが、時間とともにより高認知トピックへ遷移",
+          "分類精度: Topic 89%, Subtopic 83%, Task 81%"
         ]
       },
       {
         "type": "content",
-        "title": "まとめと展望",
+        "title": "結論とインプリケーション",
         "bullets": [
-          "初期採用者・高GDP/高教育国・知識集約的職種ほどエージェントの採用・利用が活発であることを初めて大規模データで実証",
-          "不均衡な採用・利用は生産性・学習格差を拡大する可能性があり、政策立案者・教育者への重要な含意",
-          "今後の課題：モバイル対応、企業組織での研究、エージェント性能評価と失敗モード分析",
-          "エコノミックバリューの定量化、最適な人間-エージェント協調ワークフローの設計が次の重要な問い"
+          "AIエージェントの普及はまだ初期段階だが、知識集約型セクターを中心に急速に浸透",
+          "エコノミックインパクト: エージェントAI市場は2025年80億ドル→2034年1,990億ドルに成長見込み",
+          "PwC試算: 年換算で2.6～4.4兆ドルの経済貢献の可能性（2030年）",
+          "企業・教育機関はAIエージェント活用に向けた戦略的準備が必要",
+          "限界: Cometユーザーに限定、観察期間が短い、因果推論ではない",
+          "今後の課題: 長期的なエージェント利用の進化、他プラットフォームとの比較、生産性への因果効果"
         ]
       }
     ]
   },
-  "finalText": "スライドの生成が完了しました！\n\n**生成結果**\n- ファイル名: `./slides/2512.07828.json` をもとにPowerPointファイルを生成\n- 全6枚（タイトル1枚 + コンテンツ5枚）\n- 正常に生成されました ✅\n\n**スライド構成（再掲）**\n1. タイトル — The Adoption and Usage of AI Agents: Early Evidence from Perplexity\n2. 背景と課題\n3. 提案手法：データ分析設計とエージェントタクソノミー\n4. 実験結果①：誰が・どの程度使っているか\n5. 実験結果②：何に使っているか（ユースケース分析）\n6. まとめと展望\n\n何か他に修正や追加があればお知らせください。",
-  "durationMs": 938946,
-  "generatedAt": "2026-07-08T03:25:19.661Z"
+  "finalText": "スライドの生成が完了しました。全6枚のPowerPointファイルが作成されました。\n\n**生成されたスライド:**\n1. **タイトル**: \"The Adoption and Usage of AI Agents - Early Evidence from Perplexity\"\n2. **研究の背景と定義**: Agentic AIの定義、ReActフレームワーク、研究課題\n3. **データと分析手法**: 3つのサンプル構成、階層的分類法\n4. **普及度と使用頻度の実態**: コホート別・国別・職業別の分析結果\n5. **ユースケース分析**: Topic/Subtopic/Task別の分布と利用コンテキスト\n6. **結論とインプリケーション**: 市場予測、経済的影響、今後の課題\n\nファイルは `./slides/` 配下に保存されています。何か修正や追加がありましたらお知らせください。",
+  "durationMs": 148407,
+  "generatedAt": "2026-07-09T04:15:02.779Z"
 }

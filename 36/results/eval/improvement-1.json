@@ -1,0 +1,137 @@
+{
+  "variant": "improvement-1",
+  "runs": [
+    {
+      "improvement-1-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.47619047619047616,
+          "reason": "The score is 0.48 because the summary captures the general topic of AI agents and some broad findings, but it mischaracterizes the source as a presentation rather than a paper and adds many unsupported specifics and claims—such as trend framing, market forecasts, exact percentages, correlation coefficients, policy implications, and future research directions—not stated in the original text."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7817574476193643,
+          "reason": "全体は背景→データ/手法→結果→まとめの順で並び、論理的な流れは良い。各スライドもおおむね1メッセージに絞られており、タイトルも「初期採用者ほど利用が9倍多い」「生産性と学習で全体の57%」のように主張を含んでいて具体的。箇条書きも各スライド4項目で、1項目60字超の長文も少なく、文字の壁にはなっていない。一方で、Slide 4はコホート差・国別相関・職業別偏りを1枚にまとめており論点がやや多い。Slide 6も結論・政策含意・今後の課題を同居させており、1スライド1メッセージの観点では少し詰め込み気味。"
+        }
+      },
+      "improvement-1-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.8333333333333334,
+          "reason": "The score is 0.83 because the summary is largely faithful, but it adds unsupported details: it mentions memory constraints and batch-parallelization difficulty for long sequences, claims the model is 'several to tens of times faster' than prior models, and includes future applications to images, audio, video, and large-scale input/output that are not stated in the original text."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7119202922022116,
+          "reason": "全体は「背景と課題→提案手法→結果→結論」の流れで、Transformer論文の要点（RNNの逐次性、Attentionのみ、WMT 2014英独28.4/英仏41.8、8基P100で3.5日）も押さえている。各スライドも概ね1メッセージに収まっており、箇条書きは各4項目以下で文字量も過密ではない。一方で、Slide 3と4はアーキテクチャ要素を複数詰め込み気味で、Slide 4はMulti-Head Attention・Positional Encoding・FFNの3論点が混在する。タイトルも「Multi-Head AttentionとPositional Encoding」や表紙以外は比較的具体的だが、各スライドの主張をさらに明確に打ち出せる余地がある。"
+        }
+      },
+      "improvement-1-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7777777777777778,
+          "reason": "The score is 0.78 because the summary captures the main contribution and strong results reasonably well, but it overstates several claims: it changes the paper’s reframing into an \"ad-hoc\" shift, calls Humanual the largest-scale benchmark rather than the most comprehensive to the authors’ knowledge, and implies HumanLM was best on all datasets instead of having the best average alignment. It also adds unsupported specifics, such as the \"bad idea\" example, the expansion of GRPO, and a p < 0.05 threshold. Additionally, it misses that the original includes reproducibility-related details like experimental scale, datasets, or compute information."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7622459331201855,
+          "reason": "全体は背景と課題→提案手法→学習法→結果→結論に近い流れで、Humanualの26kユーザ・216k応答・平均16.3%改善や111名の実時間評価など主要パラメータも押さえている。各スライドも概ね1メッセージに収まっており、箇条書きは各4項目で過密ではない。一方で、各項目が60字超になりがちな長文箇条書きが複数あり、『文字の壁』気味。さらにタイトルは『実時間ユーザ実験でも優位性を確認』『Humanualベンチマークで平均16.3%の改善を達成』のように具体的なものもあるが、『GRPOを用いた強化学習による明示的な状態アライメント』は章名寄りでやや説明的すぎ、改善余地がある。"
+        }
+      }
+    },
+    {
+      "improvement-1-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.6363636363636364,
+          "reason": "The score is 0.64 because the summary captures some of the paper’s main positive findings about HumanLM, but it adds several unsupported specifics and overstates results. In particular, it incorrectly claims HumanLM had the highest score on all datasets, while the original only supports strongest overall alignment and highest scores on 80% of latent states. The summary also invents examples, stronger benchmark-size claims, unsupported numeric comparisons, and conclusions about significance, intention matching, emotional accuracy, and redundancy that are not explicitly stated in the original."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7731058578630006,
+          "reason": "背景→提案手法→学習方法→結果→ユーザ実験という流れで、論理構成は概ね良好です。各スライドも主張型タイトルになっており、「平均16.3%の改善」「実時間ユーザ実験でも優位性」など具体性があります。一方で、各スライドが4項目で収まっている点は良いものの、1項目あたりが60字前後を超える長文が複数あり、特に手法説明や結果スライドは情報密度が高めです。また、Slide 5はベンチマーク概要・主結果・ベースライン比較・訓練動態まで含み、やや複数論点を詰め込んでいます。とはいえ、章名だけの曖昧タイトルはなく、冗長さも一定程度抑えられています。"
+        }
+      },
+      "improvement-1-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.6666666666666666,
+          "reason": "The score is 0.67 because the summary captures much of the original Transformer discussion, but it includes a couple of inaccurate claims and several added details not stated in the text. In particular, it misstates the purpose of the 1/sqrt(d_k) scaling and adds unsupported future-work and performance/comparison details, so it is only moderately faithful overall."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7622459331201855,
+          "reason": "全体は「背景と課題→提案手法→結果→結論」の流れで、Transformer論文の要点（RNNの逐次計算、attention-only、BLEU 28.4/41.8、8×P100で3.5日など）も押さえている点は良いです。一方で、各スライドが1メッセージに十分絞られておらず、Slide 3はアーキテクチャ詳細と利点、Slide 4はAttention・Positional Encoding・FFN、Slide 5は翻訳結果と構文解析汎化を同居させており詰め込み気味です。タイトルも「Multi-Head AttentionとPositional Encoding」のように要素列挙型や、「Attentionのみで構成された初の系列変換モデル」のように結論寄りで、各スライド固有の主張を端的に示す具体性はやや不足します。箇条書き数は各スライド4項目以内で文字量も概ね許容範囲ですが、章名だけではないものの、より主張型タイトルにできる余地があります。"
+        }
+      },
+      "improvement-1-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.6190476190476191,
+          "reason": "The score is 0.62 because the summary captures some of the paper’s broad themes, but it introduces several unsupported claims and a couple of factual inaccuracies. It misstates the user/query share split between pre- and post-GA cohorts, adds specific correlation coefficients not given in the text, and includes extra framing such as slides, “the year of Agentic AI,” market forecasts, a ranked subtopic claim, and policy/foundational interpretations not stated in the original. It also omits at least one answerable detail about reproducibility-related information, so the summary is only moderately faithful."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7924141819978756,
+          "reason": "全5枚で「背景→データ/手法→導入状況→利用用途→まとめ」の流れになっており、論理構成は評価できる。各スライドも概ね1メッセージに絞られ、箇条書きは各4項目で60字超の長文も少なく、文字過多は抑えられている。一方で、Slide 3はデータ・分析手法・分類精度まで含みやや論点が多く、Slide 5も用途構成・利用文脈・時系列変化を同居させているため少し詰め込み気味。タイトルは『導入状況：初期採用者ほど利用が9倍多い』『利用用途：生産性と学習で全体の57%を占める』のように主張を含む具体的表現が多く良いが、『まとめと展望』はやや章名寄り。要約としての省略は適切で、過度な冗長さや曖昧タイトルは限定的。"
+        }
+      }
+    },
+    {
+      "improvement-1-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7619047619047619,
+          "reason": "The score is 0.76 because the summary captures some main themes, but it includes several unsupported additions—such as market size forecasts, specific correlation coefficients, policy implications, and future research directions—and it misstates the subtopic breakdown by treating Research as a listed 8% subtopic. It also omits whether the text includes reproducibility details like dataset scale or computational resources, so the summary is only moderately faithful."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7851952801968312,
+          "reason": "全体は背景→データ/手法→導入状況→利用用途→まとめの流れで、論文要約スライドとして論理構成は良い。各スライドも概ね1メッセージに絞られ、箇条書きは各4項目で過密ではない。ただし各項目は数値や固有名詞が多くやや情報量が高く、特に導入状況スライドはコホート差・国相関・職業差を同居させていて論点が少し多い。タイトルは「初期採用者ほど利用が9倍多い」「生産性と学習で全体の57%」など主張を含み評価できる一方、「データと分析手法」「まとめと展望」はやや章名寄りで具体性が弱い。"
+        }
+      },
+      "improvement-1-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7222222222222222,
+          "reason": "The score is 0.72 because the summary captures much of the original content, but it includes a few notable inaccuracies and unsupported additions. It incorrectly says the attention scaling is to avoid vanishing gradients, when the original says it is to control large dot-product magnitudes, and it overstates the parsing result as best overall when the original says it was only below the Recurrent Neural Network Grammar. It also adds unmentioned claims about memory and batching limits, lower English-to-French training cost, and broader quantified speedups, which reduces faithfulness."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7377540668798146,
+          "reason": "全体は「背景と課題→提案手法→結果→結論」の流れで、Transformer論文の要点も押さえられている。各スライドも概ね1メッセージにまとまっており、タイトルは「RNNの逐次計算がもたらす並列化の制限」「翻訳タスクでSOTA、訓練コストは従来の1/4以下」など章名より具体的で評価できる。一方で、Slide 3とSlide 4は構成要素を複数まとめておりやや詰め込み気味で、Slide 4はAttention・Positional Encoding・FFNを同居させていて単一メッセージ性が弱い。また各スライド4項目で5項目以上ではないが、技術詳細を多めに入れており、プレゼンスライドとしてはやや密度が高い。省略は適切で致命的な欠落はないため、主な減点要因は詰め込み気味な点。"
+        }
+      },
+      "improvement-1-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7272727272727273,
+          "reason": "The score is 0.73 because the summary captures the main positive finding about HumanLM, but it introduces several unsupported claims and misstates key details. It incorrectly frames HumanLM as an ad-hoc approach instead of explicit latent-state generation, and it simplifies or distorts the reported improvement numbers. It also adds claims not stated in the text, such as Humanual being the largest benchmark, improvement over the best baseline on every dataset, explicit p < 0.05 significance, and stronger confirmation wording about stance and emotion. Additionally, it omits answerable details about reproducibility-related information such as experimental scale, datasets, or compute resources."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.7817574476193643,
+          "reason": "背景→手法→学習→結果→ユーザ実験という流れで、論文の主要点（6状態次元、Humanualの26kユーザ/216k応答、16.3%改善、111人評価）も押さえており、各スライドのタイトルも章名だけでなく主張を含んでいる点は良いです。一方で各スライドが4項目で収まっているものの、1枚に複数の論点を入れがちで、特に手法スライドや結果スライドは定義・学習方式・効果まで同居しています。また箇条書きの一部は60字超の長文でやや密度が高く、『文字の壁』寄りの箇所があります。"
+        }
+      }
+    }
+  ]
+}

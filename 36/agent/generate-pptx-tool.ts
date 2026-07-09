@@ -15,22 +15,33 @@ const slideDataSchema = z.object({
   slides: z.array(slideSchema),
 });
 
+// モデルによってはfile_path(snake_case)で呼び出すことがあるため両方受け付ける
 const inputSchema = z.object({
   filePath: z
     .string()
-    .describe("スライドJSONファイルのパス(例: ./slides/2603.03303.json)"),
+    .describe("スライドJSONファイルのパス(例: ./slides/2603.03303.json)")
+    .optional(),
+  file_path: z.string().describe("filePathの別名").optional(),
 });
 
 export function createGeneratePptxTool(backend: BackendProtocolV2) {
   return tool(
     async (input) => {
-      const readResult = await backend.readRaw(input.filePath);
+      const filePath = input.filePath ?? input.file_path;
+      if (!filePath) {
+        return JSON.stringify({
+          success: false,
+          error: "missing_file_path",
+          action: "filePath引数にスライドJSONファイルのパスを渡してください。",
+        });
+      }
+      const readResult = await backend.readRaw(filePath);
       const content = readResult.data?.content;
       if (readResult.error || content === undefined) {
         return JSON.stringify({
           success: false,
           error: "file_not_found",
-          details: `ファイルが見つかりません: ${input.filePath}`,
+          details: `ファイルが見つかりません: ${filePath}`,
           action: "ファイルパスを確認し、正しいパスで再度呼び出してください。",
         });
       }
@@ -49,7 +60,7 @@ export function createGeneratePptxTool(backend: BackendProtocolV2) {
           success: false,
           error: "invalid_json",
           details: `JSONパースエラー: ${e instanceof Error ? e.message : String(e)}`,
-          action: `${input.filePath} のJSON構文を修正し、再度このツールを呼び出してください。`,
+          action: `${filePath} のJSON構文を修正し、再度このツールを呼び出してください。`,
         });
       }
 
@@ -63,7 +74,7 @@ export function createGeneratePptxTool(backend: BackendProtocolV2) {
           success: false,
           error: "validation",
           details,
-          action: `${input.filePath} を以下のエラー内容に基づいて修正し、再度このツールを呼び出してください。`,
+          action: `${filePath} を以下のエラー内容に基づいて修正し、再度このツールを呼び出してください。`,
         });
       }
 

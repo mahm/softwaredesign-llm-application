@@ -1,9 +1,10 @@
-"""results/<variant>/ のランナー成果物をDeepEvalで評価する。
+"""
+results/<variant>/ をDeepEvalで評価する。
 
 使い方:
     uv run eval/run_eval.py baseline
-    uv run eval/run_eval.py improved
-    uv run eval/run_eval.py baseline --id 1706.03762 --repeat 3  # judgeのブレ確認
+    uv run eval/run_eval.py improvement-1
+    uv run eval/run_eval.py improvement-2 --id 1706.03762 --repeat 3
 """
 
 import argparse
@@ -13,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(ROOT / ".env")
+load_dotenv(ROOT / ".env", override=True)
 
 from cases import load_test_cases  # noqa: E402
 from deepeval import evaluate  # noqa: E402
@@ -22,9 +23,11 @@ from metrics import build_metrics  # noqa: E402
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("variant", choices=["baseline", "improved"])
+    parser.add_argument(
+        "variant", choices=["baseline", "improvement-1", "improvement-2"]
+    )
     parser.add_argument("--id", help="特定のarXiv IDだけ評価する")
-    parser.add_argument("--repeat", type=int, default=1, help="judgeのブレ確認用の繰り返し回数")
+    parser.add_argument("--repeat", type=int, default=1, help="試行回数")
     args = parser.parse_args()
 
     test_cases = load_test_cases(args.variant, args.id)

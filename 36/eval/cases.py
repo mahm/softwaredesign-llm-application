@@ -11,18 +11,15 @@ from deepeval.test_case import LLMTestCase, ToolCall
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results"
 EXPECTED_TOOLS = [ToolCall(name="execute"), ToolCall(name="generate_pptx")]
-# 3論文とも全文が収まる長さ。sourceを途中で切ると、後半(表・付録)由来の
-# 正確な数値が「原文にない」と誤判定される
 MAX_SOURCE_CHARS = 120_000
 
 
 def fetch_paper_text(arxiv_id: str) -> str:
-    """ar5ivから論文本文をテキスト化して取得する(2023年以前の論文もカバーできる)。"""
+    """ar5ivから論文本文をテキスト化して取得する"""
     url = f"https://ar5iv.labs.arxiv.org/html/{arxiv_id}"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (sd36-eval)"})
     html = urllib.request.urlopen(req, timeout=90).read().decode("utf-8", "ignore")
-    # 数式はalttext(LaTeX)に置き換えて残す。丸ごと削除するとd_kやdropout率などの
-    # 値がsourceから抜け落ち、スライド側の正確な数値が「原文にない」と誤判定される
+    # 数式はalttext(LaTeX)に置き換えて残す
     html = re.sub(
         r'(?is)<math[^>]*?alttext="([^"]*)"[^>]*>.*?</math>',
         lambda m: f" {html_lib.unescape(m.group(1))} ",
@@ -32,7 +29,7 @@ def fetch_paper_text(arxiv_id: str) -> str:
     text = re.sub(r"(?s)<[^>]+>", " ", html)
     text = re.sub(r"&[a-zA-Z#0-9]+;", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
-    # 参考文献以降は本文後半に出現した場合のみ打ち切る(冒頭ナビのリンクでの誤爆防止)
+    # 参考文献以降は本文後半に出現した場合のみ打ち切る
     refs = list(re.finditer(r"\bReferences\b", text))
     if refs and refs[-1].start() > len(text) * 0.5:
         text = text[: refs[-1].start()]
