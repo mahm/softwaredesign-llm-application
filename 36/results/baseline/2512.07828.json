@@ -1,0 +1,137 @@
+{
+  "arxivId": "2512.07828",
+  "variant": "baseline",
+  "model": "deepseek/deepseek-v4-flash",
+  "messages": [
+    "https://arxiv.org/abs/2512.07828 この論文からスライドを作成してください。",
+    "OKです。この構成でスライドを生成してください。"
+  ],
+  "toolCalls": [
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"./.agent/skills/pptx-generator/SKILL.md\",\"limit\":1000,\"offset\":0}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828\"}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"offset\":0,\"limit\":200}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":300,\"offset\":200}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":300,\"offset\":500}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_3cf3af05b845451ba76e5e72\",\"limit\":200,\"offset\":680}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"mkdir -p ./slides\"}"
+      }
+    },
+    {
+      "name": "write_file",
+      "args": {
+        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"J. Yang, N. Yang (Harvard Business School / Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents\\\",\\n      \\\"subtitle\\\": \\\"Early Evidence from Perplexity\\\\narXiv: 2512.07828 | July–October 2025\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"研究の背景と定義\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「Agentic AIの年」— LLMチャットボットから行動志向のAIエージェントへシフト\\\",\\n        \\\"AIエージェントの定義: ユーザーの目標を自律的に計画・実行し、実環境に働きかけるシステム\\\",\\n        \\\"ReActフレームワーク: 思考(Think)→行動(Act)→観察(Observe)の反復サイクル\\\",\\n        \\\"研究設定: Perplexityが開発したAIブラウザ「Comet」と内蔵エージェント「Comet Assistant」\\\",\\n        \\\"研究課題: (1)誰が使っているか? (2)どのくらい使っているか? (3)何に使っているか?\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"データと分析手法\\\",\\n      \\\"bullets\\\": [\\n        \\\"期間: 2025年7月9日～10月22日（CometローンチからGA後20日間）\\\",\\n        \\\"サンプルA: 全Cometユーザー（数百万ユーザー／数億クエリ）— 普及度・使用頻度の全体像\\\",\\n        \\\"サンプルB: 無作為抽出100,000ユーザー — O*NET職業クラスター分析\\\",\\n        \\\"サンプルC: 無作為抽出100,000エージェントユーザー — 全エージェントクエリを分類\\\",\\n        \\\"階層的エージェント分類法(Taxonomy): Topic → Subtopic → Task の3階層\\\",\\n        \\\"プライバシー保護: PII不使用、自動分類器、集計結果のみ開示\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"普及度と使用頻度の実態\\\",\\n      \\\"bullets\\\": [\\n        \\\"エージェントの普及・使用は持続的に成長、GA(一般提供)後に加速（GA後: 採用者60%、クエリ50%）\\\",\\n        \\\"早期アクセスコホート(7/9)のユーザーはGAコホート(10/2)と比較し、採用率2倍、クエリ数9倍\\\",\\n        \\\"国別: GDP per capitaや平均教育年数と正の相関\\\",\\n        \\\"職業別: デジタル技術職が最大(採用者28%、クエリ30%)、次いでアカデミア、金融、マーケティング、起業家\\\",\\n        \\\"これら知識集約型セクターは全採用者・クエリの70%超を占める\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"ユースケース分析（エージェント分類法）\\\",\\n      \\\"bullets\\\": [\\n        \\\"トピック別: Productivity & Workflow (36%) > Learning & Research (21%) > Media & Entertainment (16%) > Shopping (10%)\\\",\\n        \\\"サブトピック上位: Courses (13%), Goods Shopping (9%), Research (8%), Document Editing (8%)\\\",\\n        \\\"タスク上位: Exercise assistance (9%), Research summarization (7%), Document creation (7%), Product search (6%)\\\",\\n        \\\"利用コンテキスト: Personal (55%), Professional (30%), Educational (16%)\\\",\\n        \\\"短期では同一トピックへの stickiness が強いが、時間とともにより高認知トピックへ遷移\\\",\\n        \\\"分類精度: Topic 89%, Subtopic 83%, Task 81%\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"結論とインプリケーション\\\",\\n      \\\"bullets\\\": [\\n        \\\"AIエージェントの普及はまだ初期段階だが、知識集約型セクターを中心に急速に浸透\\\",\\n        \\\"エコノミックインパクト: エージェントAI市場は2025年80億ドル→2034年1,990億ドルに成長見込み\\\",\\n        \\\"PwC試算: 年換算で2.6～4.4兆ドルの経済貢献の可能性（2030年）\\\",\\n        \\\"企業・教育機関はAIエージェント活用に向けた戦略的準備が必要\\\",\\n        \\\"限界: Cometユーザーに限定、観察期間が短い、因果推論ではない\\\",\\n        \\\"今後の課題: 長期的なエージェント利用の進化、他プラットフォームとの比較、生産性への因果効果\\\"\\n      ]\\n    }\\n  ]\\n}\"}"
+      }
+    },
+    {
+      "name": "generate_pptx",
+      "args": {
+        "input": "{\"filePath\":\"./slides/2512.07828.json\"}"
+      }
+    }
+  ],
+  "slides": {
+    "title": "The Adoption and Usage of AI Agents: Early Evidence from Perplexity",
+    "author": "J. Yang, N. Yang (Harvard Business School / Perplexity)",
+    "slides": [
+      {
+        "type": "title",
+        "title": "The Adoption and Usage of AI Agents",
+        "subtitle": "Early Evidence from Perplexity\narXiv: 2512.07828 | July–October 2025"
+      },
+      {
+        "type": "content",
+        "title": "研究の背景と定義",
+        "bullets": [
+          "2025年は「Agentic AIの年」— LLMチャットボットから行動志向のAIエージェントへシフト",
+          "AIエージェントの定義: ユーザーの目標を自律的に計画・実行し、実環境に働きかけるシステム",
+          "ReActフレームワーク: 思考(Think)→行動(Act)→観察(Observe)の反復サイクル",
+          "研究設定: Perplexityが開発したAIブラウザ「Comet」と内蔵エージェント「Comet Assistant」",
+          "研究課題: (1)誰が使っているか? (2)どのくらい使っているか? (3)何に使っているか?"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "データと分析手法",
+        "bullets": [
+          "期間: 2025年7月9日～10月22日（CometローンチからGA後20日間）",
+          "サンプルA: 全Cometユーザー（数百万ユーザー／数億クエリ）— 普及度・使用頻度の全体像",
+          "サンプルB: 無作為抽出100,000ユーザー — O*NET職業クラスター分析",
+          "サンプルC: 無作為抽出100,000エージェントユーザー — 全エージェントクエリを分類",
+          "階層的エージェント分類法(Taxonomy): Topic → Subtopic → Task の3階層",
+          "プライバシー保護: PII不使用、自動分類器、集計結果のみ開示"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "普及度と使用頻度の実態",
+        "bullets": [
+          "エージェントの普及・使用は持続的に成長、GA(一般提供)後に加速（GA後: 採用者60%、クエリ50%）",
+          "早期アクセスコホート(7/9)のユーザーはGAコホート(10/2)と比較し、採用率2倍、クエリ数9倍",
+          "国別: GDP per capitaや平均教育年数と正の相関",
+          "職業別: デジタル技術職が最大(採用者28%、クエリ30%)、次いでアカデミア、金融、マーケティング、起業家",
+          "これら知識集約型セクターは全採用者・クエリの70%超を占める"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "ユースケース分析（エージェント分類法）",
+        "bullets": [
+          "トピック別: Productivity & Workflow (36%) > Learning & Research (21%) > Media & Entertainment (16%) > Shopping (10%)",
+          "サブトピック上位: Courses (13%), Goods Shopping (9%), Research (8%), Document Editing (8%)",
+          "タスク上位: Exercise assistance (9%), Research summarization (7%), Document creation (7%), Product search (6%)",
+          "利用コンテキスト: Personal (55%), Professional (30%), Educational (16%)",
+          "短期では同一トピックへの stickiness が強いが、時間とともにより高認知トピックへ遷移",
+          "分類精度: Topic 89%, Subtopic 83%, Task 81%"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "結論とインプリケーション",
+        "bullets": [
+          "AIエージェントの普及はまだ初期段階だが、知識集約型セクターを中心に急速に浸透",
+          "エコノミックインパクト: エージェントAI市場は2025年80億ドル→2034年1,990億ドルに成長見込み",
+          "PwC試算: 年換算で2.6～4.4兆ドルの経済貢献の可能性（2030年）",
+          "企業・教育機関はAIエージェント活用に向けた戦略的準備が必要",
+          "限界: Cometユーザーに限定、観察期間が短い、因果推論ではない",
+          "今後の課題: 長期的なエージェント利用の進化、他プラットフォームとの比較、生産性への因果効果"
+        ]
+      }
+    ]
+  },
+  "finalText": "スライドの生成が完了しました。全6枚のPowerPointファイルが作成されました。\n\n**生成されたスライド:**\n1. **タイトル**: \"The Adoption and Usage of AI Agents - Early Evidence from Perplexity\"\n2. **研究の背景と定義**: Agentic AIの定義、ReActフレームワーク、研究課題\n3. **データと分析手法**: 3つのサンプル構成、階層的分類法\n4. **普及度と使用頻度の実態**: コホート別・国別・職業別の分析結果\n5. **ユースケース分析**: Topic/Subtopic/Task別の分布と利用コンテキスト\n6. **結論とインプリケーション**: 市場予測、経済的影響、今後の課題\n\nファイルは `./slides/` 配下に保存されています。何か修正や追加がありましたらお知らせください。",
+  "durationMs": 148407,
+  "generatedAt": "2026-07-09T04:15:02.779Z"
+}

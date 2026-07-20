@@ -1,0 +1,195 @@
+{
+  "arxivId": "2512.07828",
+  "variant": "improvement-2",
+  "model": "deepseek/deepseek-v4-flash",
+  "messages": [
+    "https://arxiv.org/abs/2512.07828 この論文からスライドを作成してください。",
+    "OKです。この構成でスライドを生成してください。"
+  ],
+  "toolCalls": [
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"./.agent/skills/pptx-generator/SKILL.md\",\"limit\":1000,\"offset\":0}"
+      }
+    },
+    {
+      "name": "write_todos",
+      "args": {
+        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)のHTMLを取得して内容を分析\",\"status\":\"in_progress\"},{\"content\":\"スライド構成JSONを作成して保存\",\"status\":\"pending\"},{\"content\":\"アウトラインをユーザーに提示し確認を得る\",\"status\":\"pending\"},{\"content\":\"generate_pptxツールでスライドを生成\",\"status\":\"pending\"}]}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"mkdir -p ./slides\"}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828\"}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_b413ea39883b4300a7afcc18\",\"offset\":0,\"limit\":200}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_b413ea39883b4300a7afcc18\",\"offset\":200,\"limit\":300}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_b413ea39883b4300a7afcc18\",\"limit\":200,\"offset\":500}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_b413ea39883b4300a7afcc18\",\"limit\":200,\"offset\":678}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 | grep -oP '(?<=<p class=\\\"ltx_p\\\">).*?(?=</p>)' | head -100\"}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/large_tool_results/call_b413ea39883b4300a7afcc18\",\"limit\":200,\"offset\":678}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 > /tmp/paper_full.html 2>&1 && wc -l /tmp/paper_full.html\"}"
+      }
+    },
+    {
+      "name": "read_file",
+      "args": {
+        "input": "{\"file_path\":\"/tmp/paper_full.html\",\"limit\":200,\"offset\":678}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 | sed -n '680,1200p' 2>/dev/null\"}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 | sed -n '/Tasks/,/Discussion/p' | head -300\"}"
+      }
+    },
+    {
+      "name": "execute",
+      "args": {
+        "input": "{\"command\":\"curl -sL https://arxiv.org/html/2512.07828 | sed -n '/<h2 class=\\\"ltx_title ltx_title_section\\\">/,/<\\\\/section>/p' | grep -A2 'Discussion' | head -100\"}"
+      }
+    },
+    {
+      "name": "write_todos",
+      "args": {
+        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)のHTMLを取得して内容を分析\",\"status\":\"completed\"},{\"content\":\"スライド構成JSONを作成して保存\",\"status\":\"in_progress\"},{\"content\":\"アウトラインをユーザーに提示し確認を得る\",\"status\":\"pending\"},{\"content\":\"generate_pptxツールでスライドを生成\",\"status\":\"pending\"}]}"
+      }
+    },
+    {
+      "name": "write_file",
+      "args": {
+        "input": "{\"file_path\":\"./slides/2512.07828.json\",\"content\":\"{\\n  \\\"title\\\": \\\"The Adoption and Usage of AI Agents: Early Evidence from Perplexity\\\",\\n  \\\"author\\\": \\\"Jerry Yang (HBS) and Jerry Yue (Perplexity)\\\",\\n  \\\"slides\\\": [\\n    {\\n      \\\"type\\\": \\\"title\\\",\\n      \\\"title\\\": \\\"The Adoption and Usage of AI Agents\\\",\\n      \\\"subtitle\\\": \\\"Early Evidence from Perplexity\\\\narXiv: 2512.07828 | July - October 2025\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"エージェントAI普及の実態は未解明\\\",\\n      \\\"bullets\\\": [\\n        \\\"2025年は「エージェントAIの年」と称されるが、大規模な利用実態のエビデンスは不足\\\",\\n        \\\"市場規模は2025年$8Bから2034年$199Bへ成長見込み（Precedence Research）\\\",\\n        \\\"PwCは2030年に年$2.6T〜$4.4Tの経済効果を予測\\\",\\n        \\\"既存研究は非代表性のある企業調査や特化型エージェント（コーディング等）に限定\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"Perplexity Comet: 初の汎用AIエージェント大規模実証\\\",\\n      \\\"bullets\\\": [\\n        \\\"Comet: PerplexityのAIブラウザ。Comet Assistantが自律的にWebタスクを実行\\\",\\n        \\\"7月9日 Max層→8月13日 Pro層→10月2日 全ユーザーへ段階的ローンチ\\\",\\n        \\\"3サンプル: A（全ユーザー/全クエリ、数百万ユーザー）、B（10万人×職業分類）、C（10万エージェント利用者×全エージェントクエリ）\\\",\\n        \\\"エージェント定義: 思考→行動→観察（ReAct）のサイクルで環境を能動的に変更\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"早期導入者・高GDP国・知識労働者が導入と利用を先導\\\",\\n      \\\"bullets\\\": [\\n        \\\"プレGA層（7月9日）はGA層（10月2日）と比べ導入率2倍、利用頻度は9倍\\\",\\n        \\\"GDP per capitaと導入率の相関 r=0.85、平均教育年数と r=0.75（いずれもp<0.001）\\\",\\n        \\\"Digital Technologyが導入者28%・クエリ30%を占め最大、学生・金融・マーケティングが続く\\\",\\n        \\\"マーケティング・起業家・学生でAUR/AARが高く、導入後の利用がより活発\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"生産性と学習で全エージェントクエリの57%を占める\\\",\\n      \\\"bullets\\\": [\\n        \\\"トピック別: 生産性36%、学習21%、メディア16%、ショッピング10%\\\",\\n        \\\"主要サブトピック: コース13%、日用品買物9%、研究8%、文書編集8%、アカウント管理7%\\\",\\n        \\\"トップタスク: 演習補助9%、研究情報要約7%、文書作成7%、商品検索6%\\\",\\n        \\\"利用環境: 個人55% / 業務30% / 教育16%。短期的には同一トピックへの固執性が強い\\\"\\n      ]\\n    },\\n    {\\n      \\\"type\\\": \\\"content\\\",\\n      \\\"title\\\": \\\"認知的なタスクへのシフトと今後の展望\\\",\\n      \\\"bullets\\\": [\\n        \\\"長期では旅行・メディアから、生産性・学習・キャリア系トピックへと遷移する傾向\\\",\\n        \\\"環境の集中度はサブトピック間で大きく異なる（音楽は上位5環境で97% vs アカウント管理は28%）\\\",\\n        \\\"知見は企業・政策立案者・教育者に示唆: 導入格差・利用タスク構成の変化への対応が必要\\\",\\n        \\\"エージェント間連携（A2Aプロトコル等）によるネットワーク効果が今後の普及を加速する可能性\\\"\\n      ]\\n    }\\n  ]\\n}\"}"
+      }
+    },
+    {
+      "name": "write_todos",
+      "args": {
+        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)のHTMLを取得して内容を分析\",\"status\":\"completed\"},{\"content\":\"スライド構成JSONを作成して保存\",\"status\":\"completed\"},{\"content\":\"アウトラインをユーザーに提示し確認を得る\",\"status\":\"completed\"},{\"content\":\"generate_pptxツールでスライドを生成\",\"status\":\"in_progress\"}]}"
+      }
+    },
+    {
+      "name": "generate_pptx",
+      "args": {
+        "input": "{\"filePath\":\"./slides/2512.07828.json\"}"
+      }
+    },
+    {
+      "name": "write_todos",
+      "args": {
+        "input": "{\"todos\":[{\"content\":\"arXiv論文(2512.07828)のHTMLを取得して内容を分析\",\"status\":\"completed\"},{\"content\":\"スライド構成JSONを作成して保存\",\"status\":\"completed\"},{\"content\":\"アウトラインをユーザーに提示し確認を得る\",\"status\":\"completed\"},{\"content\":\"generate_pptxツールでスライドを生成\",\"status\":\"completed\"}]}"
+      }
+    }
+  ],
+  "slides": {
+    "title": "The Adoption and Usage of AI Agents: Early Evidence from Perplexity",
+    "author": "Jerry Yang (HBS) and Jerry Yue (Perplexity)",
+    "slides": [
+      {
+        "type": "title",
+        "title": "The Adoption and Usage of AI Agents",
+        "subtitle": "Early Evidence from Perplexity\narXiv: 2512.07828 | July - October 2025"
+      },
+      {
+        "type": "content",
+        "title": "エージェントAI普及の実態は未解明",
+        "bullets": [
+          "2025年は「エージェントAIの年」と称されるが、大規模な利用実態のエビデンスは不足",
+          "市場規模は2025年$8Bから2034年$199Bへ成長見込み（Precedence Research）",
+          "PwCは2030年に年$2.6T〜$4.4Tの経済効果を予測",
+          "既存研究は非代表性のある企業調査や特化型エージェント（コーディング等）に限定"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "Perplexity Comet: 初の汎用AIエージェント大規模実証",
+        "bullets": [
+          "Comet: PerplexityのAIブラウザ。Comet Assistantが自律的にWebタスクを実行",
+          "7月9日 Max層→8月13日 Pro層→10月2日 全ユーザーへ段階的ローンチ",
+          "3サンプル: A（全ユーザー/全クエリ、数百万ユーザー）、B（10万人×職業分類）、C（10万エージェント利用者×全エージェントクエリ）",
+          "エージェント定義: 思考→行動→観察（ReAct）のサイクルで環境を能動的に変更"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "早期導入者・高GDP国・知識労働者が導入と利用を先導",
+        "bullets": [
+          "プレGA層（7月9日）はGA層（10月2日）と比べ導入率2倍、利用頻度は9倍",
+          "GDP per capitaと導入率の相関 r=0.85、平均教育年数と r=0.75（いずれもp<0.001）",
+          "Digital Technologyが導入者28%・クエリ30%を占め最大、学生・金融・マーケティングが続く",
+          "マーケティング・起業家・学生でAUR/AARが高く、導入後の利用がより活発"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "生産性と学習で全エージェントクエリの57%を占める",
+        "bullets": [
+          "トピック別: 生産性36%、学習21%、メディア16%、ショッピング10%",
+          "主要サブトピック: コース13%、日用品買物9%、研究8%、文書編集8%、アカウント管理7%",
+          "トップタスク: 演習補助9%、研究情報要約7%、文書作成7%、商品検索6%",
+          "利用環境: 個人55% / 業務30% / 教育16%。短期的には同一トピックへの固執性が強い"
+        ]
+      },
+      {
+        "type": "content",
+        "title": "認知的なタスクへのシフトと今後の展望",
+        "bullets": [
+          "長期では旅行・メディアから、生産性・学習・キャリア系トピックへと遷移する傾向",
+          "環境の集中度はサブトピック間で大きく異なる（音楽は上位5環境で97% vs アカウント管理は28%）",
+          "知見は企業・政策立案者・教育者に示唆: 導入格差・利用タスク構成の変化への対応が必要",
+          "エージェント間連携（A2Aプロトコル等）によるネットワーク効果が今後の普及を加速する可能性"
+        ]
+      }
+    ]
+  },
+  "finalText": "スライドの生成が完了しました！ `./slides/2512.07828.pptx` に保存されています。",
+  "durationMs": 223660,
+  "generatedAt": "2026-07-09T04:23:34.305Z"
+}

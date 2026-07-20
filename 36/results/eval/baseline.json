@@ -1,0 +1,137 @@
+{
+  "variant": "baseline",
+  "runs": [
+    {
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7407407407407407,
+          "reason": "The score is 0.74 because the summary captures the paper’s main contribution and strong translation results, but it overstates or adds several points not supported by the source: it treats attention as only an adjunct to RNNs, overclaims state-of-the-art status for English-to-French, and adds unsupported details like the explicit positional encoding formula, interpretability of heads, broader generalization claims, and references to later models such as BERT, GPT, and T5."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.6528850692257081,
+          "reason": "全体は「Problem & Motivation→Model Architecture→Results→Conclusion」とおおむね論理的に並んでおり、Transformer論文の要点も押さえている。一方で各スライドの情報量が多く、Slide 5とSlide 6は6項目あり、Slide 3〜5も複数の論点を同居させていて1スライド1メッセージの原則から外れる。特にSlide 4はMulti-Head Attention・Positional Encoding・FFNを同時に扱い、Slide 5は結果と自己注意の利点を混在させている。タイトルも「Model Architecture Overview」「Conclusion & Impact」など章名寄りで、主張を含む具体性が弱い。箇条書きは多くが60字未満で極端な長文化はないが、5項目以上のスライドがあり『文字の壁』気味な点で減点となる。"
+        }
+      },
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.75,
+          "reason": "The score is 0.75 because the summary captures the general topic and some core findings, but it adds several unsupported claims and framing not in the original text, such as calling 2025 the “year of Agentic AI,” citing market and PwC forecasts, saying adoption is still early-stage and rapidly penetrating sectors, and making strategic recommendations. It also misstates a future research direction by turning “economic value derived from agent use” into causal effects on productivity."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.684606356278069,
+          "reason": "全体は「背景と課題→手法→結果→結論」の流れで、5枚の内容も論文の主要点（Comet/Comet Assistant、3サンプル、GA後60%・50%、Productivity 36%など）を押さえている点は良い。一方で各スライドに論点を詰め込み気味で、特にSlide 2は背景・定義・研究設定・研究課題、Slide 5はトピック・サブトピック・タスク・利用文脈・stickiness・分類精度まで含み1メッセージに絞れていない。箇条書きも各スライド5〜6項目で密度が高く、Slide 6も市場規模予測・含意・限界・今後の課題が混在する。タイトルは「研究の背景と定義」「データと分析手法」「結論とインプリケーション」など章名寄りで、主張を含む具体性がやや不足するため減点した。"
+        }
+      },
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.8,
+          "reason": "The score is 0.80 because the summary is largely faithful and captures the main findings, but it adds unsupported details about policy/article/AI feature improvement and specific per-dataset gains (36.0% for Book, 20.6% for News) that are not stated in the original text. It also omits whether the paper includes reproducibility details such as experiment scale, datasets, and computational resources."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.714804719803169,
+          "reason": "背景→提案→学習プロセス→ベンチマーク→結果の流れは概ね論理的で、Humanualの6データセット・26kユーザや16.3%改善、111名評価など主要パラメータも押さえている。一方で各スライドは4項目に収まるものの、Slide 6はベンチマーク結果とユーザスタディを同居させており1メッセージ性が弱い。タイトルも『問題設定』『提案手法』『実験結果』寄りで章名中心が多く、主張を含む具体性が不足している。箇条書き密度は許容範囲だが、一部項目はやや長く情報を詰め込み気味。"
+        }
+      }
+    },
+    {
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.8,
+          "reason": "The score is 0.80 because the summary appears largely faithful with no direct contradictions, but it adds unsupported details about benchmark limitations and specific Book/News improvement numbers that are not stated in the original text. It also misses whether the paper includes reproducibility details such as experiment scale, datasets, or compute resources."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.6947026856562806,
+          "reason": "背景→手法→ベンチマーク→結果という流れは概ね論理的で、Humanualの6データセット・26kユーザ・216k応答や16.3%改善、111名評価など主要パラメータも押さえている。一方で各スライドは4項目で密度は過剰ではないが、Slide 6が定量結果とユーザスタディを同居させ、Slide 4も学習と推論をまとめており1枚1メッセージ性がやや弱い。さらにタイトルが『問題設定』『提案手法』『実験結果』型で章名寄りで、主張を直接示す具体性が不足しているため減点。"
+        }
+      },
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7037037037037037,
+          "reason": "The score is 0.70 because the summary is mostly faithful to the original Transformer description, but it includes a few inaccuracies and unsupported additions. It overstates that attention was only an adjunct to RNNs rather than saying it was typically used with them, and it slightly misstates the feed-forward formula by omitting the final bias term. It also adds details not explicitly given in the provided text, such as exact normalization and positional encoding formulas, claims about interpretability and lack of task-specific tuning, and references to later models like BERT, GPT, and T5."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.598360636282605,
+          "reason": "全体として「背景と課題→提案手法→結果→結論」の流れは概ね守られており、Transformerの主張やWMT 2014 EN-DE 28.4 BLEU・EN-FR 41.8 BLEU、8 P100 GPUで3.5日など論文の主要結果も押さえている。一方で各スライドに論点を詰め込みすぎており、Slide 3はアーキテクチャ詳細とAttention式、Slide 4はMulti-Head・Positional Encoding・FFN、Slide 5は結果と自己注意の利点と解析結果とParsingまで混在していて1スライド1メッセージ性が弱い。箇条書きもSlide 5と6で5項目超、数式や長めの項目もあり文字密度が高い。さらにタイトルが『Problem & Motivation』『Model Architecture Overview』『Conclusion & Impact』など章名寄りで、評価基準の求める具体的な主張タイトルになっていない点が減点要素。"
+        }
+      },
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7,
+          "reason": "The score is 0.70 because the summary captures the general topic and some core findings, but it adds several unsupported specifics and broader claims not stated in the original, such as 2025 being the year of agentic AI, market and economic forecasts, strategic recommendations, O*NET, and precise percentages for subtopics and tasks. It also slightly misstates the evidence base by saying millions of users, while the original only mentions hundreds of millions of anonymized interactions and one sample covering the full Comet user population."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.694177017675479,
+          "reason": "背景→手法→結果→結論の流れは概ね守られており、各スライドも研究設定、データ、主要結果、結論に沿って配置されている点は良い。一方で、各スライドに5〜6項目あり、特にSlide 2・5・6は複数論点を同時に詰め込み気味で、1枚1メッセージの原則からやや外れる。タイトルも「研究の背景と定義」「データと分析手法」「結論とインプリケーション」など章名寄りで、主張を言い切る具体性が弱い。要約自体は適切で、論文の主要数値（GA後60%/50%、7/9コホート2倍・9倍、Personal 55%など）は押さえているが、文字密度とタイトルの曖昧さで減点。"
+        }
+      }
+    },
+    {
+      "baseline-2512.07828": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.7142857142857143,
+          "reason": "The score is 0.71 because the summary captures several core points and some numeric trends, but it introduces multiple unsupported details and a couple of clear misstatements. In particular, it incorrectly equates the July 9–October 22, 2025 window with '20 days after GA' and adds future-work claims like studying causal effects on productivity that the original does not state. It also includes extra specifics not in the source, such as market forecasts, PwC estimates, exact user-scale wording, and some exact topic percentages or paraphrases that are not fully supported. Overall, it is reasonably aligned but weakened by added and inaccurate details."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.6817574476193643,
+          "reason": "全体は「背景と課題→手法→結果→結論」の流れで並び、5枚構成で要約としては妥当です。各スライドも概ね1メッセージに収まっています。ただし、Slide 2は背景・定義・研究設定・研究課題を同居させ、Slide 5はトピック・サブトピック・タスク・利用文脈・遷移・分類精度まで詰め込み気味で、評価基準1に照らすと減点です。箇条書きは各スライド5〜6項目あり、特にSlide 5とSlide 6は6項目で密度が高く、一部の項目も長めで『文字の壁』寄りです。タイトルは「研究の背景と定義」「普及度と使用頻度の実態」など比較的具体的で、章名だけではない点は良い一方、「データと分析手法」「結論とインプリケーション」はやや汎用的です。省略は許容範囲ですが、詰め込みをもう少し抑えればより高評価でした。"
+        }
+      },
+      "baseline-1706.03762": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.8076923076923077,
+          "reason": "The score is 0.81 because the summary captures the main contribution and strong results of the Transformer paper, but it overstates several points: it claims attention had only been used as an adjunct to RNNs, adds unsupported details about one-quarter training cost, interpretable heads learning syntax/semantics, parsing without task-specific tuning, and mentions later models like BERT, GPT, and T5 that are not in the original text."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.5881744128421087,
+          "reason": "全体は「Problem & Motivation→Model Architecture→Results→Conclusion」と論理的に流れており、Transformerの背景・提案・結果・結論は押さえられている。一方で各スライドに論点を詰め込みすぎており、Slide 3はアーキテクチャ概要に加えて残差・LayerNorm・Scaled Dot-Product式まで含み、Slide 4もMulti-Head・位置エンコーディング・FFNの3論点が混在、Slide 5は結果と自己注意の利点と解析結果を同居させているため1スライド1メッセージ性が弱い。箇条書きはSlide 5と6で6項目あり減点対象。タイトルも『Model Architecture Overview』『Conclusion & Impact』など章名寄りで、主張を明確に述べる具体性が不足する一方、『Problem & Motivation』や『Key Results & Why Self-Attention』は比較的内容を示している。省略は許容範囲だが、詰め込みと一部曖昧なタイトルが目立つ。"
+        }
+      },
+      "baseline-2603.03303": {
+        "Tool Correctness": {
+          "score": 1.0,
+          "reason": "[\n\t Tool Calling Reason: All expected tools ['execute', 'generate_pptx'] were called (order not considered).\n\t Tool Selection Reason: No available tools were provided to assess tool selection criteria\n]\n"
+        },
+        "Summarization": {
+          "score": 0.8,
+          "reason": "The score is 0.80 because the summary is mostly faithful and captures the main findings, including the 55.9% result, with only a minor wording mismatch in that label. However, it adds several unsupported details, such as implying batch-comparison scoring happens during inference, claiming prior benchmarks used simplified profiles or limited contexts, and giving domain-specific improvement figures not stated in the source. It also omits whether the text includes reproducibility details like experimental scale, datasets, or compute resources."
+        },
+        "SlideQuality [GEval]": {
+          "score": 0.700802343530883,
+          "reason": "背景→手法→学習プロセス→ベンチマーク→結果という流れで、論文の主要要素（6状態次元、Humanualの6データセット・26kユーザ、16.3%改善、111名評価）も押さえており全体構成は良いです。一方で各スライドが章名寄りのタイトル（『問題設定』『提案手法』『実験結果』など）で主張が弱く、評価基準3で減点対象です。さらに各スライドは4項目以内で文字量も概ね許容範囲ですが、1枚の中に複数メッセージを入れている箇所があり、特に最後のスライドはベンチマーク結果とリアルタイムユーザスタディを同居させていて、1スライド1メッセージの観点でやや詰め込みがあります。"
+        }
+      }
+    }
+  ]
+}

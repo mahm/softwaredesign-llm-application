@@ -1,0 +1,9 @@
+[project]
+name = "sd-36-eval"
+version = "0.1.0"
+description = "DeepEval-based evaluation for the chapter 32 slide-generation workflow"
+requires-python = ">=3.12"
+dependencies = [
+    "deepeval==4.0.7",
+    "python-dotenv>=1.0",
+]
