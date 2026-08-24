@@ -1,0 +1,28 @@
+{
+  "name": "sd-37-openrouter-routing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deepagents": "bun src/deepagents.ts",
+    "prepare:claude": "rm -rf .workspaces/claude-code .workspaces/claude-config && mkdir -p .workspaces/claude-config && cp -R workspace .workspaces/claude-code",
+    "claude": "set -a && . ./.env && set +a && bun run prepare:claude && cd .workspaces/claude-code && CLAUDE_CONFIG_DIR=../claude-config ANTHROPIC_BASE_URL=https://openrouter.ai/api ANTHROPIC_AUTH_TOKEN=\"$OPENROUTER_API_KEY\" ANTHROPIC_API_KEY= claude --bare -p \"requirements.mdを確認して開発してください。\" --model deepseek/deepseek-v4-flash-0731 --no-session-persistence --tools \"Read,Edit\" --permission-mode dontAsk --allowedTools \"Read(./**)\" \"Edit(./**)\" && bun test ./price.test.ts",
+    "route": "bun src/route.ts",
+    "sample:text": "bun samples/text-generation.ts",
+    "sample:image": "bun samples/image-generation.ts",
+    "sample:video": "bun samples/video-generation.ts",
+    "sample:tts": "bun samples/text-to-speech.ts",
+    "verify": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/core": "1.2.8",
+    "@langchain/openrouter": "0.4.8",
+    "@openrouter/sdk": "1.2.51",
+    "deepagents": "1.12.4",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.5",
+    "@types/node": "25.8.0",
+    "typescript": "6.0.3"
+  }
+}
