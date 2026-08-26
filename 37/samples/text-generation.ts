@@ -17,7 +17,7 @@ const result = await openRouter.chat.send({
         content: "OpenRouterを一文で説明してください。",
       },
     ],
-    maxTokens: 200,
+    maxCompletionTokens: 200,
     reasoningEffort: "none",
     stream: false,
   },

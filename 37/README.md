@@ -89,6 +89,10 @@ bun run sample:tts
 
 モデルには`deepseek/deepseek-v4-flash-0731`を指定しています。
 
+Deep AgentsとClaude Codeには、税込価格を計算する同じコードの修正を依頼します。
+現在のコードは、単価へ税率を適用して小数部分を切り捨てたあとに数量を掛けています。
+単価と数量から求めた小計へ税率を適用し、最後に小数部分を切り捨てるように修正する課題です。
+どちらのコマンドも`workspace/`を個別の作業ディレクトリへコピーするため、元のコードは変更しません。
 
 ### Deep Agentsで修正する
 
@@ -125,6 +129,12 @@ bun run route
 `OPENROUTER_ROUTING_PROFILE`には`default`、`price`、`latency`、`throughput`のいずれかを指定します。
 
 ```console
-OPENROUTER_ROUTING_PROFILE=price bun run deepagents
+OPENROUTER_ROUTING_PROFILE=price bun run route
 OPENROUTER_ROUTING_PROFILE=latency bun run route
+```
+
+同じ環境変数はDeep Agentsの実行にも適用できます。
+
+```console
+OPENROUTER_ROUTING_PROFILE=price bun run deepagents
 ```

@@ -14,7 +14,6 @@ const result = await openRouter.chat.send({
   chatRequest: {
     model,
     messages: [{ role: "user", content: "Reply with only OK." }],
-    maxTokens: 16,
     provider: providerPreferences,
     stream: false,
   },
