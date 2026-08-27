@@ -1,6 +1,6 @@
 # 第37回 OpenRouter入門 サンプルアプリケーション
 
-## 動作環境
+## 動作確認環境
 
 - Bun 1.3.5
 - TypeScript 6.0.3
@@ -75,7 +75,7 @@ bun run sample:video
 ### 音声を生成する
 
 次のコマンドはQwen-Audio 3.0 TTS Flashで日本語の短文を読み上げます。
-このサンプルはOpenRouterが公開する音声ID`loongjohn`を使います。
+このサンプルでは、モデルが対応する音声IDとして`loongjohn`を指定します。
 
 ```console
 bun run sample:tts
