@@ -42,3 +42,8 @@
 | 29 | LangChain v1.0 create_agent解説 | create_agentとミドルウェアの仕組みを解説するJupyter Notebook |
 | 31 | LangChain Middlewareデモ | LangChain 1.0のミドルウェア機能を活用した3つのデモ（PII保護、レジリエンス、ツール選択） |
 | 32 | deepagentsによるエージェント開発 | CopilotKitベースのスライド生成エージェント |
+| 33 | Agent Client Protocol（ACP）でエージェントとエディタを連携させる | deepagents-acpを使ったDeep AgentsとZedエディタの接続 |
+| 34 | Agent Client Protocol（ACP）でエージェントとエージェントを連携させる | ACPXを使ってDeep AgentsのSupervisorエージェントからClaude CodeとCodexを呼び出すエージェント間連携 |
+| 35 | ハーネスエンジニアリングでAIエージェントの性能を引き上げる | コーディングエージェントによるハーネスの改善とTerminal-Bench 2による計測 |
+| 36 | DeepEvalによるAIエージェントの評価駆動開発 | スライド生成エージェントを計測し、スキルの改善と再計測を行う評価スクリプト |
+| 37 | OpenRouter入門 | OpenRouter SDKによるマルチモーダルAPIと推論プロバイダのルーティング、Deep AgentsとClaude Codeとの接続 |
