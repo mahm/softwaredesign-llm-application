@@ -1,0 +1,25 @@
+{
+  "expected": {
+    "quoteId": "SD38-042",
+    "totalYen": 2240,
+    "validUntil": "2026-10-31",
+    "destination": "Meeting Room B"
+  },
+  "followupExpected": {
+    "destination": "Meeting Room B",
+    "referenceCode": "COBALT-73"
+  },
+  "pages": 2,
+  "textChecksPassed": true,
+  "scanHasNoTextLayer": true,
+  "files": {
+    "quote-text.pdf": {
+      "sha256": "9ae558bfb208b187cc591e198c981ac8904721e9f55826d4c7abd834540e6c5c",
+      "bytes": 2774
+    },
+    "quote-scan.pdf": {
+      "sha256": "3cf8a264f698afa9af9aa94bf8a78e0414f509efba9cbda6ec88357fbfea651b",
+      "bytes": 84691
+    }
+  }
+}
