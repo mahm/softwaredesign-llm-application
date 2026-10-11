@@ -48,3 +48,4 @@
 | 36 | DeepEvalによるAIエージェントの評価駆動開発 | スライド生成エージェントを計測し、スキルの改善と再計測を行う評価スクリプト |
 | 37 | OpenRouter入門 | OpenRouter SDKによるマルチモーダルAPIと推論プロバイダのルーティング、Deep AgentsとClaude Codeとの接続 |
 | 38 | OpenRouterのレスポンスキャッシュとプラグイン | [Web検索、レスポンスキャッシュ、PDF解析、JSON修復、コンテキスト圧縮](38/README.md) |
+| 39 | 意思決定モデルJev入門 | [TypeSafeのSDKとOpenRouterのDecisions APIによる社内問い合わせの分類](39/README.md) |
