@@ -1,14 +1,13 @@
 // choice、score、noulの3種類の質問を1回のリクエストで送る例
-// 問い合わせ001について、種別、緊急度、要確認の回答と、それぞれの確率や確信度を表示する
+// 問い合わせ001について、種別、緊急度、要確認の3つを聞き、送るJSONと受け取るJSONを表示する
 import { choice, noul, score, TypeSafeClient } from "@typesafe-ai/sdk";
 
 const inquiry = await Bun.file(new URL("../inquiries/001.txt", import.meta.url)).text();
 
-const client = new TypeSafeClient();
 // 同じstateに対する質問は、1回のリクエストにまとめて送る
-const response = await client.systemOne({
+const request = {
   model: "jev-latest",
-  // 緊急度の判断には受付日時も必要なので、受付日時と本文にそれぞれ名前を付けて渡す
+  // 緊急度は受付日時の時点で判断するように聞くため、受付日時と本文にそれぞれ名前を付けて渡す
   state: { received_at: "2026-10-19T09:12:00+09:00", inquiry },
   questions: {
     // 種別
@@ -34,10 +33,11 @@ const response = await client.systemOne({
       false: "書かれている内容で対応を始められる。細かい点は対応しながら確認できる",
     }),
   },
-});
+};
+console.log("リクエスト:");
+console.log(JSON.stringify(request, null, 2));
 
-const { inquiry_type, urgency, needs_clarification } = response.answers;
-console.log("種別:", inquiry_type.choice, inquiry_type.probabilities, "確信度", inquiry_type.confidence);
-console.log("緊急度:", urgency.score, urgency.probabilities, "確信度", urgency.confidence);
-console.log("要確認（はいの確率）:", needs_clarification.noul);
-console.log("モデル:", response.model, "使用量:", response.usage);
+const client = new TypeSafeClient();
+const response = await client.systemOne(request);
+console.log("レスポンス:");
+console.log(JSON.stringify(response, null, 2));

@@ -1,12 +1,20 @@
 // OpenRouterのDecisions APIで、指定したモデルに30件の問い合わせを分類させる例
 // 質問ごとの正解ラベルとの一致数、回答が変わった問い合わせの数、所要時間、利用料金を表示する
-import { OpenRouter } from "@openrouter/sdk";
 import { inquiryQuestions } from "./03-inquiry-questions.ts";
 
 // 使い方：bun samples/06-compare-models.ts <モデルID> [繰り返し回数]
 const model = process.argv[2] ?? "typesafe/jev-1.13";
 const repeats = Number(process.argv[3] ?? 1);
-const openrouter = new OpenRouter({ apiKey: process.env.OPENROUTER_API_KEY ?? "" });
+// OpenRouterのDecisions APIへ1件送り、レスポンスのJSONを返す（APIキーは環境変数OPENROUTER_API_KEYから読み込む）
+const decide = async (body: unknown): Promise<any> => {
+  const response = await fetch("https://openrouter.ai/api/alpha/decisions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
 const readTsv = async (path: string) =>
   (await Bun.file(new URL(path, import.meta.url)).text()).trim().split("\n").map((row) => row.split("\t"));
 
@@ -27,9 +35,7 @@ for (const [id, receivedAt] of (await readTsv("../inquiries/received-at.tsv")).s
   const results = new Set<string>();
   for (let i = 0; i < repeats; i++) {
     const started = performance.now();
-    const response = await openrouter.alpha.decisions.create({
-      decisionsRequest: { model, state: { received_at: receivedAt, inquiry }, questions: inquiryQuestions as any },
-    });
+    const response = await decide({ model, state: { received_at: receivedAt, inquiry }, questions: inquiryQuestions });
     times.push(performance.now() - started);
     cost += response.usage.cost ?? 0;
     const values = names.map((name) => answerOf(response.answers[name]));

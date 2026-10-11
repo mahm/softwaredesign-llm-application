@@ -6,7 +6,6 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@openrouter/sdk": "1.4.25",
     "@typesafe-ai/sdk": "0.6.0"
   },
   "devDependencies": {

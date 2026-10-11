@@ -1,13 +1,12 @@
 // TypeSafeのSDKでJevを呼び出す最小の例
-// 問い合わせ001の種別をchoiceの質問1つで判断させ、レスポンス全体をJSONで表示する
+// 問い合わせ001の種別をchoiceの質問1つで判断させ、送るJSONと受け取るJSONを表示する
 import { choice, TypeSafeClient } from "@typesafe-ai/sdk";
 
 // 問い合わせの本文を、そのまま判断の材料（state）として渡す
 const inquiry = await Bun.file(new URL("../inquiries/001.txt", import.meta.url)).text();
 
-// クライアントは環境変数TYPESAFE_API_KEYからAPIキーを読み込む
-const client = new TypeSafeClient();
-const response = await client.systemOne({
+// SDKは、このオブジェクトをそのままJSONにしてAPIへ送る
+const request = {
   model: "jev-latest",
   state: inquiry,
   questions: {
@@ -19,6 +18,12 @@ const response = await client.systemOne({
       その他: "上のどれにも当てはまらない",
     }),
   },
-});
+};
+console.log("リクエスト:");
+console.log(JSON.stringify(request, null, 2));
 
+// クライアントは環境変数TYPESAFE_API_KEYからAPIキーを読み込む
+const client = new TypeSafeClient();
+const response = await client.systemOne(request);
+console.log("レスポンス:");
 console.log(JSON.stringify(response, null, 2));
