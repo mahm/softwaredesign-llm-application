@@ -3,7 +3,7 @@
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { inquiryQuestions } from "./03-inquiry-questions.ts";
 
-// 影響範囲と緊急度の回答の組み合わせから優先度を決める表。表の内容は運用方針の一例
+// 影響範囲と緊急度の回答の組み合わせから優先度を決める
 const PRIORITY = {
   本人だけ: { 急がない: "低", 早めに対応: "低", すぐに対応: "中" },
   部署やチームの複数人: { 急がない: "低", 早めに対応: "中", すぐに対応: "高" },
@@ -22,7 +22,7 @@ for (const [id, receivedAt] of rows.map((row) => row.split("\t"))) {
     questions: inquiryQuestions,
   });
   const priority = PRIORITY[answers.impact.choice][answers.urgency.choice];
-  // noulは「はい」の確率なので、0.5を超えたら「はい」とみなす
+  // noulが0.5を超えたら「はい」とみなす
   console.log([
     id, answers.inquiry_type.choice, answers.category.choice, answers.department.choice, priority,
     answers.multiple_departments.noul > 0.5 ? "複数部署" : "-",

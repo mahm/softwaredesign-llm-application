@@ -2,10 +2,10 @@
 // 問い合わせ001の種別をchoiceの質問1つで判断させ、送るJSONと受け取るJSONを表示する
 import { choice, TypeSafeClient } from "@typesafe-ai/sdk";
 
-// 問い合わせの本文を、そのまま判断の材料（state）として渡す
+// 問い合わせの本文をそのままstateとして渡す
 const inquiry = await Bun.file(new URL("../inquiries/001.txt", import.meta.url)).text();
 
-// SDKは、このオブジェクトをそのままJSONにしてAPIへ送る
+// リクエストの内容
 const request = {
   model: "jev-latest",
   state: inquiry,

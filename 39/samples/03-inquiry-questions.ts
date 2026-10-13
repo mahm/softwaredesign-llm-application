@@ -1,4 +1,4 @@
-// 問い合わせの分類に使う7つの質問の定義（04-classify.tsと06-compare-models.tsから読み込む）
+// 問い合わせの分類に使う7つの質問の定義（04-classify.tsと05-evaluate.tsから読み込む）
 // stateには、受付日時をreceived_at、問い合わせの本文をinquiryという名前で渡す
 import { choice, noul } from "@typesafe-ai/sdk";
 
