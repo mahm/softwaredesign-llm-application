@@ -6,10 +6,13 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@typesafe-ai/sdk": "0.6.0"
+    "@typesafe-ai/sdk": "0.7.0"
   },
   "devDependencies": {
-    "@types/bun": "1.4.2",
+    "@types/node": "24.19.2",
     "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=24.22.0"
   }
 }
