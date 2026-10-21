@@ -5,7 +5,7 @@ TypeSafeの意思決定モデル（decision model）であるJevの質問タイ�
 
 ## 動作環境
 
-- ランタイム: Node.js 24.22.0（LTS）
+- ランタイム: Node.js 24.22.1（LTS）
 - 言語: TypeScript 7.0.2
 - 主要ライブラリ: `@typesafe-ai/sdk` 0.7.0
 - 使用モデル: `jev-1.14.0`
