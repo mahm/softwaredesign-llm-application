@@ -4,6 +4,11 @@ Deep AgentsによるSupervisorエージェントから、Agent Client Protocol�
 
 ![起動イメージ](docs/sd_34.png)
 
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Node.jsのバージョン指定を22から22.23.4へ変更しました。
+実行にはNode.js 22.23.4を使用してください。
+
 ## 前提条件
 
 - [mise](https://mise.jdx.dev/)（ランタイムバージョン管理）

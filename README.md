@@ -2,6 +2,11 @@
 
 このリポジトリは技術評論社Software Design誌の連載「実践LLMアプリケーション開発」に関連するサンプルコードを保存しています。
 
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Python・Node.jsとCA証明書を更新しています。
+各回のREADMEに、紙面のバージョンとの差と環境設定の手順を記載しています。
+
 ## 注意事項
 
 - このリポジトリのコードは自由に閲覧・二次利用が可能です。
@@ -25,6 +30,7 @@
 | 10 | CRAG（Corrective RAG） | Cross-Encoderを使った検索結果の再ランキングとCRAGパターンの実装 |
 | 11 | ReAct Agent | create_react_agentを使った汎用的なリサーチエージェントの実装 |
 | 12 | ARAG（Adaptive RAG） | タスクに応じて検索戦略を動的に切り替えるAdaptive RAGの実装とLangSmith連携 |
+| [13](13/README.md) | LangGraphのチェックポイント | [Google Colabのサンプルと証明書侵害への対応状況](13/README.md) |
 | 14 | Streamlitアプリケーション | Streamlitを使ったWebアプリケーションとLangGraphの連携 |
 | 16 | LangGraph Platform | LangGraph CLIとLangGraph Platformによるエージェントのデプロイ |
 | 17 | LangGraph Studio | LangGraph Studioを使ったエージェントの開発とデバッグ |

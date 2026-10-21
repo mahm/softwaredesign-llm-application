@@ -5,3 +5,4 @@ openai
 langchain-openai
 python-dotenv
 retry
+certifi==2026.10.19

@@ -2,6 +2,19 @@
 
 このサンプルコードでは、日本語QAデータセット「JQaRA」を使用してRAGパイプラインの最適化を行います。
 
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Pythonを紙面に記載した3.13から3.13.16へ更新しました。
+HTTPS通信に使用するCA証明書も、certifi 2026.10.19へ更新しています。
+
+環境構築にはuv 0.13.4以降を使用してください。
+以下の手順で`uv sync`を実行した後、サンプルを起動するシェルで次の環境変数を設定してください。
+
+```bash
+export SSL_CERT_FILE="$(uv run python -m certifi)"
+export SSL_CERT_DIR="$(dirname "$SSL_CERT_FILE")"
+```
+
 ## 使用データセット
 
 本サンプルコードでは[JQaRA (Japanese Question Answering with Retrieval Augmentation)](https://huggingface.co/datasets/hotchpotch/JQaRA)データセットを使用しています。JQaRAは日本語の質問応答タスク用に構築された高品質なデータセットで、RAGシステムの評価に適しています。データセット作成者の[hotchpotch](https://huggingface.co/hotchpotch)氏に感謝いたします。

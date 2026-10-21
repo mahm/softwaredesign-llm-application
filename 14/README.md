@@ -1,4 +1,19 @@
+# 第14回 サンプルコード
+
 ※ 第14回、第15回のサンプルコードは同じものを使用しています。
+
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Pythonを紙面に記載した3.11.8から3.11.17へ更新しました。
+HTTPS通信に使用するCA証明書も、certifi 2026.10.19へ更新しています。
+
+環境構築にはPython 3.11.17とPoetry 2.5.1を使用してください。
+`poetry install`の実行後、サンプルを起動するシェルで次の環境変数を設定してください。
+
+```bash
+export SSL_CERT_FILE="$(poetry run python -m certifi)"
+export SSL_CERT_DIR="$(dirname "$SSL_CERT_FILE")"
+```
 
 ## サンプルコードの実行方法
 
@@ -12,7 +27,8 @@ $ git clone https://github.com/mahm/softwaredesign-llm-application.git
 
 ```
 $ cd softwaredesign-llm-application/14
-$ pip install poetry
+$ python -m pip install --upgrade "pip>=26.2.2"
+$ python -m pip install "poetry==2.5.1" "certifi>=2026.10.19"
 $ poetry install # 必要なライブラリのインストール
 ```
 

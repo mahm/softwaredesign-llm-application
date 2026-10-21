@@ -6,3 +6,4 @@ langchain-openai
 python-dotenv
 retry
 sentence-transformers
+certifi==2026.10.19

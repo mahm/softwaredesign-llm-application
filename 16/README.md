@@ -1,5 +1,14 @@
 # Software Design誌「実践LLMアプリケーション開発」第16回サンプルコード
 
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Pythonを紙面に記載した3.11.10から3.11.17へ更新しました。
+Dockerコンテナ内のHTTPS通信に使用するCA証明書も、certifi 2026.10.19へ更新しています。
+
+環境構築にはuv 0.13.4以降を使用してください。
+`langgraph up`で起動するコンテナには、更新したCA証明書の参照先を設定しています。
+起動には、LangGraphの利用権限がある`LANGSMITH_API_KEY`が必要です。
+
 ## サンプルコードの実行方法
 
 ※ このプロジェクトは`uv`を使用しています。`uv`のインストール方法については[こちら](https://github.com/astral-sh/uv)をご確認ください。
@@ -7,13 +16,13 @@
 以下のコマンドでサンプルコードが保存されているリポジトリをクローン後、
 
 ```
-$ git clone https://github.com/mahm/sd-16.git
+$ git clone https://github.com/mahm/softwaredesign-llm-application.git
 ```
 
 続けて以下のコマンドを実行し、必要なライブラリのインストールを行って下さい。
 
 ```
-$ cd sd-16
+$ cd softwaredesign-llm-application/16
 $ uv sync
 ```
 
@@ -38,8 +47,7 @@ LANGSMITH_PROJECT=sd-16
 お手元で動作を確認される際には、上記のセットアップの後に以下のコマンドを実行してご確認ください。
 
 ```
-$ pip install -U langgraph-cli
-$ langgraph up
+$ uv run langgraph up
 ```
 
 ## Tavily APIキーの取得方法

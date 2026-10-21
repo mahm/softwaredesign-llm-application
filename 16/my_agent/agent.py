@@ -4,6 +4,7 @@ from typing import Annotated, ClassVar, Literal, Sequence
 from langchain_anthropic import ChatAnthropic
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.messages import BaseMessage
+from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.prebuilt import ToolNode
@@ -49,7 +50,7 @@ def should_continue(state: AgentState) -> Literal["end", "continue"]:
 
 
 # モデルを実行する関数
-def call_model(state: AgentState, config: GraphConfig) -> dict:
+def call_model(state: AgentState, config: RunnableConfig) -> dict:
     messages = state.messages
     messages = [
         {"role": "system", "content": "You are a helpful assistant."}

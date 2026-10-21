@@ -4,13 +4,14 @@
   "workspaceFolder": "/workspaces/softwaredesign-llm-application",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.13"
+      "version": "3.13.16"
     },
     "ghcr.io/va-h/devcontainers-features/uv:1": {
-      "shellAutocompletion": true
+      "shellAutocompletion": true,
+      "version": "0.13.4"
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
+      "version": "24.22.1"
     },
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   }
