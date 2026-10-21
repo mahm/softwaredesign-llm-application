@@ -3,5 +3,10 @@
   "graphs": {
     "agent": "./my_agent/agent.py:graph"
   },
-  "env": ".env"
+  "env": ".env",
+  "dockerfile_lines": [
+    "RUN python -m pip install --no-cache-dir --upgrade pip==26.2.2 certifi==2026.10.19",
+    "RUN mkdir -p /opt/ca && cp $(python -m certifi) /opt/ca/cacert.pem",
+    "ENV SSL_CERT_FILE=/opt/ca/cacert.pem SSL_CERT_DIR=/opt/ca"
+  ]
 }

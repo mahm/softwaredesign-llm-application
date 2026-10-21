@@ -3,3 +3,5 @@ langchain==0.1.8
 langchain-openai==0.0.6
 grandalf
 jupyter
+certifi==2026.10.19
+httpx==0.27.2

@@ -9,6 +9,7 @@ dependencies = [
     "langchain-core",
     "langchain-tavily",
     "python-dotenv",
+    "certifi>=2026.10.19",
 ]
 
 [build-system]

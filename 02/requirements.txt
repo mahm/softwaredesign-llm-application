@@ -1,0 +1,4 @@
+openai==0.27.10
+chainlit==0.6.2
+chromadb==0.4.13
+certifi==2026.10.19

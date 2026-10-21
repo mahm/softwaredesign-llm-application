@@ -19,6 +19,7 @@ dependencies = [
     "pillow>=11.2.1",
     "pandas>=2.2.3",
     "pydantic>=2.11.4",
+    "certifi>=2026.10.19",
 ]
 
 [tool.uv]

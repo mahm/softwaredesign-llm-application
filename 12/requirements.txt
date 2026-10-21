@@ -5,3 +5,4 @@ openai
 langchain-openai
 retry
 pydantic-settings
+certifi==2026.10.19

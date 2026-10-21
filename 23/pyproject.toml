@@ -5,6 +5,7 @@ description = "LangGraph Supervisor & Swarm patterns sample"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "certifi>=2026.10.19",
     "langchain",
     "langchain-anthropic",
     "langchain-openai",

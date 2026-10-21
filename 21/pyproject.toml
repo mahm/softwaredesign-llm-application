@@ -10,6 +10,7 @@ dependencies = [
     "langchain-anthropic==0.3.10",
     "langgraph==0.3.29",
     "python-dotenv==1.1.0",
+    "certifi>=2026.10.19",
 ]
 
 [project.scripts]
