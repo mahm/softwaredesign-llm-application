@@ -3,6 +3,11 @@
 本ディレクトリには、Software Design連載「実践LLMアプリケーション開発」第39回で解説しているサンプルコードを収録しています。
 TypeSafeの意思決定モデル（decision model）であるJevの質問タイプと、SDKの基本的な使い方を紹介します。
 
+## 証明書検証に関する更新（2026年10月22日）
+
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Node.jsを24.22.0から24.22.1へ更新しました。
+実行にはNode.js 24.22.1を使用してください。
+
 ## 動作環境
 
 - ランタイム: Node.js 24.22.1（LTS）
