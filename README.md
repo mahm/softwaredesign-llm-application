@@ -2,10 +2,11 @@
 
 このリポジトリは技術評論社Software Design誌の連載「実践LLMアプリケーション開発」に関連するサンプルコードを保存しています。
 
-## 証明書検証に関する更新（2026年10月22日）
+## 証明書検証に関する更新（2026年10月23日）
 
-[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Python・Node.jsとCA証明書を更新しています。
+[eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Python・Node.js・BunとCA証明書を更新しています。
 各回のREADMEに、紙面のバージョンとの差と環境設定の手順を記載しています。
+Bunを使う第32〜38回は、[対策済みの1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)を使用してください。
 
 ## 注意事項
 

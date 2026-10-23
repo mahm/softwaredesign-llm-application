@@ -4,18 +4,24 @@ Deep AgentsによるSupervisorエージェントから、Agent Client Protocol�
 
 ![起動イメージ](docs/sd_34.png)
 
-## 証明書検証に関する更新（2026年10月22日）
+## 証明書検証に関する更新（2026年10月23日）
 
 [eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Node.jsのバージョン指定を22から22.23.4へ変更しました。
 実行にはNode.js 22.23.4を使用してください。
 
+Bunは、紙面に記載した1.3.5から[対策済みの1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+`mise install`で更新してください。
+
+Claude Codeは、Bun 1.4.4を内蔵する2.1.309を使用してください。
+ACPアダプタがこの実行ファイルを使うように、セットアップ時に`CLAUDE_CODE_EXECUTABLE`へ絶対パスを設定します。
+
 ## 前提条件
 
 - [mise](https://mise.jdx.dev/)（ランタイムバージョン管理）
-- Node.js 22以上
-- Bun
+- Node.js 22.23.4
+- Bun 1.4.4
 - OpenAI APIキー
-- `claude` コマンドが利用できるClaude Code環境
+- `claude` コマンドが利用できるClaude Code 2.1.309の環境
 - `codex` コマンドが利用できるCodex環境
 
 Claude CodeとCodexは、それぞれユーザー環境でログイン済みであることを前提にしています。このサンプルの`.env`にClaude Code用やCodex用のAPIキーを書く必要はありません。
@@ -48,9 +54,19 @@ vi .env
 ```
 
 `.env`ファイルには、Supervisorが使うOpenAI APIキーを設定してください。
+Claude Codeは[公式のバージョン指定手順](https://code.claude.com/docs/en/setup#install-a-specific-version)で2.1.309を導入し、次のコマンドでバージョンと実行ファイルのパスを確認してください。
+
+```bash
+claude --version
+command -v claude
+```
+
+表示された絶対パスを`.env`の`CLAUDE_CODE_EXECUTABLE`へ設定します。
+この指定がない場合、ACPアダプタはSDKに同梱された別の実行ファイルを使用するため、インストール済みのClaude Codeを更新しても反映されません。
 
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
+CLAUDE_CODE_EXECUTABLE=/absolute/path/to/claude
 ```
 
 LangSmithを使う場合だけ、`LANGSMITH_API_KEY`なども設定します。

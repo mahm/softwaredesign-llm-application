@@ -10,7 +10,7 @@ RUN apt-get update \
 
 FROM node-base AS base
 RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash
+RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash -s -- bun-v1.4.4
 
 # --- deps stage ---
 FROM base AS deps

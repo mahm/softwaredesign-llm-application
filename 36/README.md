@@ -13,10 +13,13 @@ improvement-1   詰め込み禁止・主張型タイトル・論理的な流れ
 improvement-2   本文照合・一般化禁止・照合できない数値は書かない
 ```
 
-## 証明書検証に関する更新（2026年10月22日）
+## 証明書検証に関する更新（2026年10月23日）
 
 [eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、評価用Pythonを紙面に記載した3.13から3.13.16へ更新しました。
 HTTPS通信に使用するCA証明書も、certifi 2026.10.19へ更新しています。
+
+Bunは、紙面に記載した1.3.5から[対策済みの1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+`mise install`で更新してください。
 
 環境構築にはuv 0.13.4以降を使用してください。
 依存パッケージの導入後、評価スクリプトを起動するシェルで次の環境変数を設定してください。
@@ -29,7 +32,7 @@ export SSL_CERT_DIR="$(dirname "$SSL_CERT_FILE")"
 ## 前提条件
 
 - [mise](https://mise.jdx.dev/)
-- Bun
+- Bun 1.4.4
 - `uv`
 - OpenRouter APIキー(エージェント実行: `deepseek/deepseek-v4-flash`)
 - OpenAI APIキー(評価judge: `gpt-5.4`)

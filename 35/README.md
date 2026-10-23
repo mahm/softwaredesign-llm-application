@@ -3,10 +3,16 @@
 DeepAgents TypeScript と OpenRouter を使って、Harbor 経由で Terminal-Bench 2 の公式タスクを実行するサンプルです。
 このサンプルでは、人間が `harness.json` を手で作り込むのではなく、`PROMPT.md` を読ませたコーディングエージェントに改善候補を作らせ、その候補を Harbor で測定します。
 
+## 証明書検証に関する更新（2026年10月23日）
+
+Bunは、紙面に記載した1.3.5から[eMudhraの中間CA侵害に対応した1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+ローカルでは`mise install`で更新してください。
+タスク用コンテナにも1.4.4を導入し、取得時に`curl`が使用するCA証明書も更新します。
+
 ## 前提条件
 
 - [mise](https://mise.jdx.dev/)
-- Bun
+- Bun 1.4.4
 - Docker
 - `uv` / `uvx`
 - [Harbor](https://www.harborframework.com/docs/tutorials/running-terminal-bench)
