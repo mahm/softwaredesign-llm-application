@@ -6,13 +6,18 @@ APP_DIR=/opt/deepagents-tbench-autotune-ts
 apt-get update
 apt-get install -y ca-certificates curl git gzip tar unzip
 
-if ! command -v bun >/dev/null 2>&1; then
-  curl -fsSL https://bun.sh/install | bash -s "bun-v1.3.5"
-fi
+# Bunの取得にも、侵害された中間CAを信頼しないCAストアを使用する。
+sed -i \
+  -e '/^mozilla\/AAA_Certificate_Services\.crt$/s/^/!/' \
+  -e '/^mozilla\/emSign_ECC_Root_CA_-_G3\.crt$/s/^/!/' \
+  /etc/ca-certificates.conf
+update-ca-certificates --fresh
 
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+# タスクイメージに古いBunが含まれる場合も、指定した版へ更新する。
+curl -fsSL https://bun.sh/install | bash -s -- bun-v1.4.4
 export PATH="$BUN_INSTALL/bin:$PATH"
-ln -sf "$(command -v bun)" /usr/local/bin/bun
+ln -sf "$BUN_INSTALL/bin/bun" /usr/local/bin/bun
 
 rm -rf "$APP_DIR"
 

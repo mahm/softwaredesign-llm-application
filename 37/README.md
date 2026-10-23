@@ -2,12 +2,22 @@
 
 ## 動作確認環境
 
-- Bun 1.3.5
+- Bun 1.4.4
 - TypeScript 6.0.3
 - @openrouter/sdk 1.2.51
 - deepagents 1.12.4
 - @langchain/openrouter 0.4.8
-- Claude Code 2.1.239
+- Claude Code 2.1.309
+
+## 証明書検証に関する更新（2026年10月23日）
+
+Bunは、紙面に記載した1.3.5から[eMudhraの中間CA侵害に対応した1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+`bun --version`で1.4.4を使用していることを確認してください。
+miseを使用する場合は、`37`ディレクトリで`mise trust`と`mise install`を実行してください。
+以下の`bun`コマンドを`mise exec -- bun`に読み替えると、`.mise.toml`に指定した版で実行できます。
+
+Claude Codeも、紙面に記載した2.1.239から2.1.309へ更新しています。
+Claude Codeに内蔵されたBunを更新するには、Claude Code自体の更新が必要です。
 
 ## 準備
 
@@ -17,8 +27,7 @@
 bun install
 ```
 
-Claude Codeは依存パッケージに含まれないため、[公式のインストール手順](https://code.claude.com/docs/en/installation)に従ってCLIを別途インストールします。
-本サンプルの動作確認には2.1.239を使用しています。
+Claude Codeは依存パッケージに含まれないため、[公式のバージョン指定手順](https://code.claude.com/docs/en/setup#install-a-specific-version)に従って2.1.309を別途インストールします。
 
 ```console
 claude --version

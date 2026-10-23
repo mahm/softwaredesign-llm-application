@@ -2,11 +2,15 @@
 
 deepagentsjsとCopilotKitを活用した、arXiv論文からスライドを対話的に生成するエージェントアプリケーションです。
 
-## 証明書検証に関する更新（2026年10月22日）
+## 証明書検証に関する更新（2026年10月23日）
 
 [eMudhraの中間CA侵害](https://emudhra.com/en/post/certificate-security-incident)への対応として、Node.jsのバージョン指定を22から22.23.4へ変更しました。
 DockerイメージもNode.js 22.23.4を使用します。
 コンテナ内の`curl`がHTTPS通信に使用するCA証明書も更新しています。
+
+Bunは、紙面に記載した1.3.5から[対策済みの1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+ローカルでは`mise install`で更新してください。
+Dockerを使用する場合は、`mise run build`でイメージを再ビルドしてください。
 
 ## サンプルコードの実行方法
 

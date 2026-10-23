@@ -2,6 +2,11 @@
 
 Agent Client Protocol（ACP）を使って、Deep AgentsベースのコーディングアシスタントをZedエディタと接続するサンプルです。
 
+## 証明書検証に関する更新（2026年10月23日）
+
+Bunは、紙面に記載した1.3.5から[eMudhraの中間CA侵害に対応した1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+`mise install`で更新し、Zedにも同じ版の実行ファイルを指定してください。
+
 ## サンプルコードの実行方法
 
 ### 前提条件
@@ -40,7 +45,7 @@ Zedのコマンドパレット（Cmd+Shift+P）から「agent: open settings」�
   "agent_servers": {
     "Deep Agents": {
       "type": "custom",
-      "command": "bun",
+      "command": "/absolute/path/to/bun",
       "args": [
         "run",
         "/absolute/path/to/softwaredesign-llm-application/33/server.ts"
@@ -53,7 +58,8 @@ Zedのコマンドパレット（Cmd+Shift+P）から「agent: open settings」�
 }
 ```
 
-- `/absolute/path/to/`の部分はクローン先の実際の絶対パスに置き換えてください。ACPの仕様上、相対パスでは動作しません。
+- `command`には、`33`ディレクトリで`mise which bun`を実行して表示されたBunの絶対パスを指定してください。
+- `args`内の`/absolute/path/to/`は、クローン先の実際の絶対パスに置き換えてください。ACPの仕様上、相対パスでは動作しません。
 - `ANTHROPIC_API_KEY`にはAnthropicのAPIキーを設定してください。Zedはサブプロセスとしてサーバーを起動するため、`33/.env`ファイルは読み込まれません。Zedの設定で直接指定する必要があります。
 
 ### 接続確認
