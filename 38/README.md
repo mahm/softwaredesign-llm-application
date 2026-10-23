@@ -3,9 +3,16 @@
 本ディレクトリには、Software Design連載「実践LLMアプリケーション開発」第38回で解説しているサンプルコードを収録しています。
 OpenRouterのレスポンスキャッシュ、Server Tools（Web検索）、PDF Inputs、レスポンスヒーリング、コンテキスト圧縮の動作を手元で確認できます。
 
+## 証明書検証に関する更新（2026年10月23日）
+
+Bunは、紙面に記載した1.3.5から[eMudhraの中間CA侵害に対応した1.4.4](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84)へ更新しています。
+`bun --version`で1.4.4を使用していることを確認してください。
+miseを使用する場合は、`38`ディレクトリで`mise trust`と`mise install`を実行してください。
+以下の`bun`コマンドを`mise exec -- bun`に読み替えると、`.mise.toml`に指定した版で実行できます。
+
 ## 動作環境
 
-- ランタイム: Bun 1.3.5
+- ランタイム: Bun 1.4.4
 - 言語: TypeScript 6.0.3
 - 主要ライブラリ: `@openrouter/sdk` 1.2.116, `zod` 4.4.3
 - 使用モデル: `deepseek/deepseek-v4-flash-0731`
