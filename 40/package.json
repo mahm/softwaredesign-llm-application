@@ -1,0 +1,19 @@
+{
+  "name": "sd40-jev-rag-samples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openrouter/sdk": "1.5.100",
+    "@typesafe-ai/sdk": "0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "^26.13.1"
+  }
+}

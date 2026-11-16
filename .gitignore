@@ -48,6 +48,8 @@ CONTEXT.md
 !34/workspace/AGENTS.md
 skills-lock.json
 docs/
+!40/docs/
+!40/docs/**
 
 # Misc
 tmp/
