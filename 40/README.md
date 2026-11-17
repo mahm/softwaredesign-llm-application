@@ -48,7 +48,7 @@ npm run check
 |---|---|---|
 | [`search.ts`](samples/search.ts) | OpenRouterのEmbeddings APIによるベクトル検索とBM25全文検索をRRF（Reciprocal Rank Fusion）で統合するハイブリッド検索ヘルパー | （各サンプルから呼び出し） |
 | [`01-filter-collection.ts`](samples/01-filter-collection.ts) | `noul`で問い合わせから検索すべき文書カテゴリを判定し、絞り込み前後のハイブリッド検索結果を比較 | `node samples/01-filter-collection.ts` |
-| [`02-rerank-chunks.ts`](samples/02-rerank-chunks.ts) | 候補チャンクを1回のリクエストで評価（`score`：無関係／手がかり／答え）し、期待値スコアでリランキング | `node samples/02-rerank-chunks.ts` |
+| [`02-rerank-chunks.ts`](samples/02-rerank-chunks.ts) | 候補チャンクを1回のリクエストで評価（`score`：無関係／一部関連／直接の回答）し、期待値スコアでリランキング | `node samples/02-rerank-chunks.ts` |
 | [`03-reconstruct-and-answer.ts`](samples/03-reconstruct-and-answer.ts) | スコア閾値でチャンクを選別し、同一セクションの前後チャンクを再構成してOpenRouter経由のLLMで回答を生成 | `node samples/03-reconstruct-and-answer.ts` |
 
 同じ入力に対する回答と確率の変動によって、実行結果が記事の掲載内容と異なる場合があります。

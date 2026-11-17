@@ -2,7 +2,7 @@
 import { noul, score, type ScoreQuestion, TypeSafeClient } from "@typesafe-ai/sdk";
 import { type Chunk, getOpenRouterClient, hybridSearch, loadData } from "./search.ts";
 
-const SCORE_THRESHOLD = 5.0; // 10点満点換算で5.0点（「手がかり」相当）以上を採用
+const SCORE_THRESHOLD = 5.0; // 10点満点換算で5.0点（「一部関連」相当）以上を採用
 const { inquiry, chunks } = await loadData();
 const client = new TypeSafeClient();
 const openRouter = getOpenRouterClient();
@@ -41,9 +41,9 @@ const candidates = initialHits.map((h) => ({
 }));
 
 const rubric = [
-  "無関係（質問と関係がない、または「これまで使えていたPC向け」など前提条件が異なる）",
-  "手がかり（直接の操作手順ではないが、原因や前提となる規定・参照先の手順書名が分かる）",
-  "答え（質問に対する具体的な設定手順や解決策そのものが書かれている）",
+  "無関係（質問への回答になっていない、または対象者の前提条件が異なる）",
+  "一部関連（質問の一部に答えている、または原因・前提条件は分かるが具体的な手順はない）",
+  "直接の回答（質問に対する具体的な設定手順や解決策が書かれている）",
 ] as const;
 
 const questions: Record<string, ScoreQuestion<typeof rubric>> = {};

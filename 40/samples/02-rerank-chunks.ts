@@ -18,9 +18,9 @@ const candidates = initialHits.map((h) => ({
 }));
 
 const rubric = [
-  "無関係（質問と関係がない、または「これまで使えていたPC向け」など前提条件が異なる）",
-  "手がかり（直接の操作手順ではないが、原因や前提となる規定・参照先の手順書名が分かる）",
-  "答え（質問に対する具体的な設定手順や解決策そのものが書かれている）",
+  "無関係（質問への回答になっていない、または対象者の前提条件が異なる）",
+  "一部関連（質問の一部に答えている、または原因・前提条件は分かるが具体的な手順はない）",
+  "直接の回答（質問に対する具体的な設定手順や解決策が書かれている）",
 ] as const;
 
 const questions: Record<string, ScoreQuestion<typeof rubric>> = {};
@@ -38,7 +38,7 @@ const response = await client.systemOne({
   questions,
 });
 
-// Jevが返すscore（0〜2の期待値）を5倍し、0〜10点満点（無関係:0点 / 手がかり:5点 / 答え:10点）に換算して並べ替える
+// Jevが返すscore（0〜2の期待値）を5倍し、0〜10点満点（無関係:0点 / 一部関連:5点 / 直接の回答:10点）に換算して並べ替える
 const reranked = initialHits
   .map((hit, idx) => {
     const ans = response.answers[hit.chunk.id];
@@ -57,7 +57,7 @@ for (const item of reranked) {
   const p = item.probabilities;
   console.log(
     `[${item.hit.chunk.id}] スコア=${item.pointScore.toFixed(2)}点 (初期順位:${item.initialRank}位) ` +
-      `[答え:${p["2"].toFixed(2)}, 手がかり:${p["1"].toFixed(2)}, 無関係:${p["0"].toFixed(2)}] ` +
+      `[直接の回答:${p["2"].toFixed(2)}, 一部関連:${p["1"].toFixed(2)}, 無関係:${p["0"].toFixed(2)}] ` +
       `${item.hit.chunk.title}`,
   );
 }
