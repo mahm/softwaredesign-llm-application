@@ -56,3 +56,4 @@ Bunを使う第32〜38回は、[対策済みの1.4.4](https://github.com/oven-sh
 | 37 | OpenRouter入門 | OpenRouter SDKによるマルチモーダルAPIと推論プロバイダのルーティング、Deep AgentsとClaude Codeとの接続 |
 | 38 | OpenRouterのレスポンスキャッシュとプラグイン | [Web検索、レスポンスキャッシュ、PDF解析、JSON修復、コンテキスト圧縮](38/README.md) |
 | 39 | 意思決定モデルJev入門（前編） | [TypeSafeのSDKと質問タイプの基本](39/README.md) |
+| 40 | 意思決定モデルJevによるRAGの改善 | [Jevを用いた検索対象の絞り込み、一括リランキング、前後チャンク再構成](40/README.md) |
